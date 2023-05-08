@@ -70,6 +70,11 @@ void RecordUmaEvent(WindowsRTLocationRequestEvent event) {
   base::UmaHistogramEnumeration("Windows.RT.LocationRequest.Event", event);
 }
 
+bool IsWinRTSupported() {
+  return base::win::ResolveCoreWinRTDelayload() &&
+         base::win::ScopedHString::ResolveCoreWinRTStringDelayload();
+}
+
 template <typename F>
 absl::optional<DOUBLE> GetOptionalDouble(F&& getter) {
   DOUBLE value = 0;
@@ -504,6 +509,7 @@ std::unique_ptr<LocationProvider> NewSystemLocationProvider(
     GeolocationManager* geolocation_manager) {
   if (!base::FeatureList::IsEnabled(
           features::kWinrtGeolocationImplementation) ||
+	!IsWinRTSupported() ||
       !IsSystemLocationSettingEnabled()) {
     return nullptr;
   }

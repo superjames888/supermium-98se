@@ -298,12 +298,13 @@ void GetProgIdEntries(const ShellUtil::ApplicationInfo& app_info,
     entries->back()->set_removal_flag(RegistryEntry::RemovalFlag::VALUE);
   }
 
-  // The following entries are required but do not depend on the DelegateExecute
-  // verb handler being set.
-  if (!app_info.app_id.empty()) {
-    entries->push_back(std::make_unique<RegistryEntry>(
-        prog_id_path, ShellUtil::kRegAppUserModelId, app_info.app_id));
-  }
+  // The following entries are required as of Windows 8, but do not
+  // depend on the DelegateExecute verb handler being set.
+  if (base::win::GetVersion() >= base::win::Version::WIN8) {
+    if (!app_info.app_id.empty()) {
+      entries->push_back(std::make_unique<RegistryEntry>(
+          prog_id_path, ShellUtil::kRegAppUserModelId, app_info.app_id));
+    }
 
   // Add \Software\Classes\<prog_id>\Application entries
   std::wstring application_path(prog_id_path + ShellUtil::kRegApplication);
@@ -332,6 +333,7 @@ void GetProgIdEntries(const ShellUtil::ApplicationInfo& app_info,
         application_path, ShellUtil::kRegApplicationCompany,
         app_info.publisher_name));
   }
+}
 }
 
 // This method returns a list of all the registry entries that are needed to
@@ -747,11 +749,12 @@ bool QuickIsChromeRegisteredForMode(
   }
   reg_key += ShellUtil::kRegShellOpen;
 
-  // ProgId and shell integration registrations are allowed to reside in HKCU
-  // for user-level installs, and values there have priority over values in
-  // HKLM.
+  // ProgId registrations are allowed to reside in HKCU for user-level installs
+  // (and values there have priority over values in HKLM). The same is true for
+  // shell integration entries as of Windows 8.
   if (confirmation_level == CONFIRM_PROGID_REGISTRATION ||
-      confirmation_level == CONFIRM_SHELL_REGISTRATION) {
+      (confirmation_level == CONFIRM_SHELL_REGISTRATION &&
+       base::win::GetVersion() >= base::win::Version::WIN8)) {
     const RegKey key_hkcu(HKEY_CURRENT_USER, reg_key.c_str(), KEY_QUERY_VALUE);
     std::wstring hkcu_value;
     // If |reg_key| is present in HKCU, assert that it points to |chrome_exe|.
@@ -826,7 +829,9 @@ bool GetInstallationSpecificSuffix(const base::FilePath& chrome_exe,
 // be placed for this install. As of Windows 8 everything can go in HKCU for
 // per-user installs.
 HKEY DetermineRegistrationRoot(bool is_per_user) {
-  return is_per_user ? HKEY_CURRENT_USER : HKEY_LOCAL_MACHINE;
+    return is_per_user && base::win::GetVersion() >= base::win::Version::WIN8
+             ? HKEY_CURRENT_USER
+             : HKEY_LOCAL_MACHINE;
 }
 
 // Associates Chrome with supported protocols and file associations. This should
@@ -1045,6 +1050,7 @@ ShellUtil::DefaultState ProbeProtocolHandlers(const base::FilePath& chrome_exe,
 // Returns true on success.
 bool GetAppShortcutsFolder(ShellUtil::ShellChange level, base::FilePath* path) {
   DCHECK(path);
+  DCHECK_GE(base::win::GetVersion(), base::win::Version::WIN8);
 
   base::FilePath folder;
   if (!base::PathService::Get(base::DIR_APP_SHORTCUTS, &folder)) {
@@ -1426,6 +1432,7 @@ bool RegisterChromeBrowserImpl(const base::FilePath& chrome_exe,
 bool RegisterApplicationForProtocols(const std::vector<std::wstring>& protocols,
                                      const std::wstring& prog_id,
                                      const base::FilePath& chrome_exe) {
+  DCHECK_GT(base::win::GetVersion(), base::win::Version::WIN7);
   std::vector<std::unique_ptr<RegistryEntry>> entries;
   ShellUtil::ApplicationInfo app_info =
       ShellUtil::GetApplicationInfoForProgId(prog_id);
@@ -1788,10 +1795,12 @@ bool ShellUtil::ShortcutLocationIsSupported(ShortcutLocation location) {
     case SHORTCUT_LOCATION_START_MENU_ROOT:                   // Falls through.
     case SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED:  // Falls through.
     case SHORTCUT_LOCATION_START_MENU_CHROME_APPS_DIR:        // Falls through.
-    case SHORTCUT_LOCATION_STARTUP:                           // Falls through.
-    case SHORTCUT_LOCATION_TASKBAR_PINS:                      // Falls through.
-    case SHORTCUT_LOCATION_APP_SHORTCUTS:
+    case SHORTCUT_LOCATION_STARTUP:
       return true;
+    case SHORTCUT_LOCATION_TASKBAR_PINS:
+      return base::win::GetVersion() >= base::win::Version::WIN7;
+    case SHORTCUT_LOCATION_APP_SHORTCUTS:
+      return base::win::GetVersion() >= base::win::Version::WIN8;
     default:
       NOTREACHED();
       return false;
@@ -2812,16 +2821,19 @@ bool ShellUtil::AddAppProtocolAssociations(
     if (!AddRegistryEntries(HKEY_CURRENT_USER, entries))
       success = false;
 
-    // Removing the existing user choice for a given protocol forces Windows to
-    // present a disambiguation dialog the next time this protocol is invoked
-    // from the OS.
-    std::unique_ptr<RegistryEntry> entry = GetProtocolUserChoiceEntry(protocol);
-    if (!installer::DeleteRegistryValue(HKEY_CURRENT_USER, entry->key_path(),
-                                        WorkItem::kWow64Default, kRegProgId)) {
-      success = false;
+    // On Windows 10, removing the existing user choice for a given protocol
+    // forces Windows to present a disambiguation dialog the next time this
+    // protocol is invoked from the OS.
+    if (base::win::GetVersion() >= base::win::Version::WIN10) {
+      std::unique_ptr<RegistryEntry> entry =
+          GetProtocolUserChoiceEntry(protocol);
+      if (!installer::DeleteRegistryValue(HKEY_CURRENT_USER, entry->key_path(),
+                                          WorkItem::kWow64Default,
+                                          kRegProgId)) {
+        success = false;
+      }
     }
   }
-
   return success;
 }
 

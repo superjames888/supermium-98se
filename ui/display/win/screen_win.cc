@@ -45,13 +45,47 @@ namespace {
 // resolved with Desktop Aura and WindowTreeHost.
 ScreenWin* g_instance = nullptr;
 
+bool IsProcessPerMonitorDpiAware() {
+  enum class PerMonitorDpiAware {
+    UNKNOWN = 0,
+    PER_MONITOR_DPI_UNAWARE,
+    PER_MONITOR_DPI_AWARE,
+  };
+  static PerMonitorDpiAware per_monitor_dpi_aware = PerMonitorDpiAware::UNKNOWN;
+  if (per_monitor_dpi_aware == PerMonitorDpiAware::UNKNOWN) {
+    per_monitor_dpi_aware = PerMonitorDpiAware::PER_MONITOR_DPI_UNAWARE;
+    HMODULE shcore_dll = ::LoadLibrary(L"shcore.dll");
+    if (shcore_dll) {
+      auto get_process_dpi_awareness_func =
+          reinterpret_cast<decltype(::GetProcessDpiAwareness)*>(
+              ::GetProcAddress(shcore_dll, "GetProcessDpiAwareness"));
+      if (get_process_dpi_awareness_func) {
+        PROCESS_DPI_AWARENESS awareness;
+        if (SUCCEEDED(get_process_dpi_awareness_func(nullptr, &awareness)) &&
+            awareness == PROCESS_PER_MONITOR_DPI_AWARE)
+          per_monitor_dpi_aware = PerMonitorDpiAware::PER_MONITOR_DPI_AWARE;
+      }
+    }
+  }
+  return per_monitor_dpi_aware == PerMonitorDpiAware::PER_MONITOR_DPI_AWARE;
+}
+
 // Gets the DPI for a particular monitor.
 absl::optional<int> GetPerMonitorDPI(HMONITOR monitor) {
-  UINT dpi_x, dpi_y;
-  if (!SUCCEEDED(
-          ::GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y))) {
+  if (!IsProcessPerMonitorDpiAware())
     return absl::nullopt;
-  }
+
+  static auto get_dpi_for_monitor_func = []() {
+    const HMODULE shcore_dll = ::LoadLibrary(L"shcore.dll");
+    return reinterpret_cast<decltype(&::GetDpiForMonitor)>(
+        shcore_dll ? ::GetProcAddress(shcore_dll, "GetDpiForMonitor")
+                   : nullptr);
+  }();
+  UINT dpi_x, dpi_y;
+  if (!get_dpi_for_monitor_func ||
+      !SUCCEEDED(
+          get_dpi_for_monitor_func(monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y)))
+    return absl::nullopt;
 
   DCHECK_EQ(dpi_x, dpi_y);
   return static_cast<int>(dpi_x);

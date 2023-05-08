@@ -262,32 +262,9 @@ bool Process::SetProcessBackgrounded(bool value) {
   // priority inversion, and having a process put itself in background mode is
   // broken in Windows 11 22H2. So, it is no longer supported. See
   // https://crbug.com/1396155 for details.
+  // NOTE: NtSetInformationProcess call (SetProcessInformation really) using ProcessPowerThrottling class removed because it is useless before Windows 10.
   DCHECK(!is_current());
   const DWORD priority = value ? IDLE_PRIORITY_CLASS : NORMAL_PRIORITY_CLASS;
-
-  if (base::win::OSInfo::GetInstance()->version() >=
-          base::win::Version::WIN11 &&
-      FeatureList::IsEnabled(kUseEcoQoSForBackgroundProcess)) {
-    PROCESS_POWER_THROTTLING_STATE power_throttling;
-    RtlZeroMemory(&power_throttling, sizeof(power_throttling));
-    power_throttling.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
-
-    if (value) {
-      // Sets Eco QoS level.
-      power_throttling.ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
-      power_throttling.StateMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
-    } else {
-      // Uses system default.
-      power_throttling.ControlMask = 0;
-      power_throttling.StateMask = 0;
-    }
-    bool ret =
-        ::SetProcessInformation(Handle(), ProcessPowerThrottling,
-                                &power_throttling, sizeof(power_throttling));
-    if (ret == 0) {
-      DPLOG(ERROR) << "Setting process QoS policy fails";
-    }
-  }
 
   return (::SetPriorityClass(Handle(), priority) != 0);
 }

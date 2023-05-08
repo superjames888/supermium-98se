@@ -450,6 +450,11 @@ std::string ShellContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+base::FilePath ShellContentBrowserClient::GetFontLookupTableCacheDir() {
+  return browser_context()->GetPath().Append(
+      FILE_PATH_LITERAL("FontLookupTableCache"));
+}
+
 std::unique_ptr<WebContentsViewDelegate>
 ShellContentBrowserClient::GetWebContentsViewDelegate(
     WebContents* web_contents) {

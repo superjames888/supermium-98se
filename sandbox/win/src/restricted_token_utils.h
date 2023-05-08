@@ -51,6 +51,19 @@ absl::optional<base::win::AccessToken> CreateRestrictedToken(
 // the error.
 DWORD HardenTokenIntegrityLevelPolicy(const base::win::AccessToken& token);
 
+// Create a lowbox token.
+// `base_token` a base token to derive the lowbox token from. Can be nullptr.
+// `token_type` specify to create either a primary or impersonation token.
+// `package_sid` is the AppContainer package SID.
+// `capabilities` is the list of AppContainer capabilities.
+// `token` is the output value containing the handle of the newly created
+// If the function succeeds, the return value is true.
+bool CreateLowBoxToken(HANDLE base_token,
+                       TokenType token_type,
+                       const base::win::Sid& package_sid,
+                       const std::vector<base::win::Sid>& capabilities,
+                       base::win::ScopedHandle* token);
+
 // Returns true if a low IL token can access the current desktop, false
 // otherwise.
 bool CanLowIntegrityAccessDesktop();

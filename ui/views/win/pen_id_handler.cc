@@ -37,6 +37,13 @@ class PenIdStatics {
     if (skip_initialization_) {
       return;
     }
+	
+    if(!base::win::ResolveCoreWinRTDelayload()){
+	  pen_device_statics_ = nullptr;
+	  pointer_point_statics_ = nullptr;
+	  return;
+    }
+	
     base::win::AssertComInitialized();
     base::win::RoGetActivationFactory(
         base::win::HStringReference(

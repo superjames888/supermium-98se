@@ -2222,8 +2222,12 @@ LRESULT HWNDMessageHandler::OnMouseRange(UINT message,
 LRESULT HWNDMessageHandler::OnPointerActivate(UINT message,
                                               WPARAM w_param,
                                               LPARAM l_param) {
+  using GetPointerTypeFn = BOOL(WINAPI*)(UINT32, POINTER_INPUT_TYPE*);
+  UINT32 pointer_id = GET_POINTERID_WPARAM(w_param);
   POINTER_INPUT_TYPE pointer_type;
-  if (::GetPointerType(GET_POINTERID_WPARAM(w_param), &pointer_type) &&
+  static const auto get_pointer_type = reinterpret_cast<GetPointerTypeFn>(
+      base::win::GetUser32FunctionPointer("GetPointerType"));
+  if (get_pointer_type && get_pointer_type(pointer_id, &pointer_type) &&
       pointer_type == PT_TOUCHPAD) {
     return PA_NOACTIVATE;
   }
@@ -2231,17 +2235,23 @@ LRESULT HWNDMessageHandler::OnPointerActivate(UINT message,
   return -1;
 }
 
+
 LRESULT HWNDMessageHandler::OnPointerEvent(UINT message,
                                            WPARAM w_param,
                                            LPARAM l_param) {
+  UINT32 pointer_id = GET_POINTERID_WPARAM(w_param);
+  using GetPointerTypeFn = BOOL(WINAPI*)(UINT32, POINTER_INPUT_TYPE*);
   POINTER_INPUT_TYPE pointer_type;
+  static const auto get_pointer_type = reinterpret_cast<GetPointerTypeFn>(
+      base::win::GetUser32FunctionPointer("GetPointerType"));
   // If the WM_POINTER messages are not sent from a stylus device, then we do
   // not handle them to make sure we do not change the current behavior of
   // touch and mouse inputs.
-  if (!::GetPointerType(GET_POINTERID_WPARAM(w_param), &pointer_type)) {
+  if (!get_pointer_type || !get_pointer_type(pointer_id, &pointer_type)) {
     SetMsgHandled(FALSE);
     return -1;
   }
+
 
   // |HandlePointerEventTypePenClient| assumes all pen events happen on the
   // client area, so WM_NCPOINTER messages sent to it would eventually be
@@ -3570,11 +3580,17 @@ LRESULT HWNDMessageHandler::HandlePointerEventTypePenClient(UINT message,
                                                             WPARAM w_param,
                                                             LPARAM l_param) {
   UINT32 pointer_id = GET_POINTERID_WPARAM(w_param);
+  using GetPointerPenInfoFn = BOOL(WINAPI*)(UINT32, POINTER_PEN_INFO*);
   POINTER_PEN_INFO pointer_pen_info;
-  if (!GetPointerPenInfo(pointer_id, &pointer_pen_info)) {
+  static const auto get_pointer_pen_info =
+      reinterpret_cast<GetPointerPenInfoFn>(
+          base::win::GetUser32FunctionPointer("GetPointerPenInfo"));
+  if (!get_pointer_pen_info ||
+      !get_pointer_pen_info(pointer_id, &pointer_pen_info)) {
     SetMsgHandled(FALSE);
     return -1;
   }
+
 
   return HandlePointerEventTypePen(message, pointer_id, pointer_pen_info);
 }

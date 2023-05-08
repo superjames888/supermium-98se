@@ -27,7 +27,21 @@ struct BASE_EXPORT ScopedHStringTraits {
 
 namespace win {
 
-// ScopedHString is a wrapper around an HSTRING.
+// ScopedHString is a wrapper around an HSTRING. Note that it requires certain
+// functions that are only available on Windows 8 and later, and that these
+// functions need to be delayloaded to avoid breaking Chrome on Windows 7.
+//
+// Callers MUST check the return value of ResolveCoreWinRTStringDelayLoad()
+// *before* using ScopedHString.
+//
+// One-time Initialization for ScopedHString:
+//
+//   bool success = ScopedHString::ResolveCoreWinRTStringDelayload();
+//   if (success) {
+//     // ScopeHString can be used.
+//   } else {
+//     // Handle error.
+//   }
 //
 // Example use:
 //
@@ -47,6 +61,9 @@ class BASE_EXPORT ScopedHString
 
   static ScopedHString Create(WStringPiece str);
   static ScopedHString Create(StringPiece str);
+
+  // Loads all required HSTRING functions, available from Win8 and onwards.
+  [[nodiscard]] static bool ResolveCoreWinRTStringDelayload();
 
   // Returns a view into the memory buffer managed by the instance. The returned
   // StringPiece is only valid during the lifetime of this ScopedHString

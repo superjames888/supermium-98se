@@ -88,6 +88,11 @@ class WebAccountSupportFinder
     DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
     base::win::AssertComApartmentType(base::win::ComApartmentType::MTA);
 
+    if (!base::win::ResolveCoreWinRTDelayload())
+      return;  // Unsupported.
+    if (!base::win::ScopedHString::ResolveCoreWinRTStringDelayload())
+      return;  // Unsupported.
+
     // Get the `WebAuthenticationCoreManager`.
     ComPtr<IWebAuthenticationCoreManagerStatics> auth_manager;
     HRESULT hresult = base::win::GetActivationFactory<
