@@ -101,6 +101,34 @@ POWER_PLATFORM_ROLE GetPlatformRole() {
   return PowerDeterminePlatformRoleEx(POWER_PLATFORM_ROLE_V2);
 }
 
+// Because we used to support versions earlier than 8.1, we dynamically load
+// this function from user32.dll, so it won't fail to load in runtime.
+// TODO(https://crbug.com/1408307): Call SetProcessDpiAwareness directly.
+bool SetProcessDpiAwarenessWrapper(PROCESS_DPI_AWARENESS value) {
+  if (!IsUser32AndGdi32Available())
+    return false;
+
+  static const auto set_process_dpi_awareness_func =
+      reinterpret_cast<decltype(&::SetProcessDpiAwareness)>(
+          GetUser32FunctionPointer("SetProcessDpiAwarenessInternal"));
+  if (set_process_dpi_awareness_func) {
+    HRESULT hr = set_process_dpi_awareness_func(value);
+    if (SUCCEEDED(hr))
+      return true;
+    DLOG_IF(ERROR, hr == E_ACCESSDENIED)
+        << "Access denied error from SetProcessDpiAwarenessInternal. "
+           "Function called twice, or manifest was used.";
+    NOTREACHED()
+        << "SetProcessDpiAwarenessInternal failed with unexpected error: "
+        << hr;
+    return false;
+  }
+
+  NOTREACHED() << "SetProcessDpiAwarenessInternal "
+                  "should be available on all platforms >= Windows 8.1";
+  return false;
+}
+
 // Enable V2 per-monitor high-DPI support for the process. This will cause
 // Windows to scale dialogs, comctl32 controls, context menus, and non-client
 // area owned by this process on a per-monitor basis. If per-monitor V2 is not
@@ -238,10 +266,16 @@ bool IsWindows10OrGreaterTabletMode(HWND hwnd) {
            IsDeviceUsedAsATablet(/*reason=*/nullptr);
   }
 
+  if (!ResolveCoreWinRTDelayload() ||
+      !ScopedHString::ResolveCoreWinRTStringDelayload()) {
+    return false;
+  }
+
+
   ScopedHString view_settings_guid = ScopedHString::Create(
       RuntimeClass_Windows_UI_ViewManagement_UIViewSettings);
   Microsoft::WRL::ComPtr<IUIViewSettingsInterop> view_settings_interop;
-  HRESULT hr = ::RoGetActivationFactory(view_settings_guid.get(),
+  HRESULT hr = win::RoGetActivationFactory(view_settings_guid.get(),
                                         IID_PPV_ARGS(&view_settings_interop));
   if (FAILED(hr))
     return false;
@@ -606,8 +640,15 @@ bool IsJoinedToAzureAD() {
 bool IsUser32AndGdi32Available() {
   static auto is_user32_and_gdi32_available = []() {
     // If win32k syscalls aren't disabled, then user32 and gdi32 are available.
+	  auto get_process_mitigation_policy =
+      reinterpret_cast<decltype(&GetProcessMitigationPolicy)>(::GetProcAddress(
+          ::GetModuleHandleA("kernel32.dll"), "GetProcessMitigationPolicy"));
+		  
+    if(!get_process_mitigation_policy)
+		return true;
+		  
     PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY policy = {};
-    if (::GetProcessMitigationPolicy(GetCurrentProcess(),
+    if (get_process_mitigation_policy(GetCurrentProcess(),
                                      ProcessSystemCallDisablePolicy, &policy,
                                      sizeof(policy))) {
       return policy.DisallowWin32kSystemCalls == 0;
@@ -682,7 +723,7 @@ void EnableHighDPISupport() {
 
   // Fall back to per-monitor DPI for older versions of Win10.
   PROCESS_DPI_AWARENESS process_dpi_awareness = PROCESS_PER_MONITOR_DPI_AWARE;
-  if (!::SetProcessDpiAwareness(process_dpi_awareness)) {
+  if (!SetProcessDpiAwarenessWrapper(process_dpi_awareness)) {
     // For windows versions where SetProcessDpiAwareness fails, try its
     // predecessor.
     BOOL result = ::SetProcessDPIAware();

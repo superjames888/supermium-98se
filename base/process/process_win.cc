@@ -265,6 +265,7 @@ bool Process::SetPriority(Priority priority) {
   // priority inversion, and having a process put itself in background mode is
   // broken in Windows 11 22H2. So, it is no longer supported. See
   // https://crbug.com/1396155 for details.
+  // NOTE: NtSetInformationProcess call (SetProcessInformation really) using ProcessPowerThrottling class removed because it is useless before Windows 10.
   DCHECK(!is_current());
   const DWORD priority_class = priority == Priority::kBestEffort
                                    ? IDLE_PRIORITY_CLASS

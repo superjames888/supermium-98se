@@ -260,6 +260,7 @@ std::wstring PrependWindowsSessionPath(const wchar_t* object) {
       {L"\\Sessions\\", base::NumberToWString(s_session_id), object});
 }
 
+
 // Adds the generic config rules to a sandbox TargetConfig.
 ResultCode AddGenericConfig(sandbox::TargetConfig* config) {
   DCHECK(!config->IsConfigured());
@@ -329,7 +330,9 @@ ResultCode AddDefaultConfigForSandboxedProcess(TargetConfig* config) {
 
   config->SetLockdownDefaultDacl();
 
-  result = config->AddKernelObjectToClose(L"File", L"\\Device\\DeviceApi");
+  // Win8+ adds a device DeviceApi that we don't need.
+  if (base::win::GetVersion() >= base::win::Version::WIN8)
+    result = config->AddKernelObjectToClose(L"File", L"\\Device\\DeviceApi");
   if (result != SBOX_ALL_OK)
     return result;
 
@@ -731,12 +734,18 @@ ResultCode LaunchWithoutSandbox(
   // on process shutdown, in which case TerminateProcess can fail. See
   // https://crbug.com/820996.
   if (delegate->ShouldUnsandboxedRunInJob()) {
+    BOOL in_job = true;
+    // Prior to Windows 8 nested jobs aren't possible.
+    if (base::win::GetVersion() >= base::win::Version::WIN8 ||
+        (::IsProcessInJob(::GetCurrentProcess(), nullptr, &in_job) &&
+         !in_job)) {
     static base::NoDestructor<base::win::ScopedHandle> job_object(
         CreateUnsandboxedJob());
     if (!job_object->is_valid()) {
       return SBOX_ERROR_CANNOT_INIT_JOB;
     }
     options.job_handle = job_object->get();
+    }
   }
 
   // Chromium binaries are marked as CET Compatible but some processes
@@ -827,6 +836,10 @@ ResultCode SandboxWin::AddAppContainerPolicy(TargetConfig* config,
 ResultCode SandboxWin::AddWin32kLockdownPolicy(TargetConfig* config) {
   DCHECK(!config->IsConfigured());
 #if !defined(NACL_WIN64)
+  // Win32k Lockdown is supported on Windows 8+.
+  if (base::win::GetVersion() < base::win::Version::WIN8)
+    return SBOX_ALL_OK;
+
   MitigationFlags flags = config->GetProcessMitigations();
   // Check not enabling twice. Should not happen.
   DCHECK_EQ(0U, flags & MITIGATION_WIN32K_DISABLE);
