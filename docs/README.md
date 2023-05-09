@@ -10,9 +10,11 @@ Releases are expected every one to two months.
 # Future objectives
 
 -Maintaining support for Manifest v2
+
 -Supporting Windows Vista (without extended kernel)
 
 # Future objectives of lower priority
 
 -Supporting Windows XP
+
 -SSE2 build
