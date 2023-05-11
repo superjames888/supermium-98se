@@ -611,14 +611,14 @@ absl::optional<ProcessHandleMap> GetCurrentProcessHandlesWin7() {
   while (handle_count && invalid_count < kInvalidHandleThreshold) {
     handle_value += kHandleOffset;
     HANDLE handle = base::win::Uint32ToHandle(handle_value);
-    std::wstring type_name;
-    if (!GetTypeNameFromHandle(handle, &type_name)) {
+    auto type_name = GetTypeNameFromHandle(handle);
+    if (!type_name) {
       ++invalid_count;
       continue;
     }
 
     --handle_count;
-    handle_map[type_name].push_back(handle);
+    handle_map[type_name.value()].push_back(handle);
   }
   return handle_map;
 }
