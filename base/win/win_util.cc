@@ -95,10 +95,10 @@ void __cdecl ForceCrashOnSigAbort(int) {
   *((volatile int*)nullptr) = 0x1337;
 }
 
-// Returns the current platform role. We use the PowerDeterminePlatformRoleEx
+// Returns the current platform role. We use the PowerDeterminePlatformRole
 // API for that.
 POWER_PLATFORM_ROLE GetPlatformRole() {
-  return PowerDeterminePlatformRoleEx(POWER_PLATFORM_ROLE_V2);
+	return PowerDeterminePlatformRole();
 }
 
 // Because we used to support versions earlier than 8.1, we dynamically load
