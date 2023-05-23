@@ -65,6 +65,7 @@ ScreenshotCapturedBubble::ScreenshotCapturedBubble(
       image_(image),
       web_contents_(web_contents->GetWeakPtr()),
       profile_(profile) {
+
   SetButtons(ui::DIALOG_BUTTON_NONE);
   SetTitle(IDS_BROWSER_SHARING_SCREENSHOT_POST_CAPTURE_TITLE);
 }
