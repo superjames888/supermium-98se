@@ -6,6 +6,7 @@
 
 #include <Windows.h>
 #include "base/command_line.h"
+<<<<<<< HEAD
 #include "base/win/windows_version.h"
 #include "chrome/browser/themes/theme_service.h"
 #include "chrome/browser/themes/theme_service_factory.h"
@@ -13,6 +14,8 @@
 #include "chrome/common/chrome_switches.h"
 #include "ui/color/win/accent_color_observer.h"
 #include "ui/native_theme/native_theme.h"
+=======
+>>>>>>> ee67bf583bc5d (Resolved conflicts.)
 
 bool ShouldCustomDrawSystemTitlebar() {
   // Some extra code added here because those with pre-win8 and no DWM will have to fallback on the custom titlebar.
