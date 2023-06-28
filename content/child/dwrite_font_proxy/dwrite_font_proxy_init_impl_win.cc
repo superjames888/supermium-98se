@@ -78,7 +78,6 @@ void InitializeDWriteFontProxy() {
   blink::WebFontRendering::SetFontRenderingClient(g_font_collection);
 
   skia::OverrideDefaultSkFontMgr(std::move(skia_font_manager));
-
   // When IDWriteFontFallback is not available (prior to Win8.1) Skia will
   // still attempt to use DirectWrite to determine fallback fonts (in
   // SkFontMgr_DirectWrite::onMatchFamilyStyleCharacter), which will likely
