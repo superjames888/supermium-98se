@@ -14,9 +14,8 @@ BASE_DECLARE_FEATURE(kWindows11MicaTitlebar);
 // Returns whether we should custom draw the titlebar for a browser window.
 bool ShouldBrowserCustomDrawTitlebar(BrowserView* browser_view);
 
-// Returns whether we should always use the system titlebar, even when a theme
-// is applied.
-bool ShouldAlwaysUseSystemTitlebar();
+// Returns whether we should always custom draw the system title bar.
+bool ShouldCustomDrawSystemTitlebar();
 
 // Returns whether we should use the Mica titlebar material for a browser
 // window.

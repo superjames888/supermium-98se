@@ -4,6 +4,7 @@
 
 #include "chrome/browser/win/titlebar_config.h"
 
+#include <Windows.h>
 #include "base/command_line.h"
 #include "base/win/windows_version.h"
 #include "chrome/browser/themes/theme_service.h"
@@ -44,6 +45,7 @@ bool ShouldCustomDrawSystemTitlebar() {
 }
 
 bool ShouldBrowserCustomDrawTitlebar(BrowserView* browser_view) {
+
   return ShouldCustomDrawSystemTitlebar() ||
          !ThemeServiceFactory::GetForProfile(browser_view->GetProfile())
               ->UsingSystemTheme() ||

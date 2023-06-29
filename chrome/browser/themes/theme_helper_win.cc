@@ -19,6 +19,6 @@ int ThemeHelperWin::GetDefaultDisplayProperty(int id) const {
 
 bool ThemeHelperWin::ShouldUseNativeFrame(
     const CustomThemeSupplier* theme_supplier) const {
-  return !ShouldAlwaysUseSystemTitlebar() ||
+  return ShouldCustomDrawSystemTitlebar() ||
          !HasCustomImage(IDR_THEME_FRAME, theme_supplier);
 }
