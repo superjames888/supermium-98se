@@ -2802,6 +2802,16 @@ const char kVmPerBootShaderCacheDescription[] =
 const char kAutoWebContentsDarkModeName[] = "Auto Dark Mode for Web Contents";
 const char kAutoWebContentsDarkModeDescription[] =
     "Automatically render all web contents using a dark theme.";
+	
+const char kForceDarkModeFlagName[] = "Forced Dark Mode for UI";
+const char kForceDarkModeFlagDescription[] = 
+	"Enables dark mode for all UI elements (but not web contents - " 
+	"enable #enable-force-dark for darkening web contents).";
+	
+const char kForceXpThemeName[] = "Use Classic Theme";
+const char kForceXpThemeDescription[] =
+	"Use the classic Chrome theme designed to mimick \"Aero\" window controls. "
+	"Typically used when desktop composition is disabled or unavailable.";
 
 const char kForcedColorsName[] = "Forced Colors";
 const char kForcedColorsDescription[] =

@@ -15,6 +15,7 @@
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -5646,6 +5647,14 @@ const FeatureEntry kFeatureEntries[] = {
                                     kForceDarkVariations,
                                     "ForceDarkVariations")},
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+    {"force-dark-mode",
+	 flag_descriptions::kForceDarkModeFlagName, flag_descriptions::kForceDarkModeFlagDescription, kOsAll,
+	 FEATURE_VALUE_TYPE(base::features::kForceDarkModeFlag)},
+#if BUILDFLAG(IS_WIN)
+	{"force-xp-theme",
+	 flag_descriptions::kForceXpThemeName, flag_descriptions::kForceXpThemeDescription, kOsWin,
+	 FEATURE_VALUE_TYPE(kForceXpTheme)},	 
+#endif
 #if BUILDFLAG(IS_ANDROID)
     {"enable-accessibility-page-zoom",
      flag_descriptions::kAccessibilityPageZoomName,

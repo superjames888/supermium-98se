@@ -10,6 +10,7 @@
 class BrowserView;
 
 BASE_DECLARE_FEATURE(kWindows11MicaTitlebar);
+BASE_DECLARE_FEATURE(kForceXpTheme);
 
 // Returns whether we should custom draw the titlebar for a browser window.
 bool ShouldBrowserCustomDrawTitlebar(BrowserView* browser_view);

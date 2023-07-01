@@ -10,6 +10,10 @@
 #include "chrome/grit/theme_resources.h"
 #include "base/win/windows_version.h"
 
+BASE_FEATURE(kForceXpTheme,
+             "ForceXpTheme",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
 int ThemeHelperWin::GetDefaultDisplayProperty(int id) const {
   if (id == ThemeProperties::SHOULD_FILL_BACKGROUND_TAB_COLOR) {
     return !ShouldDefaultThemeUseMicaTitlebar();
@@ -25,5 +29,5 @@ bool ThemeHelperWin::ShouldUseNativeFrame(
 		// Aero Glass is "native", Mica is "native", and so is the Windows 10-style theme that is drawn
 		// by Chromium itself.
 		// Only the "original" Chromium theme that mimicks Aero is not considered native.
-  return !HasCustomImage(IDR_THEME_FRAME, theme_supplier) && (base::win::GetVersion() >= base::win::Version::VISTA);
+  return (!HasCustomImage(IDR_THEME_FRAME, theme_supplier) && (base::win::GetVersion() >= base::win::Version::VISTA)) && !base::FeatureList::IsEnabled(kForceXpTheme);
 }

@@ -4616,6 +4616,11 @@
     "expiry_milestone": 120
   },
   {
+    "name": "force-dark-mode",
+    "owners": [ "win32", "supermium" ],
+    "expiry_milestone": -1
+  },
+  {
     "name": "force-gpu-main-thread-to-normal-priority-drdc",
     "owners": [ "vikassoni", "lehoangquyen" ],
     "expiry_milestone": 110
@@ -4674,6 +4679,11 @@
     "owners": [ "//chrome/android/java/src/org/chromium/chrome/browser/omaha/OWNERS" ],
     // This is required by test teams to verify functionality on devices which
     // have no access to commandline flags.
+    "expiry_milestone": -1
+  },
+  {
+    "name": "force-xp-theme",
+    "owners": [ "win32", "supermium" ],
     "expiry_milestone": -1
   },
   {
