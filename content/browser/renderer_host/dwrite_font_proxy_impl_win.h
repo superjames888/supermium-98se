@@ -79,21 +79,6 @@ class CONTENT_EXPORT DWriteFontProxyImpl
       uint32_t codepoint,
       FallbackFamilyAndStyleForCodepointCallback callback) override;
 
-  void GetUniqueFontLookupMode(
-      GetUniqueFontLookupModeCallback callback) override;
-
-  void GetUniqueNameLookupTableIfAvailable(
-      GetUniqueNameLookupTableIfAvailableCallback callback) override;
-
-  void GetUniqueNameLookupTable(
-      GetUniqueNameLookupTableCallback callback) override;
-
-  void FallbackFamilyAndStyleForCodepoint(
-      const std::string& base_family_name,
-      const std::string& locale_name,
-      uint32_t codepoint,
-      FallbackFamilyAndStyleForCodepointCallback callback) override;
-
   void InitializeDirectWrite();
 
  private:
