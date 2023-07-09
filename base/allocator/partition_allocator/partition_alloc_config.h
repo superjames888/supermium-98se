@@ -32,7 +32,7 @@
 static_assert(sizeof(void*) == 8, "");
 #else
 static_assert(sizeof(void*) != 8, "");
-#endif  // PA_CONFIG(HAS_64_BITS_POINTERS)
+#endif  // BUILDFLAG(HAS_64_BITS_POINTERS)
 
 #if BUILDFLAG(HAS_64_BIT_POINTERS) && \
     (defined(__ARM_NEON) || defined(__ARM_NEON__)) && defined(__ARM_FP)
@@ -41,7 +41,7 @@ static_assert(sizeof(void*) != 8, "");
 #define PA_CONFIG_STARSCAN_NEON_SUPPORTED() 0
 #endif
 
-#if PA_CONFIG(HAS_64_BITS_POINTERS) && (BUILDFLAG(IS_IOS) || BUILDFLAG(IS_WIN))
+#if BUILDFLAG(HAS_64_BIT_POINTERS) && (BUILDFLAG(IS_IOS) || BUILDFLAG(IS_WIN))
 // Allow PA to select an alternate pool size at run-time before initialization,
 // rather than using a single constexpr value.
 //
@@ -56,7 +56,7 @@ static_assert(sizeof(void*) != 8, "");
 #define PA_CONFIG_DYNAMICALLY_SELECT_POOL_SIZE() 1
 #else
 #define PA_CONFIG_DYNAMICALLY_SELECT_POOL_SIZE() 0
-#endif  // PA_CONFIG(HAS_64_BITS_POINTERS) && (BUILDFLAG(IS_IOS) ||
+#endif  // BUILDFLAG(HAS_64_BIT_POINTERS) && (BUILDFLAG(IS_IOS) ||
         // BUILDFLAG(IS_WIN))
 
 #if BUILDFLAG(HAS_64_BIT_POINTERS) && \

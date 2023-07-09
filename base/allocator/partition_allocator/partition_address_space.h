@@ -279,8 +279,8 @@ class PA_COMPONENT_EXPORT(PARTITION_ALLOC) PartitionAddressSpace {
 #if PA_CONFIG(DYNAMICALLY_SELECT_POOL_SIZE)
   // We can't afford pool sizes as large as kPoolMaxSize on Windows <8.1 (see
   // crbug.com/1101421 and crbug.com/1217759).
-  static constexpr size_t kRegularPoolSizeForLegacyWindows = 4 * kGiB;
-  static constexpr size_t kBRPPoolSizeForLegacyWindows = 4 * kGiB;
+  static constexpr size_t kRegularPoolSizeForLegacyWindows = 1 * kGiB;
+  static constexpr size_t kBRPPoolSizeForLegacyWindows = 1 * kGiB;
   static_assert(kRegularPoolSizeForLegacyWindows < kRegularPoolSize);
   static_assert(kBRPPoolSizeForLegacyWindows < kBRPPoolSize);
   static_assert(base::bits::IsPowerOfTwo(kRegularPoolSizeForLegacyWindows));
