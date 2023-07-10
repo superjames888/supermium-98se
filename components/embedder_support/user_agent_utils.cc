@@ -90,13 +90,45 @@ int GetPreRS5UniversalApiContractVersion() {
     return 6;
   }
   // The list above should account for all Windows versions prior to
-  // RS5.
-  NOTREACHED();
+  // RS5. 0 represents all pre-Win10 releases.
   return 0;
 }
 
+int GetLegacyWindowsVersion() {
+// The User Agent Client Hints specification indicates that Windows 7 through 8.x
+// should be handled as having a major version of 0 while using the OS' minor version.
+// (i.e. Windows 7 is 0.1). This does not account for how to handle Windows Vista and below.
+// As a result, Vista will report as 0.60 and NT 5.x as 0.5x.
+// TODO: introduce UA-CH spoofer to avoid any undesirable impacts of having the "wrong" values in future.
+	const base::win::Version version = base::win::OSInfo::Kernel32Version();
+	if (version == base::win::Version::WIN8_1) {
+		return 3;
+	}
+	if (version == base::win::Version::WIN8) {
+		return 2;
+	}
+	if (version == base::win::Version::WIN7) {
+		return 1;
+	}
+	if (version == base::win::Version::VISTA) {
+		return 60;
+	}
+	if (version == base::win::Version::SERVER_2003) {
+		return 52;
+	}
+	if (version == base::win::Version::XP) {
+		return 51;
+	}	
+	if (version == base::win::Version::PRE_XP) {
+		return 50;
+	}	
+	return 0;
+}
+
 // Returns the UniversalApiContract version number, which is available for
-// Windows versions greater than RS5. Otherwise, returns 0.
+// Windows versions greater than RS5. Otherwise, returns a version value
+// representing the Windows version (non-zero major version for early Windows 10,
+// non-zero minor version for pre-Windows 10).
 const std::string& GetUniversalApiContractVersion() {
   // Do not use this for runtime environment detection logic. This method should
   // only be used to help populate the Sec-CH-UA-Platform client hint. If
@@ -110,6 +142,7 @@ const std::string& GetUniversalApiContractVersion() {
         if (base::win::OSInfo::Kernel32Version() <=
             base::win::Version::WIN10_RS4) {
           major_version = GetPreRS5UniversalApiContractVersion();
+		  minor_version = GetLegacyWindowsVersion();
         } else {
           base::win::RegKey version_key(
               HKEY_LOCAL_MACHINE, kWindowsRuntimeWellKnownContractsRegKeyName,
