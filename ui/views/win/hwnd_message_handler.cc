@@ -3636,7 +3636,6 @@ bool HWNDMessageHandler::IsSynthesizedMouseMessage(unsigned int message,
 }
 
 void HWNDMessageHandler::PerformDwmTransition() {
-  CHECK(IsFrameSystemDrawn());
 
   dwm_transition_desired_ = false;
   delegate_->HandleFrameChanged();
