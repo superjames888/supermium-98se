@@ -282,8 +282,9 @@ NTSTATUS ServiceResolverThunk::PerformPatch(void* local_thunk,
   return STATUS_SUCCESS;
 }
 
-bool ServiceResolverThunk::VerifyJumpTargetForTesting(void*) const {
-  return true;
+bool Wow64ResolverThunk::IsFunctionAService(void* local_thunk) const {
+  NOTREACHED_NT();
+  return false;
 }
 
 }  // namespace sandbox

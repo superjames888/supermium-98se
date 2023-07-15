@@ -6,9 +6,8 @@
 
 #include <atomic>
 #include <limits>
-#include <string>
 
-#include <windows.h>
+#include <memory>
 
 #include <assert.h>
 #include <ntstatus.h>
@@ -380,11 +379,13 @@ ThirdPartyStatus ApplyHook() {
   assert(!g_hook_active);
 
   // Prep system-service thunk via the appropriate ServiceResolver instance.
-  sandbox::ServiceResolverThunk thunk(::GetCurrentProcess(), /*relaxed=*/false);
-  assert(sizeof(g_thunk_storage) >= thunk.GetThunkSize());
+  std::unique_ptr<sandbox::ServiceResolverThunk> thunk(
+      elf_hook::HookSystemService(false));
+  if (!thunk)
+    return ThirdPartyStatus::kHookUnsupportedOs;
 
   // Set target process to self.
-  thunk.AllowLocalPatches();
+  thunk->AllowLocalPatches();
 
   // Mark the thunk storage as readable and writeable, since we
   // are ready to write to it now.
@@ -397,9 +398,33 @@ ThirdPartyStatus ApplyHook() {
   // Replace the default NtMapViewOfSection system service with our patched
   // version.
 #if defined(_WIN64)
-  void* entry_point = reinterpret_cast<void*>(&NewNtMapViewOfSection64);
-#else
-  void* entry_point = reinterpret_cast<void*>(&NewNtMapViewOfSection);
+  // Setup() applies the system-service patch, and stores a copy of the original
+  // system service coded in |thunk_storage|.
+  ntstatus =
+      thunk->Setup(::GetModuleHandle(sandbox::kNtdllName),
+                   reinterpret_cast<void*>(&__ImageBase), "NtMapViewOfSection",
+                   nullptr, reinterpret_cast<void*>(&NewNtMapViewOfSection64),
+                   thunk_storage, sizeof(sandbox::ThunkData), nullptr);
+
+  // Keep a pointer to the original system-service code, which is now in
+  // |thunk_storage|.  Use this pointer for passing off execution from new shim.
+  // - Only needed on x64.
+  g_nt_map_view_of_section_func =
+      reinterpret_cast<NtMapViewOfSectionFunction>(thunk_storage);
+
+  // Ensure that the pointer to the old function can't be changed.
+  // - Do not treat this as a fatal error on failure.
+  if (!VirtualProtect(&g_nt_map_view_of_section_func,
+                      sizeof(g_nt_map_view_of_section_func), PAGE_EXECUTE_READ,
+                      &old_protect)) {
+    assert(false);
+  }
+#else   // x86
+  ntstatus =
+      thunk->Setup(::GetModuleHandle(sandbox::kNtdllName),
+                   reinterpret_cast<void*>(&__ImageBase), "NtMapViewOfSection",
+                   nullptr, reinterpret_cast<void*>(&NewNtMapViewOfSection),
+                   thunk_storage, sizeof(sandbox::ThunkData), nullptr);
 #endif  // defined(_WIN64)
 
   // Setup() applies the system-service patch, and stores a copy of the original
