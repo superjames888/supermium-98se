@@ -34,7 +34,6 @@
 #include "base/win/registry.h"
 #include "content/browser/renderer_host/dwrite_font_file_util_win.h"
 #include "content/browser/renderer_host/dwrite_font_proxy_impl_win.h"
-#include "content/browser/renderer_host/dwrite_font_uma_logging_win.h"
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/common/content_client.h"
 #include "content/public/common/content_features.h"
@@ -186,7 +185,6 @@ void DWriteFontLookupTableBuilder::InitializeDirectWrite() {
   if (!collection_) {
     base::UmaHistogramSparse(
         "DirectWrite.Fonts.Proxy.GetSystemFontCollectionResult", hr);
-    LogMessageFilterError(MessageFilterError::ERROR_NO_COLLECTION);
     return;
   }
 }
