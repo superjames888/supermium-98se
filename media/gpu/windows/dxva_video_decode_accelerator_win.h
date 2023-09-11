@@ -94,7 +94,6 @@ class MEDIA_GPU_EXPORT DXVAVideoDecodeAccelerator
   DXVAVideoDecodeAccelerator(
       const GetGLContextCallback& get_gl_context_cb,
       const MakeGLContextCurrentCallback& make_context_current_cb,
-      const BindGLImageCallback& bind_image_cb,
       const gpu::GpuDriverBugWorkarounds& workarounds,
       const gpu::GpuPreferences& gpu_preferences,
       MediaLog* media_log);
@@ -509,7 +508,6 @@ class MEDIA_GPU_EXPORT DXVAVideoDecodeAccelerator
   GetGLContextCallback get_gl_context_cb_;
   // Callback to set the correct gl context.
   MakeGLContextCurrentCallback make_context_current_cb_;
-  BindGLImageCallback bind_image_cb_;
 
   // This may be null, e.g. when not using MojoVideoDecoder.
   const raw_ptr<MediaLog> media_log_;

@@ -39,7 +39,8 @@
 #include "base/trace_event/trace_event.h"
 #include "base/win/scoped_co_mem.h"
 #include "build/build_config.h"
-#include "components/viz/common/resources/resource_format_utils.h"
+#include "components/viz/common/resources/resource_format.h"
+#include "components/viz/common/viz_resource_format_export.h"
 #include "gpu/command_buffer/common/shared_image_usage.h"
 #include "gpu/command_buffer/service/shared_image/d3d_image_backing.h"
 #include "gpu/command_buffer/service/shared_image/pbuffer_image_backing.h"
@@ -636,7 +637,6 @@ DXVAVideoDecodeAccelerator::PendingSampleInfo::~PendingSampleInfo() {}
 DXVAVideoDecodeAccelerator::DXVAVideoDecodeAccelerator(
     const GetGLContextCallback& get_gl_context_cb,
     const MakeGLContextCurrentCallback& make_context_current_cb,
-    const BindGLImageCallback& bind_image_cb,
     const gpu::GpuDriverBugWorkarounds& workarounds,
     const gpu::GpuPreferences& gpu_preferences,
     MediaLog* media_log)
@@ -650,7 +650,6 @@ DXVAVideoDecodeAccelerator::DXVAVideoDecodeAccelerator(
       sent_drain_message_(false),
       get_gl_context_cb_(get_gl_context_cb),
       make_context_current_cb_(make_context_current_cb),
-      bind_image_cb_(bind_image_cb),
       media_log_(media_log),
       codec_(VideoCodec::kUnknown),
       decoder_thread_("DXVAVideoDecoderThread"),
@@ -1142,15 +1141,6 @@ void DXVAVideoDecodeAccelerator::AssignPictureBuffers(
     RETURN_AND_NOTIFY_ON_FAILURE(picture_buffer.get(),
                                  "Failed to allocate picture buffer",
                                  PLATFORM_FAILURE, );
-    if (bind_image_cb_) {
-      for (uint32_t client_id : buffers[buffer_index].client_texture_ids()) {
-        // The picture buffer handles the actual binding of its contents to
-        // texture ids. This call just causes the texture manager to hold a
-        // reference to the GLImage as long as either texture exists.
-        bind_image_cb_.Run(client_id, GetTextureTarget(),
-                           picture_buffer->gl_image());
-      }
-    }
 
     bool inserted = output_picture_buffers_
                         .insert(std::make_pair(buffers[buffer_index].id(),
