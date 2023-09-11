@@ -81,7 +81,6 @@
   X("drm")                                                               \
   X("drmcursor")                                                         \
   X("dwrite")                                                            \
-  X("DXVA_Decoding")                                                     \
   X("evdev")                                                             \
   X("event")                                                             \
   X("exo")                                                               \

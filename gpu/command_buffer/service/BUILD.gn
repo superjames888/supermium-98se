@@ -250,8 +250,6 @@ target(link_target_type, "gles2_sources") {
     "shared_image/gl_common_image_backing_factory.h",
     "shared_image/gl_repack_utils.cc",
     "shared_image/gl_repack_utils.h",
-    "shared_image/gl_texture_common_representations.cc",
-    "shared_image/gl_texture_common_representations.h",
     "shared_image/gl_texture_holder.cc",
     "shared_image/gl_texture_holder.h",
     "shared_image/gl_texture_image_backing.cc",
@@ -624,8 +622,6 @@ target(link_target_type, "gles2_sources") {
       "shared_image/dxgi_swap_chain_image_backing.h",
       "shared_image/dxgi_swap_chain_image_representation.cc",
       "shared_image/dxgi_swap_chain_image_representation.h",
-      "shared_image/pbuffer_image_backing.cc",
-      "shared_image/pbuffer_image_backing.h",
     ]
     libs = [
       "dxguid.lib",
