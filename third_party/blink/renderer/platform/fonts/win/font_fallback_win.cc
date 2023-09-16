@@ -55,8 +55,12 @@ const char kTimesNewRoman[] = "Times New Roman";
 static inline bool IsFontPresent(const UChar* font_name,
                                  SkFontMgr* font_manager) {
   String family = font_name;
-  sk_sp<SkTypeface> tf(
-      font_manager->matchFamilyStyle(family.Utf8().c_str(), SkFontStyle()));
+  sk_sp<SkTypeface> tf;
+  if(FontCache::useDirectWrite()) {
+	tf = font_manager->matchFamilyStyle(family.Utf8().c_str(), SkFontStyle());
+  } else {
+	tf = font_manager->legacyMakeTypeface(family.Utf8().data(), SkFontStyle());
+  }
   if (!tf)
     return false;
 

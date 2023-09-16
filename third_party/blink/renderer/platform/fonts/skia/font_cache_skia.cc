@@ -193,7 +193,6 @@ scoped_refptr<SimpleFontData> FontCache::GetLastResortFallbackFont(
                             AlternateFontName::kLastResort);
   }
 #endif
-
   DCHECK(font_platform_data);
   return FontDataFromFontPlatformData(font_platform_data, should_retain);
 }
@@ -233,6 +232,12 @@ sk_sp<SkTypeface> FontCache::CreateTypeface(
   // TODO(https://crbug.com/1425390: Assign FontCache::font_manager_ in the
   // ctor.
   auto font_manager = font_manager_ ? font_manager_ : SkFontMgr::RefDefault();
+#if BUILDFLAG(IS_WIN)
+  if(!useDirectWrite()) {
+	return sk_sp<SkTypeface>(font_manager->legacyMakeTypeface(
+      name.empty() ? nullptr : name.c_str(), font_description.SkiaFontStyle()));	  
+  }
+#endif
   return sk_sp<SkTypeface>(font_manager->matchFamilyStyle(
       name.empty() ? nullptr : name.c_str(), font_description.SkiaFontStyle()));
 }

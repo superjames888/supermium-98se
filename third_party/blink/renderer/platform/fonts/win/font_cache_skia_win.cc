@@ -509,7 +509,7 @@ std::unique_ptr<FontPlatformData> FontCache::CreateFontPlatformData(
 
   } else {
     typeface = CreateTypeface(font_description, creation_params, name);
-
+    
     // For a family match, Windows will always give us a valid pointer here,
     // even if the face name is non-existent. We have to double-check and see if
     // the family name was really used.

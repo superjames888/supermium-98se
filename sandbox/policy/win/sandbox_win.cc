@@ -63,6 +63,7 @@
 #include "sandbox/win/src/process_mitigations.h"
 #include "sandbox/win/src/sandbox.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
+#include "ui/gfx/win/direct_write.h"
 
 namespace sandbox {
 namespace policy {
@@ -180,19 +181,20 @@ bool AddWindowsFontsDir(TargetConfig* config) {
   if (!base::PathService::Get(base::DIR_WINDOWS_FONTS, &directory)) {
     return false;
   }
+  
+  if (gfx::win::ShouldUseDirectWrite()) {
+	  ResultCode result =
+		  config->AddRule(SubSystem::kFiles, Semantics::kFilesAllowReadonly,
+						  directory.value().c_str());
+	  if (result != SBOX_ALL_OK)
+		return false;
 
-  ResultCode result =
-      config->AddRule(SubSystem::kFiles, Semantics::kFilesAllowReadonly,
-                      directory.value().c_str());
-  if (result != SBOX_ALL_OK)
-    return false;
-
-  std::wstring directory_str = directory.value() + L"\\*";
-  result = config->AddRule(SubSystem::kFiles, Semantics::kFilesAllowReadonly,
-                           directory_str.c_str());
-  if (result != SBOX_ALL_OK)
-    return false;
-
+	  std::wstring directory_str = directory.value() + L"\\*";
+	  result = config->AddRule(SubSystem::kFiles, Semantics::kFilesAllowReadonly,
+							   directory_str.c_str());
+	  if (result != SBOX_ALL_OK)
+		return false;
+  }
   return true;
 }
 #endif  // !defined(NACL_WIN64)
@@ -583,6 +585,12 @@ ResultCode GenerateConfigForSandboxedProcess(const base::CommandLine& cmd_line,
       MITIGATION_SEHOP | MITIGATION_NONSYSTEM_FONT_DISABLE |
       MITIGATION_IMAGE_LOAD_NO_REMOTE | MITIGATION_IMAGE_LOAD_NO_LOW_LABEL |
       MITIGATION_RESTRICT_INDIRECT_BRANCH_PREDICTION | MITIGATION_KTM_COMPONENT;
+	  
+  #if !defined(NACL_WIN64)
+    // Don't block font loading with GDI.
+    if (!gfx::win::ShouldUseDirectWrite())
+      mitigations ^= sandbox::MITIGATION_NONSYSTEM_FONT_DISABLE;
+  #endif
 
   // CET is enabled with the CETCOMPAT bit on chrome.exe so must be
   // disabled for processes we know are not compatible.

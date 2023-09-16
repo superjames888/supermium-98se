@@ -128,6 +128,34 @@ FontPlatformData FontCustomPlatformData::GetFontPlatformData(
   // now, going with a reasonable upper limit. Deduplication is
   // handled by Skia with priority given to the last occuring
   // assignment.
+  #if BUILDFLAG(IS_WIN)
+    if (!FontCache::useDirectWrite()) {
+        // FIXME: Skia currently renders synthetic bold and italics with
+        // hinting and without linear metrics on the windows GDI backend
+        // while the DirectWrite backend does the right thing. Using
+        // legacyCreateTypeface and specifying the bold/italics style allows
+        // for proper rendering of synthetic style. Once Skia has been
+        // updated this workaround will no longer be needed.
+        // http://crbug.com/332958
+        bool syntheticBold = bold && !return_typeface->isBold();
+        bool syntheticItalic = italic && !return_typeface->isItalic();
+        if (syntheticBold || syntheticItalic) {
+            SkString name;
+			sk_sp<SkFontMgr> font_mgr(SkFontMgr::RefDefault());
+            return_typeface->getFamilyName(&name);
+
+            SkFontStyle realStyle = return_typeface->fontStyle();
+            SkFontStyle syntheticStyle = SkFontStyle(
+                realStyle.weight() + (syntheticBold ? 200 : 0),
+                realStyle.width(),
+                syntheticItalic ? SkFontStyle::kItalic_Slant : realStyle.slant());
+            sk_sp<SkTypeface> typeface = font_mgr->legacyMakeTypeface(name.c_str(), syntheticStyle);
+            syntheticBold = false;
+            syntheticItalic = false;
+            return FontPlatformData(typeface, "", size, syntheticBold, syntheticItalic, text_rendering, resolved_font_features, orientation);
+        }
+    }
+  #endif
   FontFormatCheck::VariableFontSubType font_sub_type =
       FontFormatCheck::ProbeVariableFont(base_typeface_);
   bool synthetic_bold = bold;

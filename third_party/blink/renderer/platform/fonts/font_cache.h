@@ -203,8 +203,10 @@ class PLATFORM_EXPORT FontCache final {
 #if BUILDFLAG(IS_WIN)
   // TODO(https://crbug.com/808221) System font style configuration is not
   // related to FontCache. Move it somewhere else, e.g. to WebThemeEngine.
+  static bool useDirectWrite() { return s_useDirectWrite; }
   static bool AntialiasedTextEnabled() { return antialiased_text_enabled_; }
   static bool LcdTextEnabled() { return lcd_text_enabled_; }
+  static void setUseDirectWrite(bool useDirectWrite) { s_useDirectWrite = useDirectWrite; }
   static void SetAntialiasedTextEnabled(bool enabled) {
     antialiased_text_enabled_ = enabled;
   }
@@ -365,6 +367,7 @@ class PLATFORM_EXPORT FontCache final {
   static SkFontMgr* static_font_manager_;
 
 #if BUILDFLAG(IS_WIN)
+  static bool s_useDirectWrite;
   static WebFontPrewarmer* prewarmer_;
   static bool antialiased_text_enabled_;
   static bool lcd_text_enabled_;

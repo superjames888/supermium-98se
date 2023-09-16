@@ -8,6 +8,7 @@
 
 #include <string>
 
+#include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/histogram_macros.h"
@@ -20,11 +21,29 @@
 
 namespace gfx {
 namespace win {
+	
+GFX_EXPORT bool ShouldUseDirectWrite() {
+  // If the flag is currently on, and we're on WinVista or above, we enable
+  // DirectWrite. There is no reason to not install Platform Update or
+  // even use the Windows 7 Platform Update dwrite.dll with the extended kernel.
+  if (base::win::GetVersion() < base::win::Version::VISTA) {
+    return false;
+  }
+  // If forced off, don't use it.
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  return !command_line.HasSwitch("disable-direct-write");
+}
 
 namespace {
 
+static bool dwrite_enabled = false;
+
 // Pointer to the global IDWriteFactory interface.
 IDWriteFactory* g_direct_write_factory = nullptr;
+
+
+
 
 void SetDirectWriteFactory(IDWriteFactory* factory) {
   DCHECK(!g_direct_write_factory);
@@ -37,9 +56,24 @@ void SetDirectWriteFactory(IDWriteFactory* factory) {
 }  // anonymous namespace
 
 void CreateDWriteFactory(IDWriteFactory** factory) {
+  if (!gfx::win::ShouldUseDirectWrite())
+    return;
+
+  using DWriteCreateFactoryProc = decltype(DWriteCreateFactory)*;
+  HMODULE dwrite_dll = LoadLibraryW(L"dwrite.dll");
+  if (!dwrite_dll)
+    return;
+
+  DWriteCreateFactoryProc dwrite_create_factory_proc =
+      reinterpret_cast<DWriteCreateFactoryProc>(
+          GetProcAddress(dwrite_dll, "DWriteCreateFactory"));
+  if (!dwrite_create_factory_proc)
+    return;
+
   Microsoft::WRL::ComPtr<IUnknown> factory_unknown;
+  
   HRESULT hr =
-      DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+      dwrite_create_factory_proc(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
                           &factory_unknown);
   if (FAILED(hr)) {
     base::debug::Alias(&hr);
@@ -59,7 +93,11 @@ void InitializeDirectWrite() {
 
   Microsoft::WRL::ComPtr<IDWriteFactory> factory;
   CreateDWriteFactory(&factory);
-  CHECK(!!factory);
+  if (factory == nullptr) {
+	  sk_sp<SkFontMgr> direct_write_font_mgr = SkFontMgr_New_GDI();
+	  skia::OverrideDefaultSkFontMgr(std::move(direct_write_font_mgr));
+	  return;
+  }
   SetDirectWriteFactory(factory.Get());
 
 // The skia call to create a new DirectWrite font manager instance can fail
@@ -89,16 +127,20 @@ void InitializeDirectWrite() {
     iteration = -1;
   base::UmaHistogramSparse("DirectWrite.Fonts.Gfx.InitializeLoopCount",
                            iteration);
-  // TODO(crbug.com/956064): Move to a CHECK when the cause of the crash is
-  // fixed and remove the if statement that fallback to GDI font manager.
   DCHECK(!!direct_write_font_mgr);
   if (!direct_write_font_mgr)
     direct_write_font_mgr = SkFontMgr_New_GDI();
+  else
+	dwrite_enabled = true;
 
   // Override the default skia font manager. This must be called before any
   // use of the skia font manager is done (e.g. before any call to
   // SkFontMgr::RefDefault()).
   skia::OverrideDefaultSkFontMgr(std::move(direct_write_font_mgr));
+}
+
+bool IsDirectWriteEnabled() {
+  return dwrite_enabled;
 }
 
 IDWriteFactory* GetDirectWriteFactory() {

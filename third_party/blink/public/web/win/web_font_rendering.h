@@ -18,6 +18,7 @@ class WebFontRenderingClient;
 
 class BLINK_EXPORT WebFontRendering {
  public:
+  static void setUseDirectWrite(bool);
   static void SetSkiaFontManager(sk_sp<SkFontMgr>);
   // Set an instance of |WebFontPrewarmer|. The instance must be kept alive
   // until the process exits.

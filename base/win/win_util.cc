@@ -66,6 +66,22 @@ namespace base {
 namespace win {
 
 namespace {
+	
+// Disables the DirectWrite font rendering system on windows.
+const char kDisableDirectWrite[] = "disable-direct-write";
+	
+bool ShouldUseDirectWrite() {
+  // If the flag is currently on, and we're on WinVista or above, we enable
+  // DirectWrite. There is no reason to not install Platform Update or
+  // even use the Windows 7 Platform Update dwrite.dll with the extended kernel.
+  if (GetVersion() < base::win::Version::VISTA) {
+    return false;
+  }
+  // If forced off, don't use it.
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  return !command_line.HasSwitch(kDisableDirectWrite);
+}
 
 // Sets the value of |property_key| to |property_value| in |property_store|.
 bool SetPropVariantValueForPropertyStore(
@@ -642,6 +658,8 @@ bool IsJoinedToAzureAD() {
 bool IsUser32AndGdi32Available() {
   static auto is_user32_and_gdi32_available = []() {
     // If win32k syscalls aren't disabled, then user32 and gdi32 are available.
+	if (!ShouldUseDirectWrite())
+        return true;
 	  auto get_process_mitigation_policy =
       reinterpret_cast<decltype(&GetProcessMitigationPolicy)>(::GetProcAddress(
           ::GetModuleHandleA("kernel32.dll"), "GetProcessMitigationPolicy"));
@@ -716,7 +734,7 @@ void DisableFlicks(HWND hwnd) {
 }
 
 void EnableHighDPISupport() {
-  if (!IsUser32AndGdi32Available())
+  if (!IsUser32AndGdi32Available() || GetVersion() < Version::VISTA)
     return;
 
   // Enable per-monitor V2 if it is available (Win10 1703 or later).

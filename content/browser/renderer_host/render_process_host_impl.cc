@@ -3461,6 +3461,7 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
     switches::kRendererWaitForJavaDebugger,
 #endif
 #if BUILDFLAG(IS_WIN)
+    switches::kDisableDirectWrite,
     switches::kDisableHighResTimer,
     switches::kTrySupportedChannelLayouts,
     switches::kRaiseTimerFrequency,

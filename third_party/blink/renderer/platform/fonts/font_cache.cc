@@ -59,6 +59,7 @@
 #include "ui/gfx/font_list.h"
 
 #if BUILDFLAG(IS_WIN)
+#include <Windows.h>
 #include "third_party/skia/include/ports/SkTypeface_win.h"
 #endif
 
@@ -77,6 +78,7 @@ float FontCache::device_scale_factor_ = 1.0;
 #endif
 
 #if BUILDFLAG(IS_WIN)
+bool FontCache::s_useDirectWrite = false;
 bool FontCache::antialiased_text_enabled_ = false;
 bool FontCache::lcd_text_enabled_ = false;
 bool FontCache::use_skia_font_fallback_ = false;
@@ -96,7 +98,11 @@ FontCache::FontCache()
     // This code path is only for unit tests. This SkFontMgr does not work in
     // sandboxed environments, but injecting this initialization code to all
     // unit tests isn't easy.
-    font_manager_ = SkFontMgr_New_DirectWrite();
+	if(s_useDirectWrite) {
+		font_manager_ = SkFontMgr_New_DirectWrite();
+	} else {
+		font_manager_ = SkFontMgr_New_GDI();
+	}
     // Set |is_test_font_mgr_| to capture if this is not happening in the
     // production code. crbug.com/561873
     is_test_font_mgr_ = true;

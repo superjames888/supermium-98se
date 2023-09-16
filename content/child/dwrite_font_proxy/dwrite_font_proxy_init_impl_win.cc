@@ -53,7 +53,7 @@ void CreateDirectWriteFactory(IDWriteFactory** factory) {
 void InitializeDWriteFontProxy() {
   TRACE_EVENT0("dwrite,fonts", "InitializeDWriteFontProxy");
   mswr::ComPtr<IDWriteFactory> factory;
-
+ 
   CreateDirectWriteFactory(&factory);
 
   if (!g_font_collection) {

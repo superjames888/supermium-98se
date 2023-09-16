@@ -366,6 +366,9 @@ void DWriteFontLookupTableBuilder::
 
 void DWriteFontLookupTableBuilder::PrepareFontUniqueNameTable(
     const std::string& browser_version) {
+  if (!collection_) {
+    return;
+  }
   TRACE_EVENT0("dwrite,fonts",
                "DWriteFontLookupTableBuilder::PrepareFontUniqueNameTable");
   DCHECK(!HasDWriteUniqueFontLookups());

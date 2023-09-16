@@ -24,6 +24,7 @@
 #include "sandbox/win/src/nt_internals.h"
 #include "sandbox/win/src/restricted_token_utils.h"
 #include "sandbox/win/src/win_utils.h"
+#include "ui/gfx/win/direct_write.h"
 
 // These are missing in 10.0.19551.0 but are in 10.0.19041.0 and 10.0.20226.0.
 #ifndef PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_STRICT_MODE
@@ -122,6 +123,12 @@ bool ApplyProcessMitigationsToCurrentProcess(MitigationFlags starting_flags,
     return true;
 
   base::win::Version version = base::win::GetVersion();
+  
+  #if !defined(NACL_WIN64)
+  // Don't block font loading with GDI.
+  if (!gfx::win::ShouldUseDirectWrite())
+    flags ^= sandbox::MITIGATION_NONSYSTEM_FONT_DISABLE;
+  #endif
 
  if (flags & MITIGATION_DLL_SEARCH_ORDER) {
     HMODULE module = ::GetModuleHandleA("kernel32.dll");
@@ -460,6 +467,12 @@ void ConvertProcessMitigationsToPolicy(MitigationFlags flags,
   // Win 7
   if (version < base::win::Version::WIN8)
     return;
+
+  #if !defined(NACL_WIN64)
+    // Don't block font loading with GDI.
+    if (!gfx::win::ShouldUseDirectWrite())
+      *policy_value_1 ^= sandbox::MITIGATION_NONSYSTEM_FONT_DISABLE;
+  #endif
 
   // Everything >= Win8, do not return before the end of the function where
   // the final policy bitmap is sanity checked against what is supported on this
