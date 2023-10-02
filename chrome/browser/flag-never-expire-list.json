@@ -79,6 +79,7 @@
   "force-color-profile",
   "force-dark-mode",
   "force-effective-connection-type",
+  "force-gdi",
   "force-show-update-menu-badge",
   "force-startup-signin-promo",
   "force-text-direction",

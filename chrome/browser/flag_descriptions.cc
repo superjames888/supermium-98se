@@ -1779,6 +1779,10 @@ const char kForceTextDirectionDescription[] =
 const char kForceDirectionLtr[] = "Left-to-right";
 const char kForceDirectionRtl[] = "Right-to-left";
 
+const char kForceGdiName[] = "Force GDI font rendering";
+const char kForceGdiDescription[] =
+    "Use GDI font rendering in place of DirectWrite font rendering on Windows.";
+
 const char kForceUiDirectionName[] = "Force UI direction";
 const char kForceUiDirectionDescription[] =
     "Explicitly force the UI to left-to-right (LTR) or right-to-left (RTL) "

@@ -38,6 +38,7 @@
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/metrics/histogram_functions.h"
@@ -80,7 +81,8 @@ bool ShouldUseDirectWrite() {
   // If forced off, don't use it.
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
-  return !command_line.HasSwitch(kDisableDirectWrite);
+  return !(command_line.HasSwitch(kDisableDirectWrite) || 
+          base::FeatureList::IsEnabled(base::features::kForceGdi));
 }
 
 // Sets the value of |property_key| to |property_value| in |property_store|.

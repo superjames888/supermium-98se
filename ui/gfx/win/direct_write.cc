@@ -9,6 +9,7 @@
 #include <string>
 
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/debug/alias.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/histogram_macros.h"
@@ -32,7 +33,8 @@ GFX_EXPORT bool ShouldUseDirectWrite() {
   // If forced off, don't use it.
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
-  return !command_line.HasSwitch("disable-direct-write");
+  return !(command_line.HasSwitch("disable-direct-write") || 
+          base::FeatureList::IsEnabled(base::features::kForceGdi));
 }
 
 namespace {

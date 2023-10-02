@@ -5654,6 +5654,9 @@ const FeatureEntry kFeatureEntries[] = {
 	{"force-xp-theme",
 	 flag_descriptions::kForceXpThemeName, flag_descriptions::kForceXpThemeDescription, kOsWin,
 	 FEATURE_VALUE_TYPE(kForceXpTheme)},	 
+	{"force-gdi",
+	 flag_descriptions::kForceGdiName, flag_descriptions::kForceGdiDescription, kOsWin,
+	 FEATURE_VALUE_TYPE(base::features::kForceGdi)},
 #endif
 #if BUILDFLAG(IS_ANDROID)
     {"enable-accessibility-page-zoom",
