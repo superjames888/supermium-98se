@@ -29,6 +29,7 @@
 #include "base/win/dark_mode_support.h"
 #include "base/win/scoped_gdi_object.h"
 #include "base/win/win_util.h"
+#include "base/win/windows_version.h"
 #include "services/tracing/public/cpp/perfetto/macros.h"
 #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_window_handle_event_info.pbzero.h"
 #include "third_party/skia/include/core/SkPath.h"
@@ -46,6 +47,7 @@
 #include "ui/base/win/mouse_wheel_util.h"
 #include "ui/base/win/session_change_observer.h"
 #include "ui/base/win/touch_input.h"
+#include "ui/base/win/shell.h"
 #include "ui/base/win/win_cursor.h"
 #include "ui/display/types/display_constants.h"
 #include "ui/display/win/dpi.h"
@@ -385,7 +387,8 @@ class HWNDMessageHandler::ScopedRedrawLock {
         hwnd_(owner_->hwnd()),
         should_lock_(owner_->IsVisible() && !owner->HasChildRenderingWindow() &&
                      ::IsWindow(hwnd_) && !owner_->IsHeadless() &&
-                     (!(GetWindowLong(hwnd_, GWL_STYLE) & WS_CAPTION))) {
+                     (!(GetWindowLong(hwnd_, GWL_STYLE) & WS_CAPTION) ||
+					  !ui::win::IsAeroGlassEnabled())) {
     if (should_lock_)
       owner_->LockUpdates();
   }
@@ -709,7 +712,8 @@ void HWNDMessageHandler::SetBounds(const gfx::Rect& bounds_in_pixels,
 }
 
 void HWNDMessageHandler::SetDwmFrameExtension(DwmFrameState state) {
-  if (!delegate_->HasFrame() && !is_translucent_) {
+  if (!delegate_->HasFrame() && ui::win::IsAeroGlassEnabled() &&
+	  !is_translucent_) {
     MARGINS m = {0, 0, 0, 0};
     if (state == DwmFrameState::kOn && !IsMaximized())
       m = {0, 0, 1, 0};
@@ -2010,7 +2014,8 @@ void HWNDMessageHandler::OnEnterSizeMove() {
 
 LRESULT HWNDMessageHandler::OnEraseBkgnd(HDC dc) {
   gfx::Insets insets;
-  if (delegate_->GetDwmFrameInsetsInPixels(&insets) && !insets.IsEmpty() &&
+  if (ui::win::IsAeroGlassEnabled() && 
+	  delegate_->GetDwmFrameInsetsInPixels(&insets) && !insets.IsEmpty() &&
       needs_dwm_frame_clear_) {
     // This is necessary to avoid white flashing in the titlebar area around the
     // minimize/maximize/close buttons.
@@ -2586,6 +2591,7 @@ void HWNDMessageHandler::OnNCPaint(HRGN rgn) {
   // It's required to avoid some native painting artifacts from appearing when
   // the window is resized.
   if (!delegate_->HasNonClientView() || IsFrameSystemDrawn()) {
+	  if (ui::win::IsAeroGlassEnabled()) {
     // The default WM_NCPAINT handler under Aero Glass doesn't clear the
     // nonclient area, so it'll remain the default white color. That area is
     // invisible initially (covered by the window border) but can become
@@ -2608,6 +2614,7 @@ void HWNDMessageHandler::OnNCPaint(HRGN rgn) {
     ::FillRect(dc, &dirty_region, brush);
     ::DeleteObject(brush);
     ::ReleaseDC(hwnd(), dc);
+	}
     SetMsgHandled(FALSE);
     return;
   }
@@ -2956,6 +2963,18 @@ LRESULT HWNDMessageHandler::OnTouchEvent(UINT message,
       POINT point;
       point.x = TOUCH_COORD_TO_PIXEL(input[i].x);
       point.y = TOUCH_COORD_TO_PIXEL(input[i].y);
+	  
+	  if (base::win::GetVersion() == base::win::Version::WIN7) {
+		  // Windows 7 sends touch events for NC area touches but Win8+ do not.
+		  // This code will be used to make Windows 7 ignore these touches as well.
+		  
+		  LPARAM l_param_ht = MAKELPARAM(point.x, point.y);
+		  LRESULT hittest = SendMessage(hwnd(), WM_NCHITTEST, 0, l_param_ht);
+		  
+		  if (hittest != HTCLIENT)
+			  return 0;
+	  }
+	  
       ScreenToClient(hwnd(), &point);
 
       last_touch_or_pen_message_time_ = ::GetMessageTime();
@@ -3646,7 +3665,8 @@ void HWNDMessageHandler::UpdateDwmFrame() {
   TRACE_EVENT0("ui", "HWNDMessageHandler::UpdateDwmFrame");
 
   gfx::Insets insets;
-  if (delegate_->GetDwmFrameInsetsInPixels(&insets)) {
+  if (ui::win::IsAeroGlassEnabled() &&
+      delegate_->GetDwmFrameInsetsInPixels(&insets)) {
     MARGINS margins = {insets.left(), insets.right(), insets.top(),
                        insets.bottom()};
     DwmExtendFrameIntoClientArea(hwnd(), &margins);
