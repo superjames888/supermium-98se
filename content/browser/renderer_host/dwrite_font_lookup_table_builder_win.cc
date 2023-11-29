@@ -321,14 +321,12 @@ void DWriteFontLookupTableBuilder::QueueShareMemoryRegionWhenReady(
 bool DWriteFontLookupTableBuilder::FontUniqueNameTableReady() {
   TRACE_EVENT0("dwrite,fonts",
                "DWriteFontLookupTableBuilder::FontUniqueNameTableReady");
-  DCHECK(base::FeatureList::IsEnabled(features::kFontSrcLocalMatching));
   DCHECK(!HasDWriteUniqueFontLookups());
   return font_table_built_.IsSet() && IsFontUniqueNameTableValid();
 }
 
 void DWriteFontLookupTableBuilder::
     SchedulePrepareFontUniqueNameTableIfNeeded() {
-  DCHECK(base::FeatureList::IsEnabled(features::kFontSrcLocalMatching));
 
   {
     base::ScopedBlockingCall scoped_blocking_call(
