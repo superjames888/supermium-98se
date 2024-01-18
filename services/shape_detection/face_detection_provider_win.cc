@@ -49,6 +49,11 @@ BitmapPixelFormat GetPreferredPixelFormat(IFaceDetectorStatics* factory) {
 void FaceDetectionProviderWin::CreateFaceDetection(
     mojo::PendingReceiver<shape_detection::mojom::FaceDetection> receiver,
     shape_detection::mojom::FaceDetectorOptionsPtr options) {
+  if (!(base::win::ResolveCoreWinRTDelayload() &&
+        ScopedHString::ResolveCoreWinRTStringDelayload())) {
+    DLOG(ERROR) << "Failed loading functions from combase.dll";
+    return;
+  }
   ComPtr<IFaceDetectorStatics> factory;
   HRESULT hr = GetActivationFactory<
       IFaceDetectorStatics,

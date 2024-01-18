@@ -714,7 +714,7 @@ class NotificationPlatformBridgeWinImpl
         InstallUtil::IsStartMenuShortcutWithActivatorGuidInstalled();
 
     int status = static_cast<int>(SetReadyCallbackStatus::kSuccess);
-    bool enabled = activator_registered && shortcut_installed;
+    bool enabled = base::win::ResolveCoreWinRTDelayload() && ScopedHString::ResolveCoreWinRTStringDelayload() && activator_registered && shortcut_installed;
 
     if (!enabled) {
       if (!shortcut_installed) {
@@ -725,6 +725,8 @@ class NotificationPlatformBridgeWinImpl
         status |= static_cast<int>(
             SetReadyCallbackStatus::kComServerMisconfiguration);
       }
+      if (!(base::win::ResolveCoreWinRTDelayload() && ScopedHString::ResolveCoreWinRTStringDelayload()))
+        status |= static_cast<int>(SetReadyCallbackStatus::kComNotInitialized);
     }
 
     LogSetReadyCallbackStatus(static_cast<SetReadyCallbackStatus>(status));

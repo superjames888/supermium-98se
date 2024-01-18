@@ -11,6 +11,7 @@
 
 #include "base/check_op.h"
 #include "base/command_line.h"
+#include "base/feature_list.h"
 #include "base/i18n/break_iterator.h"
 #include "base/i18n/char_iterator.h"
 #include "base/i18n/rtl.h"
@@ -31,6 +32,7 @@
 #include "third_party/skia/include/core/SkTextBlob.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
+#include "ui/base/ui_base_features.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/gfx/geometry/size_conversions.h"
@@ -43,6 +45,10 @@
 #include "ui/gfx/text_elider.h"
 #include "ui/gfx/text_utils.h"
 #include "ui/gfx/utf16_indexing.h"
+
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
 
 namespace gfx {
 
@@ -255,23 +261,25 @@ UChar32 ReplaceControlCharacter(UChar32 codepoint) {
     // Support Microsoft defined PUA on Windows.
     // see:
     // https://docs.microsoft.com/en-us/windows/uwp/design/style/segoe-ui-symbol-font
-    switch (codepoint) {
-      case 0xF093:  // ButtonA
-      case 0xF094:  // ButtonB
-      case 0xF095:  // ButtonY
-      case 0xF096:  // ButtonX
-      case 0xF108:  // LeftStick
-      case 0xF109:  // RightStick
-      case 0xF10A:  // TriggerLeft
-      case 0xF10B:  // TriggerRight
-      case 0xF10C:  // BumperLeft
-      case 0xF10D:  // BumperRight
-      case 0xF10E:  // Dpad
-      case 0xEECA:  // ButtonView2
-      case 0xEDE3:  // ButtonMenu
-        return codepoint;
-      default:
-        break;
+  if (base::win::GetVersion() >= base::win::Version::WIN10) {
+      switch (codepoint) {
+        case 0xF093:  // ButtonA
+        case 0xF094:  // ButtonB
+        case 0xF095:  // ButtonY
+        case 0xF096:  // ButtonX
+        case 0xF108:  // LeftStick
+        case 0xF109:  // RightStick
+        case 0xF10A:  // TriggerLeft
+        case 0xF10B:  // TriggerRight
+        case 0xF10C:  // BumperLeft
+        case 0xF10D:  // BumperRight
+        case 0xF10E:  // Dpad
+        case 0xEECA:  // ButtonView2
+        case 0xEDE3:  // ButtonMenu
+          return codepoint;
+        default:
+          break;
+      }
     }
 #endif
     const int8_t codepoint_category = u_charType(codepoint);
@@ -996,12 +1004,19 @@ int RenderText::GetContentWidth() {
 int RenderText::GetBaseline() {
   if (baseline_ == kInvalidBaseline) {
     const int centering_height =
-        (vertical_alignment_ == ALIGN_MIDDLE)
+        (vertical_alignment_ == ALIGN_MIDDLE || vertical_alignment_ == ALIGN_SPECIAL)
             ? display_rect().height()
             : std::max(font_list().GetHeight(), min_line_height());
     baseline_ = DetermineBaselineCenteringText(centering_height, font_list());
     if (vertical_alignment_ == ALIGN_BOTTOM)
       baseline_ += display_rect().height() - centering_height;
+	if (vertical_alignment_ == ALIGN_SPECIAL) {
+		if (base::FeatureList::IsEnabled(features::kChromeRefresh2023)) {
+			baseline_ *= 1.40; // This will push down the offending labels in GDI to the point that they will appear centred
+		}
+		else
+			baseline_ *= 1.30;
+	}
   }
   DCHECK_NE(kInvalidBaseline, baseline_);
   return baseline_;
@@ -1860,6 +1875,7 @@ Vector2d RenderText::GetAlignmentOffset(size_t line_number) {
       offset.set_y(0);
       break;
     case ALIGN_MIDDLE:
+	case ALIGN_SPECIAL:
       if (multiline_)
         offset.set_y((display_rect_.height() - GetStringSize().height()) / 2);
       else

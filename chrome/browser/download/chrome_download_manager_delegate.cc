@@ -56,6 +56,7 @@
 #include "chrome/common/chrome_constants.h"
 #include "chrome/common/chrome_features.h"
 #include "chrome/common/chrome_paths.h"
+#include "chrome/common/chrome_switches.h"
 #include "chrome/common/pdf_util.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/grit/generated_resources.h"
@@ -1586,7 +1587,10 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
     DownloadItemModel model(item);
     model.DetermineAndSetShouldPreferOpeningInBrowser(
         target_info->target_path, target_info->is_filetype_handled_safely);
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kDisableDownloadUpload) ||
+		base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kUngoogledSupermium))	{
     model.SetDangerLevel(target_info->danger_level);
+		}
   }
   if (ShouldBlockFile(item, target_info->danger_type)) {
     MaybeReportDangerousDownloadBlocked(
@@ -1665,6 +1669,10 @@ bool ChromeDownloadManagerDelegate::IsOpenInBrowserPreferreredForFile(
 bool ChromeDownloadManagerDelegate::ShouldBlockFile(
     download::DownloadItem* item,
     download::DownloadDangerType danger_type) const {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kDisableDownloadUpload) ||
+		base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kUngoogledSupermium))	{
+	  return false;
+  }
   // Chrome-initiated background downloads should not be blocked.
   if (item && !item->RequireSafetyChecks()) {
     return false;

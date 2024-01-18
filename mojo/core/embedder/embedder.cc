@@ -28,6 +28,10 @@
 #include "mojo/core/node_controller.h"
 #include "mojo/public/c/system/thunks.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif // BUILDFLAG(IS_WIN)
+
 #if !BUILDFLAG(IS_NACL)
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_ANDROID)
 #include "mojo/core/channel_linux.h"
@@ -86,7 +90,20 @@ void InitFeatures() {
 }
 
 void EnableMojoIpcz() {
-  g_mojo_ipcz_enabled.store(true, std::memory_order_release);
+#if BUILDFLAG(IS_WIN)
+  // TODO(https://crbug.com/1299283): Sandboxed processes on Windows versions
+  // older than 8.1 require some extra (not yet implemented... err... never implemented) setup for ipcz to
+  // work properly. This is omitted for early experimentation.
+  const bool kIsIpczSupported =
+      base::win::GetVersion() >= base::win::Version::WIN8_1;
+#else
+  const bool kIsIpczSupported = true;
+#endif
+  if (kIsIpczSupported) {
+    g_mojo_ipcz_enabled.store(true, std::memory_order_release);
+  }
+  else
+    g_mojo_ipcz_enabled.store(false, std::memory_order_release);
 }
 
 void Init(const Configuration& configuration) {

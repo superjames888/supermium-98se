@@ -10,9 +10,17 @@
 class BrowserView;
 
 BASE_DECLARE_FEATURE(kWindows11MicaTitlebar);
+BASE_DECLARE_FEATURE(kForceXpTheme);
 
 // Returns whether we should custom draw the titlebar for a browser window.
 bool ShouldBrowserCustomDrawTitlebar(BrowserView* browser_view);
+
+// Returns whether we should always custom draw the system title bar.
+bool ShouldCustomDrawSystemTitlebar();
+
+// Returns whether we should use the Mica titlebar material for a browser
+// window.
+bool ShouldBrowserUseMicaTitlebar(BrowserView* browser_view);
 
 // Returns whether we should use the Mica titlebar in standard browser windows
 // using the default theme.
@@ -21,5 +29,8 @@ bool ShouldDefaultThemeUseMicaTitlebar();
 // Returns whether the system-drawn titlebar can be drawn using the Mica
 // material.
 bool SystemTitlebarCanUseMicaMaterial();
+
+// Returns whether the system-drawn titlebar can be drawn in dark mode.
+bool SystemTitlebarSupportsDarkMode();
 
 #endif  // CHROME_BROWSER_WIN_TITLEBAR_CONFIG_H_

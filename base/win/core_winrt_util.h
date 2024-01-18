@@ -15,6 +15,8 @@
 
 namespace base::win {
 
+BASE_EXPORT bool ResolveCoreWinRTDelayload();
+
 // The following stubs are provided for when component build is enabled, in
 // order to avoid the propagation of delay-loading CoreWinRT to other modules.
 

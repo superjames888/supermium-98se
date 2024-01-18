@@ -116,6 +116,7 @@ FontPlatformData* FontPlatformDataCache::GetOrCreateFontPlatformData(
   FontPlatformData* const platform_data = GetOrCreateFontPlatformData(
       font_cache, font_description, create_by_alternate_family,
       AlternateFontName::kNoAlternate);
+  
   if (!platform_data)
     return nullptr;
 

@@ -9,6 +9,7 @@
 #include <winioctl.h>
 
 #include "base/base_paths.h"
+#include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/notreached.h"
 #include "base/path_service.h"
@@ -19,6 +20,9 @@ namespace metrics {
 
 // static
 bool MachineIdProvider::HasId() {
+if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-machine-id")) {
+    return false;
+  }
   return true;
 }
 
@@ -26,6 +30,9 @@ bool MachineIdProvider::HasId() {
 // is running from.
 // static
 std::string MachineIdProvider::GetMachineId() {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-machine-id")) {
+    return std::string();
+  }
   base::ScopedBlockingCall scoped_blocking_call(FROM_HERE,
                                                 base::BlockingType::MAY_BLOCK);
 

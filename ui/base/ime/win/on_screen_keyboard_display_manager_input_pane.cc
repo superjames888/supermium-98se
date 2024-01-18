@@ -91,6 +91,11 @@ class OnScreenKeyboardDisplayManagerInputPane::VirtualKeyboardInputPane
     if (input_pane2_)
       return true;
 
+    if (!base::win::ResolveCoreWinRTDelayload() ||
+        !base::win::ScopedHString::ResolveCoreWinRTStringDelayload()) {
+      return false;
+    }
+
     base::win::AssertComApartmentType(base::win::ComApartmentType::STA);
 
     base::win::ScopedHString input_pane_guid = base::win::ScopedHString::Create(

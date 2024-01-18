@@ -21,7 +21,11 @@
 #if !BUILDFLAG(IS_WIN)
 #include <unistd.h>
 #else
+#include <Windows.h>
 #include "partition_alloc/shim/winheap_stubs_win.h"
+extern "C" {
+VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+}
 #endif
 
 #if BUILDFLAG(IS_APPLE)
@@ -234,8 +238,12 @@ PA_ALWAYS_INLINE void* ShimMalloc(size_t size, void* context) {
 }
 
 PA_ALWAYS_INLINE void* ShimCalloc(size_t n, size_t size, void* context) {
+  #if BUILDFLAG(IS_WIN)
+	TLSInit_DllMain_ThreadAttach(::GetModuleHandleA("chrome.dll"));
+  #endif
   const allocator_shim::AllocatorDispatch* const chain_head = GetChainHead();
   void* ptr;
+
   do {
     ptr = chain_head->alloc_zero_initialized_function(chain_head, n, size,
                                                       context);

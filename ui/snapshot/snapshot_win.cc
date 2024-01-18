@@ -5,7 +5,6 @@
 #include "ui/snapshot/snapshot_win.h"
 
 #include <memory>
-#include <utility>
 
 #include "base/functional/callback.h"
 #include "base/win/windows_version.h"
@@ -21,6 +20,17 @@
 #include "ui/snapshot/snapshot.h"
 #include "ui/snapshot/snapshot_aura.h"
 
+namespace {
+
+// Windows 8.1 is the first version that supports PW_RENDERFULLCONTENT.
+// Without that flag PrintWindow may not correctly capture what's actually
+// onscreen.
+bool UseAuraSnapshot() {
+  return (base::win::GetVersion() < base::win::Version::WIN8_1);
+}
+
+}  // namespace
+
 namespace ui {
 
 namespace internal {
@@ -29,6 +39,7 @@ bool GrabHwndSnapshot(HWND window_handle,
                       const gfx::Rect& snapshot_bounds_in_pixels,
                       const gfx::Rect& clip_rect_in_pixels,
                       gfx::Image* image) {
+  BOOL result = false;
   gfx::Rect snapshot_bounds_in_window =
       snapshot_bounds_in_pixels + clip_rect_in_pixels.OffsetFromOrigin();
   gfx::Size bitmap_size(snapshot_bounds_in_window.right(),
@@ -43,8 +54,32 @@ bool GrabHwndSnapshot(HWND window_handle,
   // but works starting in Windows 8.1. It allows for capturing the contents of
   // the window that are drawn using DirectComposition.
   UINT flags = PW_CLIENTONLY | PW_RENDERFULLCONTENT;
-
-  BOOL result = PrintWindow(window_handle, mem_hdc, flags);
+  
+  if (base::win::GetVersion() >= base::win::Version::WIN8_1){
+	result = PrintWindow(window_handle, mem_hdc, flags);
+  }
+  else {
+	// PrintWindow does not work for pre-Windows 8.1. So we'll use BitBlt.
+	// Copying from the window's actual HDC doesn't work so let's just use the full screen HDC.
+	// When a snapshot is captured the focus should be on the browser window anyway.
+	HDC window_hdc = GetDC(NULL);
+	
+	RECT window_rect;
+	
+	memset(&window_rect, 0, sizeof(RECT));
+	
+	result = GetWindowRect(window_handle, &window_rect);
+	
+	 if (!result) {
+    PLOG(ERROR) << "Failed to get valid rect for snapshot area.";
+    return false;
+    }
+	// The left of the snapshot "window" rect is offset by 8 pixels to remove a bit of the dark grey showing through.
+	result = BitBlt(mem_hdc, 0, 0, bitmap_size.width(), bitmap_size.height(), 
+					window_hdc, window_rect.left + 8, window_rect.top, SRCCOPY);
+	
+	DeleteDC(window_hdc);
+  }
   if (!result) {
     PLOG(ERROR) << "Failed to print window";
     return false;
@@ -85,6 +120,11 @@ bool GrabViewSnapshot(gfx::NativeView view_handle,
 bool GrabWindowSnapshot(gfx::NativeWindow window_handle,
                         const gfx::Rect& snapshot_bounds,
                         gfx::Image* image) {
+  if (UseAuraSnapshot()) {
+    // Not supported in Aura.  Callers should fall back to the async version.
+    return false;
+  }
+
   DCHECK(window_handle);
   gfx::Rect window_bounds = window_handle->GetBoundsInRootWindow();
   aura::WindowTreeHost* host = window_handle->GetHost();
@@ -109,6 +149,10 @@ bool GrabWindowSnapshot(gfx::NativeWindow window_handle,
 void GrabWindowSnapshotAsync(gfx::NativeWindow window,
                              const gfx::Rect& source_rect,
                              GrabWindowSnapshotAsyncCallback callback) {
+  if (UseAuraSnapshot()) {
+    GrabWindowSnapshotAsyncAura(window, source_rect, std::move(callback));
+    return;
+  }
   gfx::Image image;
   GrabWindowSnapshot(window, source_rect, &image);
   std::move(callback).Run(image);
@@ -117,6 +161,10 @@ void GrabWindowSnapshotAsync(gfx::NativeWindow window,
 void GrabViewSnapshotAsync(gfx::NativeView view,
                            const gfx::Rect& source_rect,
                            GrabWindowSnapshotAsyncCallback callback) {
+  if (UseAuraSnapshot()) {
+    GrabWindowSnapshotAsyncAura(view, source_rect, std::move(callback));
+    return;
+  }
   NOTIMPLEMENTED();
   std::move(callback).Run(gfx::Image());
 }
@@ -125,6 +173,11 @@ void GrabWindowSnapshotAndScaleAsync(gfx::NativeWindow window,
                                      const gfx::Rect& source_rect,
                                      const gfx::Size& target_size,
                                      GrabWindowSnapshotAsyncCallback callback) {
+  if (UseAuraSnapshot()) {
+    GrabWindowSnapshotAndScaleAsyncAura(window, source_rect, target_size,
+                                        std::move(callback));
+    return;
+  }
   NOTIMPLEMENTED();
   std::move(callback).Run(gfx::Image());
 }

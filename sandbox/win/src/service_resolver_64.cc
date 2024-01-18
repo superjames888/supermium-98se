@@ -282,8 +282,4 @@ NTSTATUS ServiceResolverThunk::PerformPatch(void* local_thunk,
   return STATUS_SUCCESS;
 }
 
-bool ServiceResolverThunk::VerifyJumpTargetForTesting(void*) const {
-  return true;
-}
-
 }  // namespace sandbox

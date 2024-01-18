@@ -82,6 +82,7 @@
 
 #if BUILDFLAG(IS_WIN)
 #include "base/win/win_util.h"
+#include "ui/gfx/win/direct_write.h"
 #endif
 
 #if BUILDFLAG(IS_LINUX)
@@ -624,6 +625,12 @@ void Textfield::FitToLocalBounds() {
   } else {
     // The text will draw with the correct vertical alignment if we don't apply
     // the vertical insets.
+	
+	#if BUILDFLAG(IS_WIN)
+    if (!gfx::win::IsDirectWriteEnabled()) {
+	  GetRenderText()->SetVerticalAlignment(gfx::ALIGN_SPECIAL);    
+	}
+	#endif
     bounds.Inset(gfx::Insets::TLBR(0, insets.left(), 0, insets.right()));
   }
 
@@ -1832,6 +1839,7 @@ bool Textfield::ChangeTextDirectionAndLayoutAlignment(
       modes_match && GetHorizontalAlignment() == gfx::ALIGN_TO_HEAD;
   if (!dir_from_text && GetHorizontalAlignment() != gfx::ALIGN_CENTER)
     SetHorizontalAlignment(default_rtl ? gfx::ALIGN_RIGHT : gfx::ALIGN_LEFT);
+
   SchedulePaint();
   return true;
 }

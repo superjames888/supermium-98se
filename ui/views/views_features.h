@@ -18,6 +18,7 @@ VIEWS_EXPORT BASE_DECLARE_FEATURE(kEnableViewPaintOptimization);
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kForceUseLegacyPreferredSize);
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kKeyboardAccessibleTooltipInViews);
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kWidgetLayering);
+VIEWS_EXPORT BASE_DECLARE_FEATURE(kInheritNativeThemeFromParentWidget);
 
 }  // namespace views::features
 

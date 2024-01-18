@@ -382,7 +382,6 @@ void ToolbarView::Init() {
   forward_ = container_view_->AddChildView(std::move(forward));
   reload_ = container_view_->AddChildView(std::move(reload));
   home_ = container_view_->AddChildView(std::move(home));
-
   location_bar_ = container_view_->AddChildView(std::move(location_bar));
 
   if (extensions_container)
@@ -444,7 +443,8 @@ void ToolbarView::Init() {
         container_view_->AddChildView(std::move(send_tab_to_self_button));
 
   if (!features::IsSidePanelPinningEnabled()) {
-    if (companion::IsCompanionFeatureEnabled()) {
+    if (companion::IsCompanionFeatureEnabled() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("hide-sidepanel-button")) {
       side_panel_container_ = container_view_->AddChildView(
           std::make_unique<SidePanelToolbarContainer>(browser_view_));
     } else {

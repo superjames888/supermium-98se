@@ -1621,6 +1621,18 @@ extern const char kParallelDownloadingDescription[];
 extern const char kPasswordGenerationExperimentName[];
 extern const char kPasswordGenerationExperimentDescription[];
 
+extern const char kDisableDownloadUploadName[];
+extern const char kDisableDownloadUploadDescription[];
+
+extern const char kUngoogledSupermiumName[];
+extern const char kUngoogledSupermiumDescription[];
+
+extern const char kForceGdiName[];
+extern const char kForceGdiDescription[];
+
+extern const char kDisableWindows10CustomTitlebarName[];
+extern const char kDisableWindows10CustomTitlebarDescription[];
+
 extern const char kPasswordGenerationStrongLabelExperimentName[];
 extern const char kPasswordGenerationStrongLabelExperimentDescription[];
 
@@ -1644,6 +1656,12 @@ extern const char kBookmarksRefreshDescription[];
 
 extern const char kAutoWebContentsDarkModeName[];
 extern const char kAutoWebContentsDarkModeDescription[];
+
+extern const char kForceDarkModeFlagName[];
+extern const char kForceDarkModeFlagDescription[];
+
+extern const char kForceXpThemeName[];
+extern const char kForceXpThemeDescription[];
 
 extern const char kForcedColorsName[];
 extern const char kForcedColorsDescription[];
@@ -4592,6 +4610,15 @@ extern const char kProfilesReorderingDescription[];
 extern const char kEnableBoundSessionCredentialsName[];
 extern const char kEnableBoundSessionCredentialsDescription[];
 #endif  // BUILDFLAG(ENABLE_BOUND_SESSION_CREDENTIALS)
+
+extern const char kSupermiumCustomTabsName[];
+extern const char kSupermiumCustomTabsDescription[];
+
+extern const char kIncognitoBrandConsistencyForDesktopName[];
+extern const char kIncognitoBrandConsistencyForDesktopDescription[];
+
+extern const char kInheritNativeThemeFromParentWidgetName[];
+extern const char kInheritNativeThemeFromParentWidgetDescription[];
 
 #if BUILDFLAG(ENABLE_FFMPEG_VIDEO_DECODERS)
 extern const char kTheoraVideoCodecName[];

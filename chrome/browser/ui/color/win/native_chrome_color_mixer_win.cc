@@ -8,6 +8,7 @@
 #include "base/functional/bind.h"
 #include "base/no_destructor.h"
 #include "base/win/windows_version.h"
+#include "chrome/browser/themes/browser_theme_pack.h"
 #include "chrome/browser/themes/theme_properties.h"
 #include "chrome/browser/ui/color/chrome_color_id.h"
 #include "chrome/browser/win/titlebar_config.h"
@@ -45,6 +46,13 @@ class FrameColorHelper {
   static FrameColorHelper* Get();
 
  private:
+  // Returns whether there is a custom image provided for the given id.
+  bool HasCustomImage(int id, const ui::ColorProviderKey& key) const;
+
+  // Returns true if colors from DWM can be used, i.e. this is a native frame
+  // on Windows 8+.
+  bool DwmColorsAllowed(const ui::ColorProviderKey& key) const;
+
   // Returns the Tint for the given |id|. If there is no tint, the identity tint
   // {-1, -1, -1} is returned and won't tint the color on which it is used.
   color_utils::HSL GetTint(int id, const ui::ColorProviderKey& key) const;
@@ -89,16 +97,22 @@ void FrameColorHelper::AddNativeChromeColors(
     return absl::nullopt;
   };
 
-  // When we're custom-drawing the titlebar we want to use either the colors
-  // we calculated in OnDwmKeyUpdated() or the default colors. When we're not
-  // custom-drawing the titlebar we want to match the color Windows actually
-  // uses because some things (like the incognito icon) use this color to
-  // decide whether they should draw in light or dark mode. Incognito colors
-  // should be the same as non-incognito in all cases here.
+  if (DwmColorsAllowed(key)) {
+    // When we're custom-drawing the titlebar we want to use either the colors
+    // we calculated in OnDwmKeyUpdated() or the default colors. When we're not
+    // custom-drawing the titlebar we want to match the color Windows actually
+    // uses because some things (like the incognito icon) use this color to
+    // decide whether they should draw in light or dark mode. Incognito colors
+    // should be the same as non-incognito in all cases here.
 
-  constexpr SkColor kSystemMicaLightFrameColor =
+    constexpr SkColor kSystemSolidLightFrameColor = SK_ColorWHITE;
+    constexpr SkColor kSystemSolidDarkInactiveFrameColor =
+        SkColorSetRGB(0x2B, 0x2B, 0x2B);
+		
+    constexpr SkColor kSystemMicaLightFrameColor =
       SkColorSetRGB(0xE8, 0xE8, 0xE8);
-  constexpr SkColor kSystemMicaDarkFrameColor = SkColorSetRGB(0x20, 0x20, 0x20);
+    constexpr SkColor kSystemMicaDarkFrameColor = SkColorSetRGB(0x20, 0x20, 0x20);
+
 
   // Dwm colors should always be applied if present for pervasive accent colors
   // pre-refresh. With refresh enabled we should only attempt to paint
@@ -168,13 +182,37 @@ void FrameColorHelper::AddNativeChromeColors(
     mixer[ui::kColorSysHeaderContainerInactive] = {ui::kColorSysBase};
   }
 
-  if (ShouldDefaultThemeUseMicaTitlebar() && !key.app_controller) {
-    mixer[kColorNewTabButtonBackgroundFrameActive] = {SK_ColorTRANSPARENT};
-    mixer[kColorNewTabButtonBackgroundFrameInactive] = {SK_ColorTRANSPARENT};
-    mixer[kColorNewTabButtonInkDropFrameActive] =
-        ui::GetColorWithMaxContrast(ui::kColorFrameActive);
-    mixer[kColorNewTabButtonInkDropFrameInactive] =
+    if (auto color = get_theme_color(TP::COLOR_FRAME_INACTIVE)) {
+      mixer[ui::kColorFrameInactive] = {color.value()};
+    } else if (dwm_inactive_frame_color_) {
+      mixer[ui::kColorFrameInactive] = {dwm_inactive_frame_color_.value()};
+    } else if (ShouldDefaultThemeUseMicaTitlebar() && !key.app_controller) {
+      mixer[ui::kColorFrameInactive] = {key.color_mode == ColorMode::kDark
+                                            ? kSystemMicaDarkFrameColor
+                                            : kSystemMicaLightFrameColor};
+    } else if (!ShouldCustomDrawSystemTitlebar()) {
+      mixer[ui::kColorFrameInactive] = {key.color_mode == ColorMode::kDark
+                                            ? kSystemSolidDarkInactiveFrameColor
+                                            : kSystemSolidLightFrameColor};
+    } else if (dwm_frame_color_) {
+      mixer[ui::kColorFrameInactive] =
+          ui::HSLShift({dwm_frame_color_.value()},
+                       GetTint(ThemeProperties::TINT_FRAME_INACTIVE, key));
+    }
+
+    if (ShouldDefaultThemeUseMicaTitlebar() && !key.app_controller) {
+      mixer[kColorNewTabButtonBackgroundFrameActive] = {SK_ColorTRANSPARENT};
+      mixer[kColorNewTabButtonBackgroundFrameInactive] = {SK_ColorTRANSPARENT};
+      mixer[kColorNewTabButtonInkDropFrameInactive] =
         ui::GetColorWithMaxContrast(ui::kColorFrameInactive);
+      mixer[kColorNewTabButtonInkDropFrameActive] =
+          ui::GetColorWithMaxContrast(ui::kColorFrameActive);
+    }
+  } else {
+    if (auto color = get_theme_color(TP::COLOR_FRAME_ACTIVE))
+      mixer[ui::kColorFrameActive] = {color.value()};
+    if (auto color = get_theme_color(TP::COLOR_FRAME_INACTIVE))
+      mixer[ui::kColorFrameInactive] = {color.value()};
   }
 }
 
@@ -195,6 +233,19 @@ void FrameColorHelper::AddBorderAccentColors(ui::ColorMixer& mixer) const {
 FrameColorHelper* FrameColorHelper::Get() {
   static base::NoDestructor<FrameColorHelper> g_frame_color_helper;
   return g_frame_color_helper.get();
+}
+
+bool FrameColorHelper::HasCustomImage(
+    int id,
+    const ui::ColorProviderKey& key) const {
+  return BrowserThemePack::IsPersistentImageID(id) && key.custom_theme &&
+         key.custom_theme->HasCustomImage(id);
+}
+
+bool FrameColorHelper::DwmColorsAllowed(
+    const ui::ColorProviderKey& key) const {
+  return (!ShouldCustomDrawSystemTitlebar() ||
+         !HasCustomImage(IDR_THEME_FRAME, key));
 }
 
 color_utils::HSL FrameColorHelper::GetTint(

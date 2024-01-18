@@ -15,6 +15,7 @@
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -3947,6 +3948,47 @@ const flags_ui::FeatureEntry::FeatureVariation
          std::size(kDesktopPWAsLinkCapturingDefaultOff), nullptr}};
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
 
+const FeatureEntry::Choice kTabHoverCards[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"None",
+     "tab-hover-cards",
+     "none"},
+    {"Tooltip",
+     "tab-hover-cards",
+     "tooltip"},
+};
+
+const FeatureEntry::Choice kBookmarkBarNewTab[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Never",
+     "bookmark-bar-ntp",
+     "never"},
+};
+const FeatureEntry::Choice kOmniboxAutocompleteFiltering[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Search suggestions only",
+     "omnibox-autocomplete-filtering",
+     "search"},
+    {"Search suggestions and bookmarks",
+     "omnibox-autocomplete-filtering",
+     "search-bookmarks"},
+    {"Search suggestions and internal chrome pages",
+     "omnibox-autocomplete-filtering",
+     "search-chrome"},
+    {"Search suggestions, bookmarks, and internal chrome pages",
+     "omnibox-autocomplete-filtering",
+     "search-bookmarks-chrome"},
+};
+const FeatureEntry::Choice kExtensionHandlingChoices[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Download as regular file",
+     "extension-mime-request-handling",
+     "download-as-regular-file"},
+    {"Always prompt for install",
+     "extension-mime-request-handling",
+     "always-prompt-for-install"},
+};
+
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
 // The first line of the entry is the internal name.
@@ -6341,6 +6383,18 @@ const FeatureEntry kFeatureEntries[] = {
     {"memlog-stack-mode", flag_descriptions::kMemlogStackModeName,
      flag_descriptions::kMemlogStackModeDescription, kOsAll,
      MULTI_VALUE_TYPE(kMemlogStackModeChoices)},
+	 
+    {"incognito-brand-consistency-for-desktop",
+     flag_descriptions::kIncognitoBrandConsistencyForDesktopName,
+     flag_descriptions::kIncognitoBrandConsistencyForDesktopDescription,
+     kOsDesktop,
+     FEATURE_VALUE_TYPE(base::features::kIncognitoBrandConsistencyForDesktop)},
+
+    {"inherit-native-theme-from-parent-widget",
+     flag_descriptions::kInheritNativeThemeFromParentWidgetName,
+     flag_descriptions::kInheritNativeThemeFromParentWidgetDescription,
+     kOsDesktop,
+     FEATURE_VALUE_TYPE(views::features::kInheritNativeThemeFromParentWidget)},
 
     {"omnibox-max-zero-suggest-matches",
      flag_descriptions::kOmniboxMaxZeroSuggestMatchesName,
@@ -7184,10 +7238,6 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kEnableWindowsGamingInputDataFetcherName,
      flag_descriptions::kEnableWindowsGamingInputDataFetcherDescription, kOsWin,
      FEATURE_VALUE_TYPE(features::kEnableWindowsGamingInputDataFetcher)},
-
-    {"windows11-mica-titlebar", flag_descriptions::kWindows11MicaTitlebarName,
-     flag_descriptions::kWindows11MicaTitlebarDescription, kOsWin,
-     FEATURE_VALUE_TYPE(kWindows11MicaTitlebar)},
 #endif
 
 #if BUILDFLAG(IS_ANDROID)
@@ -11054,6 +11104,12 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kEnableBuiltinHlsDescription, kOsAll,
      FEATURE_VALUE_TYPE(media::kBuiltInHlsPlayer)},
 #endif
+	{"ungoogled-supermium",
+	 flag_descriptions::kUngoogledSupermiumName, flag_descriptions::kUngoogledSupermiumDescription, 
+	 kOsAll, SINGLE_VALUE_TYPE("ungoogled-supermium")},
+	{"disable-download-upload",
+	 flag_descriptions::kDisableDownloadUploadName, flag_descriptions::kDisableDownloadUploadDescription, 
+	 kOsAll, SINGLE_VALUE_TYPE("disable-download-upload")},
 
 #if !BUILDFLAG(IS_CHROMEOS_ASH)
     {"profiles-reordering", flag_descriptions::kProfilesReorderingName,
@@ -11369,6 +11425,127 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kRemoveUPMUnenrollmentDescription, kOsAndroid,
      FEATURE_VALUE_TYPE(password_manager::features::kRemoveUPMUnenrollment)},
 #endif
+
+    {"force-dark-mode",
+	 flag_descriptions::kForceDarkModeFlagName, flag_descriptions::kForceDarkModeFlagDescription, kOsAll,
+	 FEATURE_VALUE_TYPE(base::features::kForceDarkModeFlag)},
+#if BUILDFLAG(IS_WIN)
+	{"disable-windows-10-custom-titlebar",
+	 flag_descriptions::kDisableWindows10CustomTitlebarName, flag_descriptions::kDisableWindows10CustomTitlebarDescription, kOsWin,
+	 SINGLE_VALUE_TYPE("disable-windows10-custom-titlebar")},
+	{"force-xp-theme",
+	 flag_descriptions::kForceXpThemeName, flag_descriptions::kForceXpThemeDescription, kOsWin,
+	 FEATURE_VALUE_TYPE(kForceXpTheme)},	 
+	{"force-gdi",
+	 flag_descriptions::kForceGdiName, flag_descriptions::kForceGdiDescription, kOsWin,
+	 SINGLE_VALUE_TYPE("disable-direct-write")},
+#endif
+    {"custom-tab-shapes",
+     flag_descriptions::kSupermiumCustomTabsName,
+     flag_descriptions::kSupermiumCustomTabsDescription,
+     kOsAll,
+     FEATURE_VALUE_TYPE(features::kSupermiumCustomTabs)},
+
+    {"tab-hover-cards",
+     "Tab Hover Cards",
+     "Allows removing the tab hover cards or using a tooltip as a replacement. ungoogled-chromium flag.",
+     kOsDesktop, MULTI_VALUE_TYPE(kTabHoverCards)},
+    {"custom-ntp",
+     "Custom New Tab Page",
+     "Allows setting a custom URL for the new tab page. Value can be internal (e.g. `about:blank` or `chrome://new-tab-page`), external (e.g. `example.com`), or local (e.g. `file:///tmp/startpage.html`). This applies for incognito windows as well when not set to a `chrome://` internal page. ungoogled-chromium flag",
+     kOsDesktop, ORIGIN_LIST_VALUE_TYPE("custom-ntp", "")},
+    {"bookmark-bar-ntp",
+     "Bookmark Bar on New-Tab-Page",
+     "Disable the Bookmark Bar on the New-Tab-Page. ungoogled-chromium flag.",
+     kOsDesktop, MULTI_VALUE_TYPE(kBookmarkBarNewTab)},
+    {"remove-grab-handle",
+     "Remove Grab Handle",
+     "Removes the reserved empty space in the tabstrip for moving the window. ungoogled-chromium flag",
+     kOsDesktop, SINGLE_VALUE_TYPE("remove-grab-handle")},
+    {"omnibox-autocomplete-filtering",
+     "Omnibox Autocomplete Filtering",
+     "Restrict omnibox autocomplete results to a combination of search suggestions (if enabled), bookmarks, and internal chrome pages. ungoogled-chromium flag.",
+     kOsAll, MULTI_VALUE_TYPE(kOmniboxAutocompleteFiltering)},
+	{"disable-sharing-hub",
+	 "Disable Sharing Hub",
+     "Disables the sharing hub button. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("disable-sharing-hub")},
+	{"disable-grease-tls",
+     "Disable GREASE for TLS",
+     "Turn off GREASE (Generate Random Extensions And Sustain Extensibility) for TLS connections. ungoogled-chromium flag.",
+     kOsAll, SINGLE_VALUE_TYPE("disable-grease-tls")},
+	{"force-punycode-hostnames",
+     "Force punycode hostnames",
+     "Force punycode in hostnames instead of Unicode when displaying Internationalized Domain Names (IDNs). ungoogled-chromium flag.",
+     kOsAll, SINGLE_VALUE_TYPE("force-punycode-hostnames")},
+	{"hide-crashed-bubble",
+     "Hide crashed bubble",
+     "Hides the bubble box with the message \"Restore Pages? Chromium didn't shut down correctly.\" that shows on startup after the browser did not exit cleanly. ungoogled-chromium flag.",
+     kOsAll, SINGLE_VALUE_TYPE("hide-crashed-bubble")},
+	{"hide-extensions-menu",
+     "Hide Extensions Menu",
+     "Hides the extensions container. This includes the puzzle piece icon as well as any pinned extensions. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("hide-extensions-menu")},
+	{"hide-fullscreen-exit-ui",
+     "Hide Fullscreen Exit UI",
+     "Hides the \"X\" that appears when the mouse cursor is moved towards the top of the window in fullscreen mode. Additionally, this hides the \"Press F11 to exit full screen\" popup. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("hide-fullscreen-exit-ui")},
+	{"hide-sidepanel-button",
+     "Hide SidePanel Button",
+     "Hides the SidePanel Button. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("hide-sidepanel-button")},
+	{"hide-tab-close-buttons",
+     "Hide tab close buttons",
+     "Hides the close buttons on tabs. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("hide-tab-close-buttons")},
+    {"remove-tabsearch-button",
+     "Remove Tabsearch Button",
+     "Removes the tabsearch button from the tabstrip. ungoogled-chromium flag",
+     kOsDesktop, SINGLE_VALUE_TYPE("remove-tabsearch-button")},
+    {"http-accept-header",
+     "Custom HTTP Accept Header",
+     "Set a custom value for the Accept header which is sent by the browser with every HTTP request.  (e.g. `text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8`). ungoogled-chromium flag.",
+     kOsAll, ORIGIN_LIST_VALUE_TYPE("http-accept-header", "")},
+    {"clear-data-on-exit",
+     "Clear data on exit",
+     "Clears all browsing data on exit. ungoogled-chromium flag",
+     kOsDesktop, FEATURE_VALUE_TYPE(browsing_data::features::kClearDataOnExit)},
+    {"extension-mime-request-handling",
+     "Handling of extension MIME type requests",
+     "Used when deciding how to handle a request for a CRX or User Script MIME type. ungoogled-chromium flag.",
+     kOsAll, MULTI_VALUE_TYPE(kExtensionHandlingChoices)},
+	{"keep-old-history",
+     "Keep old history",
+     "Keep history older than 3 months. ungoogled-chromium flag",
+     kOsAll, SINGLE_VALUE_TYPE("keep-old-history")},
+	{"disable-qr-generator",
+     "Disable QR Generator",
+     "Disables the QR generator for sharing page links. ungoogled-chromium flag",
+     kOsDesktop, FEATURE_VALUE_TYPE(kDisableQRGenerator)},
+	{"disable-encryption",
+     "Disable encryption",
+     "Disable encryption of cookies, passwords, and settings which uses a generated machine-specific encryption key.  This is used to enable portable user data directories.  ungoogled-chromium flag.",
+     kOsWin, SINGLE_VALUE_TYPE("disable-encryption")},
+	{"disable-machine-id",
+     "Disable machine ID",
+     "Disables use of a generated machine-specific ID to lock the user data directory to that machine.  This is used to enable portable user data directories.  ungoogled-chromium flag.",
+     kOsWin, SINGLE_VALUE_TYPE("disable-machine-id")},
+	{"compact-ui",
+     "Compact UI",
+     "Reduces the amount of padding in all UI elements.",
+     kOsDesktop, SINGLE_VALUE_TYPE("compact-ui")},
+	{"transparent-tabs",
+     "Semi-Transparent Tabs",
+     "Reduces the opacity of tabs and the new tab button, as was done before the 2018 UI refresh.",
+     kOsDesktop, SINGLE_VALUE_TYPE("transparent-tabs")},
+	{"override-tab-outline-default",
+     "Override Tab Outline Default",
+     "Trapezoidal tabs normally have outlines while rounded tabs do not. This option allows the user to override the default setting for the tab shape.",
+     kOsDesktop, SINGLE_VALUE_TYPE("override-tab-outline-default")},
+	{"override-new-tab-button-shape-default",
+     "Override New Tab Button Shape Default",
+     "Trapezoidal tabs used a trapzeoidal new tab button while rounded tabs used a round NTB. This option allows the user to override the default setting for the tab shape.",
+     kOsDesktop, SINGLE_VALUE_TYPE("override-new-tab-button-shape-default")},
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
