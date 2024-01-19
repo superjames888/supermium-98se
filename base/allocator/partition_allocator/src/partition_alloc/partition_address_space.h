@@ -283,8 +283,8 @@ class PA_COMPONENT_EXPORT(PARTITION_ALLOC) PartitionAddressSpace {
   static constexpr size_t kBRPPoolSizeForLegacyWindows = 1 * kGiB;
   static_assert(kRegularPoolSizeForLegacyWindows < kRegularPoolSize);
   static_assert(kBRPPoolSizeForLegacyWindows < kBRPPoolSize);
-  static_assert(base::bits::IsPowerOfTwo(kRegularPoolSizeForLegacyWindows));
-  static_assert(base::bits::IsPowerOfTwo(kBRPPoolSizeForLegacyWindows));
+  static_assert(std::has_single_bit(kRegularPoolSizeForLegacyWindows));
+  static_assert(std::has_single_bit(kBRPPoolSizeForLegacyWindows));
 #endif  // PA_CONFIG(DYNAMICALLY_SELECT_POOL_SIZE)
   static constexpr size_t kConfigurablePoolMaxSize = kPoolMaxSize;
   static constexpr size_t kConfigurablePoolMinSize = 1 * kGiB;
