@@ -97,6 +97,7 @@ ScopedHString::ScopedHString(HSTRING hstr) : ScopedGeneric(hstr) {
 
 // static
 ScopedHString ScopedHString::Create(std::wstring_view str) {
+  DCHECK(g_load_succeeded);
   HSTRING hstr;
   HRESULT hr = base::WindowsCreateString(str.data(),
                                      checked_cast<UINT32>(str.length()), &hstr);
