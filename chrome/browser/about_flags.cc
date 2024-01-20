@@ -11546,6 +11546,10 @@ const FeatureEntry kFeatureEntries[] = {
      "Override New Tab Button Shape Default",
      "Trapezoidal tabs used a trapzeoidal new tab button while rounded tabs used a round NTB. This option allows the user to override the default setting for the tab shape.",
      kOsDesktop, SINGLE_VALUE_TYPE("override-new-tab-button-shape-default")},
+    {"download-bubble", "Enable download bubble",
+     "Enables the download bubble instead of the download shelf.",
+     kOsLinux | kOsLacros | kOsMac | kOsWin,
+     FEATURE_VALUE_TYPE(safe_browsing::kDownloadBubble)},
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
