@@ -1053,8 +1053,10 @@ class DownloadItemModelImprovedDownloadBubbleWarningsTest
     : public DownloadItemModelTest {
  public:
   DownloadItemModelImprovedDownloadBubbleWarningsTest() {
-    scoped_feature_list_.InitAndEnableFeature(
-        safe_browsing::kImprovedDownloadBubbleWarnings);
+    scoped_feature_list_.InitWithFeatures(
+        {safe_browsing::kDownloadBubble,
+         safe_browsing::kImprovedDownloadBubbleWarnings},
+        {});
   }
 
   void SetUp() override {
@@ -1383,8 +1385,10 @@ class DownloadItemModelTailoredWarningTest : public DownloadItemModelTest {
  public:
   DownloadItemModelTailoredWarningTest() {
     DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
-    scoped_feature_list_.InitAndEnableFeature(
-        safe_browsing::kDownloadTailoredWarnings);
+    scoped_feature_list_.InitWithFeatures(
+        {safe_browsing::kDownloadBubble,
+         safe_browsing::kDownloadTailoredWarnings},
+        {});
   }
 
   ~DownloadItemModelTailoredWarningTest() override = default;
@@ -1522,8 +1526,9 @@ class DownloadItemModelTailoredWarningDisabledTest
  public:
   DownloadItemModelTailoredWarningDisabledTest() {
     DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
-    scoped_feature_list_.InitAndDisableFeature(
-        safe_browsing::kDownloadTailoredWarnings);
+    scoped_feature_list_.InitWithFeatures(
+        {safe_browsing::kDownloadBubble},
+        {safe_browsing::kDownloadTailoredWarnings});
   }
 
   ~DownloadItemModelTailoredWarningDisabledTest() override = default;

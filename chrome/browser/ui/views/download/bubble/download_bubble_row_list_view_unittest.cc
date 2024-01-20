@@ -5,6 +5,7 @@
 #include "chrome/browser/ui/views/download/bubble/download_bubble_row_list_view.h"
 
 #include "base/strings/string_number_conversions.h"
+#include "base/test/scoped_feature_list.h"
 #include "chrome/browser/download/bubble/download_bubble_ui_controller.h"
 #include "chrome/browser/download/download_item_model.h"
 #include "chrome/browser/download/offline_item_utils.h"
@@ -16,6 +17,7 @@
 #include "components/download/public/common/download_item.h"
 #include "components/download/public/common/mock_download_item.h"
 #include "components/offline_items_collection/core/offline_item.h"
+#include "components/safe_browsing/core/common/features.h"
 #include "content/public/browser/download_item_utils.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -30,7 +32,9 @@ using ::testing::ReturnRefOfCopy;
 
 class DownloadBubbleRowListViewTest : public TestWithBrowserView {
  public:
-  DownloadBubbleRowListViewTest() = default;
+  DownloadBubbleRowListViewTest() {
+    scoped_feature_list_.InitAndEnableFeature(safe_browsing::kDownloadBubble);
+  }
   ~DownloadBubbleRowListViewTest() override = default;
 
   DownloadBubbleRowListViewTest(const DownloadBubbleRowListViewTest&) = delete;
@@ -89,6 +93,7 @@ class DownloadBubbleRowListViewTest : public TestWithBrowserView {
   }
 
  protected:
+  base::test::ScopedFeatureList scoped_feature_list_;
   std::unique_ptr<DownloadBubbleRowListViewInfo> info_;
   std::unique_ptr<DownloadBubbleRowListView> row_list_view_;
   std::vector<std::unique_ptr<NiceMock<download::MockDownloadItem>>>
