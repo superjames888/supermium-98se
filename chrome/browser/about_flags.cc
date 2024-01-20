@@ -11550,6 +11550,9 @@ const FeatureEntry kFeatureEntries[] = {
      "Enables the download bubble instead of the download shelf.",
      kOsLinux | kOsLacros | kOsMac | kOsWin,
      FEATURE_VALUE_TYPE(safe_browsing::kDownloadBubble)},
+    {"power-bookmarks-side-panel", "Power bookmarks side panel",
+     "Enables the power bookmarks version of the bookmarks side panel content.", kOsDesktop,
+     FEATURE_VALUE_TYPE(features::kPowerBookmarksSidePanel)},
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag

@@ -45,8 +45,10 @@ BubbleSyncPromoView::BubbleSyncPromoView(
   }
 
   const views::LayoutOrientation orientation =
-      account.IsEmpty() ? views::LayoutOrientation::kHorizontal
-                        : views::LayoutOrientation::kVertical;
+      (base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel) &&
+       account.IsEmpty())
+          ? views::LayoutOrientation::kHorizontal
+          : views::LayoutOrientation::kVertical;
 
   std::unique_ptr<views::FlexLayout> layout =
       std::make_unique<views::FlexLayout>();
