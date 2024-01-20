@@ -407,19 +407,16 @@ bool RunSaveFileDialog(HWND owner,
  	  ConfigureDialog_Legacy(&open_file_name, title, default_path, filter, dialog_options);
    }
   if (!use_legacy_dialogs) {
-	file_save_dialog->SetDefaultExtension(def_ext.c_str());
-   }
-
-  // This handler auto-closes the file dialog if its owner window is closed.
-  auto auto_close_dialog_event_handler =
-      std::make_unique<ScopedAutoCloseDialogEventHandler>(
-          owner, file_save_dialog.Get());
-
-  // Never consider the current scope as hung. The hang watching deadline (if
-  // any) is not valid since the user can take unbounded time to choose the
-  // file.
-  base::HangWatcher::InvalidateActiveExpectations();
-  if (!use_legacy_dialogs) {
+	  file_save_dialog->SetDefaultExtension(def_ext.c_str());
+   
+	  // This handler auto-closes the file dialog if its owner window is closed.
+	  auto auto_close_dialog_event_handler =
+		  std::make_unique<ScopedAutoCloseDialogEventHandler>(
+			  owner, file_save_dialog.Get());
+	  // Never consider the current scope as hung. The hang watching deadline (if
+	  // any) is not valid since the user can take unbounded time to choose the
+	  // file.
+      base::HangWatcher::InvalidateActiveExpectations();
 	  HRESULT hr = file_save_dialog->Show(owner);
 	  BaseShellDialogImpl::DisableOwner(owner);
 
@@ -448,6 +445,7 @@ bool RunSaveFileDialog(HWND owner,
 	  *path = base::FilePath(display_name.get());
 	  return true;
   } else {
+	  base::HangWatcher::InvalidateActiveExpectations();
 	  open_file_name.hwndOwner = owner;
 	  open_file_name.Flags |= OFN_OVERWRITEPROMPT | OFN_EXPLORER |
 							  OFN_ENABLESIZING | OFN_NOCHANGEDIR |
@@ -482,6 +480,9 @@ bool RunSaveFileDialog(HWND owner,
 	  }
 	  open_file_name.lpstrFile = filename_buffer;
 	  open_file_name.nMaxFile = UNICODE_STRING_MAX_CHARS;
+      if (!filter.empty() && ((int)filter.size() - 1) < *filter_index) {
+            *filter_index = filter.size() - 1;
+          }
 	  open_file_name.lpstrFilter = 
 		  filter.empty() ? nullptr : (LPCWSTR)filter.at(*filter_index).extension_spec.c_str();
 	  open_file_name.nFilterIndex = *filter_index;
@@ -560,16 +561,18 @@ bool RunOpenFileDialog(HWND owner,
 	  ConfigureDialog_Legacy(&open_file_name, title, default_path, filter, dialog_options);
   }
 
-  // This handler auto-closes the file dialog if its owner window is closed.
-  auto auto_close_dialog_event_handler =
-      std::make_unique<ScopedAutoCloseDialogEventHandler>(
-          owner, file_open_dialog.Get());
-
-  // Never consider the current scope as hung. The hang watching deadline (if
-  // any) is not valid since the user can take unbounded time to choose the
-  // file.
-  base::HangWatcher::InvalidateActiveExpectations();
   if (!use_legacy_dialogs) {
+          // This handler auto-closes the file dialog if its owner window is
+          // closed.
+      auto auto_close_dialog_event_handler =
+              std::make_unique<ScopedAutoCloseDialogEventHandler>(
+                  owner, file_open_dialog.Get());
+  
+	  // Never consider the current scope as hung. The hang watching deadline (if
+	  // any) is not valid since the user can take unbounded time to choose the
+	  // file.
+	  base::HangWatcher::InvalidateActiveExpectations();
+
 	  HRESULT hr = file_open_dialog->Show(owner);
 	  BaseShellDialogImpl::DisableOwner(owner);
 
@@ -614,6 +617,7 @@ bool RunOpenFileDialog(HWND owner,
 	  *paths = std::move(result);
 	  return !paths->empty();
   } else {
+	  base::HangWatcher::InvalidateActiveExpectations();
 	  wchar_t filename_buffer [UNICODE_STRING_MAX_CHARS];
 	  filename_buffer[0] = '\0';
 	  open_file_name.hwndOwner = owner;
