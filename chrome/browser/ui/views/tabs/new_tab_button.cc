@@ -113,11 +113,23 @@ void NewTabButton::AnimateToStateForTesting(views::InkDropState state) {
 
 void NewTabButton::AddLayerToRegion(ui::Layer* new_layer,
                                     views::LayerRegion region) {
-  ink_drop_container_->AddLayerToRegion(new_layer, region);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			!base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default")) ||
+			(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default"))) {    
+	}
+	else
+		ink_drop_container_->AddLayerToRegion(new_layer, region);
 }
 
 void NewTabButton::RemoveLayerFromRegions(ui::Layer* old_layer) {
-  ink_drop_container_->RemoveLayerFromRegions(old_layer);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+		!base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default")) ||
+		(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+		base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default"))) { 
+	}
+	else
+		ink_drop_container_->RemoveLayerFromRegions(old_layer);
 }
 
 SkColor NewTabButton::GetForegroundColor() const {
@@ -190,7 +202,7 @@ void NewTabButton::OnMouseReleased(const ui::MouseEvent& event) {
     views::ImageButton::OnMouseReleased(event);
     return;
   }
-
+  
   // TODO(pkasting): If we handled right-clicks on the frame, and we made sure
   // this event was not handled, it seems like things would Just Work.
   gfx::Point point = event.location();
@@ -271,10 +283,14 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     canvas->Translate(GetContentsBounds().OffsetFromOrigin());
-    flags.setColor(GetColorProvider()->GetColor(
-        GetWidget()->ShouldPaintAsActive()
-            ? background_frame_active_color_id_
-            : background_frame_inactive_color_id_));
+	if(GetState() == STATE_HOVERED) {
+		flags.setColor(SkColorSetRGB(90, 90, 90));
+	} else {
+		flags.setColor(GetColorProvider()->GetColor(
+			GetWidget()->ShouldPaintAsActive()
+				? background_frame_active_color_id_
+				: background_frame_inactive_color_id_));
+	}
     if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs"))
 		flags.setAlphaf(0.7f);
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
