@@ -956,7 +956,8 @@ void GM2TabStyleViews::PaintTabBackgroundFill(
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     flags.setColor(GetCurrentTabBackgroundColor(selection_state, hovered));
-	if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs"))
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs") &&
+	    selection_state != TabStyle::TabSelectionState::kActive)
 		flags.setAlphaf(0.7f);
     canvas->DrawRect(gfx::ScaleToEnclosingRect(tab_->GetLocalBounds(), scale),
                      flags);
