@@ -684,12 +684,16 @@ float GM2TabStyleViews::GetSeparatorOpacity(bool for_layout,
 
   const Tab* adjacent_tab =
       tab_->controller()->GetAdjacentTab(tab_, leading ? -1 : 1);
+  // The separator should never appear at the end of the tab strip.
+  if (!adjacent_tab && !leading)
+	  return 0.0f;
 
   const Tab* left_tab = leading ? adjacent_tab : tab_.get();
   const Tab* right_tab = leading ? tab_.get() : adjacent_tab;
   const bool adjacent_to_header =
       right_tab && right_tab->group().has_value() &&
       (!left_tab || left_tab->group() != right_tab->group());
+  
 
   // If the current tab is selected, default to hiding the separator. Only show
   // the separator if it's adjacent to other selected tabs.

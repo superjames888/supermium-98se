@@ -11,6 +11,10 @@
 #include "ui/color/color_provider.h"
 #include "ui/views/layout/layout_provider.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
+
 namespace {
 
 // Thickness in DIPs of the separator painted on the left and right edges of
@@ -176,10 +180,15 @@ SkColor GM2TabStyle::GetTabBackgroundColor(
   const SkColor active_color = color_provider.GetColor(
       frame_active ? kColorTabBackgroundActiveFrameActive
                    : kColorTabBackgroundActiveFrameInactive);
+#if BUILDFLAG(IS_WIN)
+  const SkColor inactive_color = color_provider.GetColor(
+      frame_active || (base::win::GetVersion() == base::win::Version::WIN7) ? kColorTabBackgroundInactiveFrameActive
+                   : kColorTabBackgroundInactiveFrameInactive);
+#else
   const SkColor inactive_color = color_provider.GetColor(
       frame_active ? kColorTabBackgroundInactiveFrameActive
-                   : kColorTabBackgroundInactiveFrameInactive);
-
+                   : kColorTabBackgroundInactiveFrameInactive);	
+#endif
   if (hovered) {
     return active_color;
   }
