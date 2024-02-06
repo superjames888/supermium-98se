@@ -623,6 +623,7 @@ bool RunOpenFileDialog(HWND owner,
 	  open_file_name.hwndOwner = owner;
 	  open_file_name.lpstrFile = filename_buffer;
 	  open_file_name.nMaxFile = UNICODE_STRING_MAX_CHARS;
+	  open_file_name.Flags |= OFN_EXPLORER;
 	  bool success = ::GetOpenFileNameW((OPENFILENAMEW*)&open_file_name);
 	  BaseShellDialogImpl::DisableOwner(owner);
 	  
