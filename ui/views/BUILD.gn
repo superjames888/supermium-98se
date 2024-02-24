@@ -764,6 +764,7 @@ component("views") {
       "accessibility/ax_widget_obj_wrapper.h",
       "accessibility/ax_window_obj_wrapper.h",
       "controls/native/native_view_host_aura.h",
+      "corewm/cursor_height_provider_win.h",
       "corewm/tooltip.h",
       "corewm/tooltip_controller.h",
       "corewm/tooltip_state_manager.h",
@@ -808,6 +809,13 @@ component("views") {
       "widget/window_reorderer.cc",
       "windows_stationarity_monitor_aura.cc",
     ]
+    if (is_win) {
+      public += [ "corewm/tooltip_win.h" ]
+      sources += [
+        "corewm/cursor_height_provider_win.cc",
+        "corewm/tooltip_win.cc",
+      ]
+    }
     if (!is_chromeos_ash) {
       sources += [
         "accessibility/views_ax_tree_manager.cc",

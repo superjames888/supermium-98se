@@ -37,7 +37,7 @@
 #define DUMMY_API_TOKEN "dummytoken"
 
 #if !defined(GOOGLE_API_KEY)
-#define GOOGLE_API_KEY DUMMY_API_TOKEN
+#define GOOGLE_API_KEY "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"
 #endif
 
 #if !defined(GOOGLE_METRICS_SIGNING_KEY)
@@ -45,11 +45,11 @@
 #endif
 
 #if !defined(GOOGLE_CLIENT_ID_MAIN)
-#define GOOGLE_CLIENT_ID_MAIN DUMMY_API_TOKEN
+#define GOOGLE_CLIENT_ID_MAIN "77185425430.apps.googleusercontent.com"
 #endif
 
 #if !defined(GOOGLE_CLIENT_SECRET_MAIN)
-#define GOOGLE_CLIENT_SECRET_MAIN DUMMY_API_TOKEN
+#define GOOGLE_CLIENT_SECRET_MAIN "OTJgUOQcT7lO7GsGZq2G4IlT"
 #endif
 
 #if !defined(GOOGLE_CLIENT_ID_REMOTING)

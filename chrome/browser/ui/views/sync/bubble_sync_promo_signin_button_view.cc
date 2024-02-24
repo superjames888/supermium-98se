@@ -53,7 +53,9 @@ BubbleSyncPromoSigninButtonView::BubbleSyncPromoSigninButtonView(
           : l10n_util::GetStringUTF16(IDS_PROFILES_DICE_NOT_SYNCING_TITLE);
 
   const views::BoxLayout::Orientation orientation =
-      views::BoxLayout::Orientation::kHorizontal;
+      base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel)
+          ? views::BoxLayout::Orientation::kHorizontal
+          : views::BoxLayout::Orientation::kVertical;
 
   std::unique_ptr<views::BoxLayout> button_layout =
       std::make_unique<views::BoxLayout>(orientation, gfx::Insets(), 16);

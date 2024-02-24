@@ -15,6 +15,7 @@
 #include "ui/base/ui_base_features.h"
 #include "ui/gfx/font_util_win.h"
 #include "ui/gfx/win/singleton_hwnd_observer.h"
+#include "ui/gfx/win/direct_write.h"
 
 namespace gfx {
 
@@ -77,7 +78,8 @@ class CachedFontRenderParams {
     BOOL enabled = false;
     if (SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &enabled, 0) && enabled) {
       params_->antialiasing = true;
-      params_->subpixel_positioning = true;
+      // GDI does not support subpixel positioning.
+      params_->subpixel_positioning = win::IsDirectWriteEnabled();
 
       UINT type = 0;
       if (SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &type, 0) &&

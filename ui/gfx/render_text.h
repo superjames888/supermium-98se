@@ -73,6 +73,7 @@ class GFX_EXPORT SkiaTextRenderer {
                            bool subpixel_rendering_suppressed);
   void SetTypeface(sk_sp<SkTypeface> typeface);
   void SetTextSize(SkScalar size);
+  void SetSpecialYOffset(int y_offset) { special_y_offset_ = y_offset; }
   void SetForegroundColor(SkColor foreground);
   void SetShader(sk_sp<cc::PaintShader> shader);
   // TODO(vmpstr): Change this API to mimic SkCanvas::drawTextBlob instead.
@@ -89,6 +90,7 @@ class GFX_EXPORT SkiaTextRenderer {
   raw_ptr<cc::PaintCanvas> canvas_skia_;
   cc::PaintFlags flags_;
   SkFont font_;
+  int special_y_offset_ = 0;
 };
 
 struct TextToDisplayIndex {
@@ -1060,6 +1062,9 @@ class GFX_EXPORT RenderText {
 
   // Tell whether or not the |layout_text_| needs an update or is up to date.
   mutable bool layout_text_up_to_date_ = false;
+  
+  // Offset of Y used for accurate font positioning in GDI.
+  int y_offset_;
 };
 
 }  // namespace gfx

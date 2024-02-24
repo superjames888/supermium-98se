@@ -20,11 +20,13 @@
 #include "base/functional/callback.h"
 #include "base/functional/callback_helpers.h"
 #include "base/location.h"
+#include "base/logging.h"
 #include "base/memory/ptr_util.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/notreached.h"
 #include "base/path_service.h"
 #include "base/run_loop.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/synchronization/waitable_event.h"
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/single_thread_task_runner.h"
@@ -105,6 +107,7 @@
 #include "components/metrics/metrics_service.h"
 #include "components/metrics_services_manager/metrics_services_manager.h"
 #include "components/metrics_services_manager/metrics_services_manager_client.h"
+#include "components/network_session_configurator/common/network_switches.h"
 #include "components/network_time/network_time_tracker.h"
 #include "components/os_crypt/async/browser/os_crypt_async.h"
 #include "components/permissions/permissions_client.h"
@@ -136,6 +139,7 @@
 #include "media/media_buildflags.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "net/log/net_log.h"
+#include "net/socket/client_socket_pool_manager.h"
 #include "ppapi/buildflags/buildflags.h"
 #include "printing/buildflags/buildflags.h"
 #include "services/network/public/cpp/features.h"
@@ -370,6 +374,18 @@ void BrowserProcessImpl::Init() {
   // whenever the preference or its controlling policy changes.
   pref_change_registrar_.Add(metrics::prefs::kMetricsReportingEnabled,
                              base::BindRepeating(&ApplyMetricsReportingPolicy));
+							 
+  int max_connections_per_host = 0;
+  auto switch_value = base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+      "max-connections-per-host");
+  if (!switch_value.empty() && !base::StringToInt(switch_value, &max_connections_per_host)) {
+    LOG(DFATAL) << "--" << "max-connections-per-host"
+      << " expected integer; got (\"" << switch_value << "\" instead)";
+  }
+  if (max_connections_per_host != 0) {
+    net::ClientSocketPoolManager::set_max_sockets_per_group(
+        net::HttpNetworkSession::NORMAL_SOCKET_POOL, max_connections_per_host);
+  }
 
   DCHECK(!webrtc_event_log_manager_);
   webrtc_event_log_manager_ = WebRtcEventLogManager::CreateSingletonInstance();

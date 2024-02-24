@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
@@ -695,7 +696,9 @@ void Tab::OnGestureEvent(ui::GestureEvent* event) {
 }
 
 std::u16string Tab::GetTooltipText(const gfx::Point& p) const {
-  // Tab hover cards replace tooltips for tabs.
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "tooltip")
+     return GetTooltipText(data_.title, GetAlertStateToShow(data_.alert_state));
+  // Tab hover cards don't replace tooltips for tabs in all cases ^.
   return std::u16string();
 }
 
@@ -1063,7 +1066,11 @@ void Tab::UpdateIconVisibility() {
   if (IsActive()) {
     // Close button is shown on active tabs regardless of the size.
     showing_close_button_ = true;
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons")) {
+      showing_close_button_ = false;
+    } else {
     available_width -= close_button_width;
+	}
 
     showing_alert_indicator_ =
         has_alert_icon && alert_icon_width <= available_width;
@@ -1088,6 +1095,8 @@ void Tab::UpdateIconVisibility() {
     }
 
     showing_close_button_ = large_enough_for_close_button;
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons"))
+      showing_close_button_ = false;
     if (showing_close_button_) {
       available_width -= close_button_width;
     }

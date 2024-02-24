@@ -19,6 +19,13 @@
 #include "partition_alloc/partition_alloc_buildflags.h"
 #include "partition_alloc/partition_alloc_check.h"
 
+#if BUILDFLAG(IS_WIN)
+#include <Windows.h>
+extern "C" {
+VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+}
+#endif
+
 namespace {
 
 PA_ALWAYS_INLINE size_t GetCachedPageSize() {
@@ -112,6 +119,9 @@ PA_ALWAYS_INLINE void* ShimMalloc(size_t size, void* context) {
 }
 
 PA_ALWAYS_INLINE void* ShimCalloc(size_t n, size_t size, void* context) {
+  #if BUILDFLAG(IS_WIN)
+	TLSInit_DllMain_ThreadAttach(::GetModuleHandleA("chrome.dll"));
+  #endif
   const allocator_shim::AllocatorDispatch* const chain_head =
       allocator_shim::internal::GetChainHead();
   void* ptr;

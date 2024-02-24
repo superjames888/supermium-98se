@@ -1817,6 +1817,18 @@ const char kDrawImmediatelyWhenInteractiveName[] =
 const char kDrawImmediatelyWhenInteractiveDescription[] =
     "Causes viz to activate and draw frames immediately during a touch "
     "interaction or scroll.";
+	
+const char kIncognitoBrandConsistencyForDesktopName[] =
+    "Enable Incognito brand consistency in desktop.";
+const char kIncognitoBrandConsistencyForDesktopDescription[] =
+    "When enabled, removes any theme or background customization done by the "
+    "user on the Incognito UI.";
+	
+const char kInheritNativeThemeFromParentWidgetName[] =
+    "Allow widgets to inherit native theme from its parent widget.";
+const char kInheritNativeThemeFromParentWidgetDescription[] =
+    "When enabled, secondary UI like menu, dialog etc would be in dark mode "
+    "when Incognito mode is open.";
 
 const char kFillingAcrossGroupedSitesName[] =
     "Password filling across grouped websites";
@@ -1853,6 +1865,14 @@ const char kForceTextDirectionDescription[] =
     "direction of the character language.";
 const char kForceDirectionLtr[] = "Left-to-right";
 const char kForceDirectionRtl[] = "Right-to-left";
+
+const char kForceGdiName[] = "Force GDI font rendering";
+const char kForceGdiDescription[] =
+    "Use GDI font rendering in place of DirectWrite font rendering on Windows.";
+
+const char kDisableWindows10CustomTitlebarName[] = "Force disabling of Windows 10 custom titlebar";
+const char kDisableWindows10CustomTitlebarDescription[] =
+    "Disable the \"Windows 10\" custom titlebar to take advantage of Aero Glass fixes for the operating system.";
 
 const char kForceUiDirectionName[] = "Force UI direction";
 const char kForceUiDirectionDescription[] =
@@ -2003,6 +2023,10 @@ const char kHideIncognitoMediaMetadataName[] =
 const char kHideIncognitoMediaMetadataDescription[] =
     "When enabled, media metadata will be hidden from your OS' media player "
     "if you are in an Incognito session.";
+	
+const char kUngoogledSupermiumName[] = "\"Ungoogled\" Supermium Mode";
+const char kUngoogledSupermiumDescription[] = "A work in progress - this rolls all new privacy-protecting "
+											"features in Supermium into one option";
 
 const char kTabAudioMutingName[] = "Tab audio muting UI control";
 const char kTabAudioMutingDescription[] =
@@ -2813,6 +2837,16 @@ const char kPdfXfaFormsDescription[] =
 const char kAutoWebContentsDarkModeName[] = "Auto Dark Mode for Web Contents";
 const char kAutoWebContentsDarkModeDescription[] =
     "Automatically render all web contents using a dark theme.";
+	
+const char kForceDarkModeFlagName[] = "Forced Dark Mode for UI";
+const char kForceDarkModeFlagDescription[] = 
+	"Enables dark mode for all UI elements (but not web contents - " 
+	"enable #enable-force-dark for darkening web contents).";
+	
+const char kForceXpThemeName[] = "Use Classic Theme";
+const char kForceXpThemeDescription[] =
+	"Use the classic Chrome theme designed to mimick \"Aero\" window controls. "
+	"Typically used when desktop composition is disabled or unavailable.";
 
 const char kForcedColorsName[] = "Forced Colors";
 const char kForcedColorsDescription[] =

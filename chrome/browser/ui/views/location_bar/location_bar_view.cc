@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/containers/adapters.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
@@ -347,14 +348,17 @@ void LocationBarView::Init() {
 
     params.types_enabled.push_back(PageActionIconType::kSendTabToSelf);
     params.types_enabled.push_back(PageActionIconType::kClickToCall);
-    params.types_enabled.push_back(PageActionIconType::kQRCodeGenerator);
+	if (!base::FeatureList::IsEnabled(kDisableQRGenerator))
+      params.types_enabled.push_back(PageActionIconType::kQRCodeGenerator);
     if (base::FeatureList::IsEnabled(kWebOTPCrossDevice))
       params.types_enabled.push_back(PageActionIconType::kSmsRemoteFetcher);
     params.types_enabled.push_back(PageActionIconType::kManagePasswords);
     if (!apps::features::ShouldShowLinkCapturingUX()) {
       params.types_enabled.push_back(PageActionIconType::kIntentPicker);
     }
-    params.types_enabled.push_back(PageActionIconType::kPwaInstall);
+	if (!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-pwa-install-prompt")) {
+      params.types_enabled.push_back(PageActionIconType::kPwaInstall);
+	}
     params.types_enabled.push_back(PageActionIconType::kFind);
     params.types_enabled.push_back(PageActionIconType::kTranslate);
     params.types_enabled.push_back(PageActionIconType::kZoom);

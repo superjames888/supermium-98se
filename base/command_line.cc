@@ -27,8 +27,8 @@
 #include <windows.h>
 
 #include <shellapi.h>
-
 #include "base/strings/string_util_win.h"
+#include "base/win/windows_version.h"
 #endif  // BUILDFLAG(IS_WIN)
 
 namespace base {
@@ -310,6 +310,7 @@ bool CommandLine::HasSwitch(StringPiece switch_string) const {
 }
 
 bool CommandLine::HasSwitch(const char switch_constant[]) const {
+	
   return HasSwitch(StringPiece(switch_constant));
 }
 

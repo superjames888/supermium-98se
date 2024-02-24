@@ -196,6 +196,10 @@ TSFBridgeImpl::~TSFBridgeImpl() {
 
 HRESULT TSFBridgeImpl::Initialize() {
   DCHECK(base::CurrentUIThread::IsSet());
+  
+// if (!features::IsUsingTSFForIME())
+ //    return E_FAIL;
+ 
   if (client_id_ != TF_CLIENTID_NULL) {
     DVLOG(1) << "Already initialized.";
     return S_OK;  // shouldn't return error code in this case.
@@ -729,6 +733,9 @@ void TSFBridge::InitializeForTesting() {
   if (!base::CurrentUIThread::IsSet()) {
     return;
   }
+  
+//  if (!features::IsUsingTSFForIME())
+//     return;
   ReplaceThreadLocalTSFBridge(std::make_unique<MockTSFBridge>());
 }
 

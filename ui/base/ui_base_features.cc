@@ -11,6 +11,10 @@
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
+
 #if BUILDFLAG(IS_ANDROID)
 #include "base/android/build_info.h"
 #endif
@@ -76,6 +80,14 @@ BASE_FEATURE(kNotificationsIgnoreRequireInteraction,
 
 bool IsNotificationsIgnoreRequireInteractionEnabled() {
   return base::FeatureList::IsEnabled(kNotificationsIgnoreRequireInteraction);
+}
+
+// Enables using TSF (over IMM32) for IME.
+BASE_FEATURE(kTSFImeSupport, "TSFImeSupport", base::FEATURE_ENABLED_BY_DEFAULT);
+ 
+bool IsUsingTSFForIME() {
+  return base::win::GetVersion() >= base::win::Version::VISTA &&
+			base::FeatureList::IsEnabled(kTSFImeSupport);
 }
 
 BASE_FEATURE(kShortcutCustomizationApp,
@@ -255,7 +267,8 @@ BASE_FEATURE(kPointerEventsForTouch,
              base::FEATURE_ENABLED_BY_DEFAULT);
 
 bool IsUsingWMPointerForTouch() {
-  return base::FeatureList::IsEnabled(kPointerEventsForTouch);
+  return base::win::GetVersion() >= base::win::Version::WIN8 &&
+			base::FeatureList::IsEnabled(kPointerEventsForTouch);
 }
 
 #endif  // BUILDFLAG(IS_WIN)
@@ -590,6 +603,10 @@ ChromeRefresh2023Level GetChromeRefresh2023Level() {
 
 BASE_FEATURE(kBubbleMetricsApi,
              "BubbleMetricsApi",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+			 
+BASE_FEATURE(kSupermiumCustomTabs,
+             "SupermiumCustomTabs",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
 #if BUILDFLAG(IS_MAC)

@@ -1203,6 +1203,8 @@ WindowOpenDisposition NavigationPolicyToDisposition(
     case blink::kWebNavigationPolicyNewWindow:
       return WindowOpenDisposition::NEW_WINDOW;
     case blink::kWebNavigationPolicyNewPopup:
+	  if (base::CommandLine::ForCurrentProcess()->HasSwitch("popups-to-tabs"))
+         return WindowOpenDisposition::NEW_FOREGROUND_TAB;
       return WindowOpenDisposition::NEW_POPUP;
     case blink::kWebNavigationPolicyPictureInPicture:
       return WindowOpenDisposition::NEW_PICTURE_IN_PICTURE;

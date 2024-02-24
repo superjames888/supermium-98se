@@ -49,6 +49,14 @@ bool GetUserDataDirectoryThunk(wchar_t* user_data_dir,
   return true;
 }
 
+extern "C" {
+
+VOID __stdcall TLSInit_DllMain_ProcessAttach(HMODULE DllBase);
+
+VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+
+}
+
 // DllMain
 // -------
 // Warning: The OS loader lock is held during DllMain.  Be careful.
@@ -59,6 +67,13 @@ bool GetUserDataDirectoryThunk(wchar_t* user_data_dir,
 //         that will blow up with the loader lock held.
 //         https://bugs.chromium.org/p/chromium/issues/detail?id=748949#c18
 BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved) {
+	
+  if (DLL_PROCESS_ATTACH == reason) 
+	  TLSInit_DllMain_ProcessAttach(module); // Implicit TLS initialization code for Windows XP and below
+                                             // Implemented in progwrp.dll.
+  if (DLL_THREAD_ATTACH == reason)
+	  TLSInit_DllMain_ThreadAttach(module);
+	
   if (reason == DLL_PROCESS_ATTACH) {
     install_static::InitializeProductDetailsForPrimaryModule();
     install_static::InitializeProcessType();

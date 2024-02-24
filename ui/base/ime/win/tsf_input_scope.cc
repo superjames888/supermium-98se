@@ -10,6 +10,7 @@
 #include "base/compiler_specific.h"
 #include "base/containers/contains.h"
 #include "base/task/current_thread.h"
+#include "base/win/windows_version.h"
 
 namespace ui::tsf_inputscope {
 namespace {

@@ -11,6 +11,7 @@
 #include "base/logging.h"
 #include "base/win/static_constants.h"
 #include "base/win/win_util.h"
+#include "base/win/windows_version.h"
 #include "sandbox/win/src/win_utils.h"
 
 namespace sandbox {
@@ -150,8 +151,11 @@ bool HandleCloserAgent::CloseHandles() {
     return true;
 
   std::optional<ProcessHandleMap> handle_map = GetCurrentProcessHandles();
-  if (!handle_map)
-    return false;
+  // Fallback for pre-Windows 8.1.
+  if (!handle_map) {
+    DCHECK(base::win::GetVersion() < base::win::Version::WIN8_1);
+    handle_map = GetCurrentProcessHandlesWin7();
+  }
 
   for (const HandleMap::value_type& handle_to_close : handles_to_close_) {
     ProcessHandleMap::iterator result = handle_map->find(handle_to_close.first);

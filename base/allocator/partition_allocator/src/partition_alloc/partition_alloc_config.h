@@ -34,7 +34,7 @@
 static_assert(sizeof(void*) == 8, "");
 #else
 static_assert(sizeof(void*) != 8, "");
-#endif  // PA_CONFIG(HAS_64_BITS_POINTERS)
+#endif  // BUILDFLAG(HAS_64_BITS_POINTERS)
 
 #if BUILDFLAG(HAS_64_BIT_POINTERS) && \
     (defined(__ARM_NEON) || defined(__ARM_NEON__)) && defined(__ARM_FP)
@@ -43,18 +43,23 @@ static_assert(sizeof(void*) != 8, "");
 #define PA_CONFIG_STARSCAN_NEON_SUPPORTED() 0
 #endif
 
-#if BUILDFLAG(HAS_64_BIT_POINTERS) && BUILDFLAG(IS_IOS)
+#if BUILDFLAG(HAS_64_BIT_POINTERS) && (BUILDFLAG(IS_IOS) || BUILDFLAG(IS_WIN))
 // Allow PA to select an alternate pool size at run-time before initialization,
 // rather than using a single constexpr value.
 //
 // This is needed on iOS because iOS test processes can't handle large pools
 // (see crbug.com/1250788).
 //
+// This is needed on Windows, because OS versions <8.1 incur commit charge even
+// on reserved address space, thus don't handle large pools well (see
+// crbug.com/1101421 and crbug.com/1217759).
+//
 // This setting is specific to 64-bit, as 32-bit has a different implementation.
 #define PA_CONFIG_DYNAMICALLY_SELECT_POOL_SIZE() 1
 #else
 #define PA_CONFIG_DYNAMICALLY_SELECT_POOL_SIZE() 0
-#endif  // BUILDFLAG(HAS_64_BIT_POINTERS) && BUILDFLAG(IS_IOS)
+#endif  // BUILDFLAG(HAS_64_BIT_POINTERS) && (BUILDFLAG(IS_IOS) ||
+        // BUILDFLAG(IS_WIN))
 
 #if BUILDFLAG(HAS_64_BIT_POINTERS) && \
     (BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_ANDROID))

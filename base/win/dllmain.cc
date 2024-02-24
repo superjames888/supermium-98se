@@ -89,9 +89,24 @@ NOINLINE static void CrashOnProcessDetach() {
   *static_cast<volatile int*>(nullptr) = 0x356;
 }
 
+extern "C" {
+
+VOID __stdcall TLSInit_DllMain_ProcessAttach(PVOID DllBase);
+
+VOID __stdcall TLSInit_DllMain_ThreadAttach(PVOID DllBase);
+
+}
+
 // Make DllMain call the listed callbacks.  This way any third parties that are
 // linked in will also be called.
 BOOL WINAPI DllMain(PVOID h, DWORD reason, PVOID reserved) {
+
+  if (DLL_PROCESS_ATTACH == reason) 
+	  TLSInit_DllMain_ProcessAttach(h); // Implicit TLS initialization code for Windows XP and below
+                                             // Implemented in progwrp.dll.
+  if (DLL_THREAD_ATTACH == reason)
+	  TLSInit_DllMain_ThreadAttach(h);
+
   if (DLL_PROCESS_DETACH == reason && base::win::ShouldCrashOnProcessDetach())
     CrashOnProcessDetach();
 

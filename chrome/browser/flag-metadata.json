@@ -1766,6 +1766,11 @@
     "expiry_milestone": 121
   },
   {
+    "name": "disable-download-upload",
+    "owners": [ "win32", "supermium" ],
+    "expiry_milestone": -1
+  },  
+  {
     "name": "disable-explicit-dma-fences",
     "owners": [ "chromeos-gfx@google.com" ],
     // This flag is used for QA & debugging on ChromeOS, which has no way to
@@ -1831,6 +1836,11 @@
     // This flag does not expire because it allows users to disable HW video
     // encoding only in webrtc usecase for debugging purpose and temporary
     // workaround for some issues.
+    "expiry_milestone": -1
+  },
+  {
+    "name": "disable-windows-10-custom-titlebar",
+    "owners": [ "win32", "supermium" ],
     "expiry_milestone": -1
   },
   {
@@ -4508,6 +4518,11 @@
     "expiry_milestone": -1
   },
   {
+    "name": "force-xp-theme",
+    "owners": [ "win32", "supermium" ],
+    "expiry_milestone": -1
+  },
+  {
     "name": "forced-colors",
     "owners": [ "almaher@microsoft.com" ],
     "expiry_milestone": 123
@@ -4887,11 +4902,6 @@
     "name": "info-card-acknowledgement-tracking",
     "owners": [ "//chrome/android/feed/OWNERS", "jianli@chromium.org" ],
     "expiry_milestone": 130
-  },
-  {
-    "name": "insecure-download-warnings",
-    "owners": [ "jdeblasio@chromium.org", "trusty-transport@chromium.org" ],
-    "expiry_milestone": 120
   },
   {
     "name": "install-isolated-web-app-from-url",

@@ -42,6 +42,13 @@ using Microsoft::WRL::ComPtr;
 // static
 void TextDetectionImpl::Create(
     mojo::PendingReceiver<mojom::TextDetection> receiver) {
+
+if (!(base::win::ResolveCoreWinRTDelayload() &&
+        ScopedHString::ResolveCoreWinRTStringDelayload())) {
+    DLOG(ERROR) << "Failed loading functions from combase.dll";
+    return;
+  }
+
   // Text Detection specification only supports Latin-1 text as documented in
   // https://wicg.github.io/shape-detection-api/text.html#text-detection-api.
   // TODO(junwei.fu): https://crbug.com/794097 consider supporting other Latin

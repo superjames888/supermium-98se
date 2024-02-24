@@ -1395,7 +1395,8 @@ void BrowserCommandController::InitCommandState() {
   command_updater_.UpdateCommandEnabled(IDC_WINDOW_CLOSE_OTHER_TABS,
                                         normal_window);
 
-  const bool enable_tab_search_commands = browser_->is_type_normal();
+  const bool enable_tab_search_commands = browser_->is_type_normal() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button");
   command_updater_.UpdateCommandEnabled(IDC_TAB_SEARCH,
                                         enable_tab_search_commands);
   command_updater_.UpdateCommandEnabled(IDC_TAB_SEARCH_CLOSE,
@@ -1416,7 +1417,10 @@ void BrowserCommandController::InitCommandState() {
   }
 #endif
 
-  command_updater_.UpdateCommandEnabled(IDC_SHOW_BOOKMARK_SIDE_PANEL, true);
+  if ((browser_->is_type_normal() && features::IsChromeRefresh2023()) ||
+      base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel)) {
+    command_updater_.UpdateCommandEnabled(IDC_SHOW_BOOKMARK_SIDE_PANEL, true);
+  }
 
   if (features::IsChromeRefresh2023()) {
     if (browser_->is_type_normal()) {

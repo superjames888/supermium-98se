@@ -53,7 +53,11 @@ std::unique_ptr<InputMethod> CreateInputMethod(
     return base::WrapUnique(new MockInputMethod(ime_key_event_dispatcher));
 
 #if BUILDFLAG(IS_WIN)
+ // if (features::IsUsingTSFForIME()) {
   return std::make_unique<InputMethodWinTSF>(ime_key_event_dispatcher, widget);
+ // }
+//  else
+//	  return nullptr;
 #elif BUILDFLAG(IS_APPLE)
   return std::make_unique<InputMethodMac>(ime_key_event_dispatcher);
 #elif BUILDFLAG(IS_OZONE)

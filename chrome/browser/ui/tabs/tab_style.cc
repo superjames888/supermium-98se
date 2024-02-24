@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/tabs/tab_style.h"
 
+#include "base/command_line.h"
 #include "chrome/browser/ui/layout_constants.h"
 #include "chrome/browser/ui/ui_features.h"
 #include "ui/base/ui_base_features.h"
@@ -71,7 +72,9 @@ TabStyle::~TabStyle() = default;
 
 int GM2TabStyle::GetStandardWidth() const {
   // The standard tab width is 240 DIP including both separators.
-  constexpr int kTabWidth = 240;
+  int kTabWidth = 240;
+  if(base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+	kTabWidth = 193;
   // The overlap includes one separator, so subtract it here.
   return kTabWidth + GetTabOverlap() - GetSeparatorSize().width();
 }
@@ -118,7 +121,7 @@ int GM2TabStyle::GetMinimumInactiveWidth() const {
 }
 
 int GM2TabStyle::GetTabOverlap() const {
-  return GetBottomCornerRadius() * 2 + GetSeparatorSize().width();
+	return GetBottomCornerRadius() * 2 + GetSeparatorSize().width();
 }
 
 int GM2TabStyle::GetDragHandleExtension(int height) const {
@@ -126,8 +129,15 @@ int GM2TabStyle::GetDragHandleExtension(int height) const {
 }
 
 gfx::Size GM2TabStyle::GetSeparatorSize() const {
-  return gfx::Size(kGM2SeparatorThickness,
+  if (!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs)) {
+	  if(base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+		  return gfx::Size(kGM2SeparatorThickness,
+                   GetLayoutConstant(TAB_SEPARATOR_HEIGHT) * 0.6);
+	return gfx::Size(kGM2SeparatorThickness,
                    GetLayoutConstant(TAB_SEPARATOR_HEIGHT));
+  }
+  else
+	  return gfx::Size(0, 0);
 }
 
 gfx::Insets GM2TabStyle::GetSeparatorMargins() const {
@@ -147,12 +157,12 @@ gfx::Size GM2TabStyle::GetPreviewImageSize() const {
 }
 
 int GM2TabStyle::GetTopCornerRadius() const {
-  return views::LayoutProvider::Get()->GetCornerRadiusMetric(
+	return views::LayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kHigh);
 }
 
 int GM2TabStyle::GetBottomCornerRadius() const {
-  return views::LayoutProvider::Get()->GetCornerRadiusMetric(
+	return views::LayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kHigh);
 }
 
@@ -169,10 +179,15 @@ SkColor GM2TabStyle::GetTabBackgroundColor(
   const SkColor active_color = color_provider.GetColor(
       frame_active ? kColorTabBackgroundActiveFrameActive
                    : kColorTabBackgroundActiveFrameInactive);
+#if BUILDFLAG(IS_WIN)
   const SkColor inactive_color = color_provider.GetColor(
       frame_active ? kColorTabBackgroundInactiveFrameActive
                    : kColorTabBackgroundInactiveFrameInactive);
-
+#else
+  const SkColor inactive_color = color_provider.GetColor(
+      frame_active ? kColorTabBackgroundInactiveFrameActive
+                   : kColorTabBackgroundInactiveFrameInactive);	
+#endif
   if (hovered) {
     return active_color;
   }
@@ -206,10 +221,10 @@ int ChromeRefresh2023TabStyle::GetBottomCornerRadius() const {
 
 int ChromeRefresh2023TabStyle::GetTabOverlap() const {
   // The overlap removes the width and the margins of the separator.
-  const float total_separator_width = GetSeparatorMargins().left() +
-                                      GetSeparatorSize().width() +
-                                      GetSeparatorMargins().right();
-  return 2 * GetBottomCornerRadius() - total_separator_width;
+	const float total_separator_width = GetSeparatorMargins().left() +
+										GetSeparatorSize().width() +
+										GetSeparatorMargins().right();
+	return 2 * GetBottomCornerRadius() - total_separator_width;
 }
 
 gfx::Size ChromeRefresh2023TabStyle::GetSeparatorSize() const {
