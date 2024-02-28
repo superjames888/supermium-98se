@@ -1181,7 +1181,7 @@ bool PreReadFile(const FilePath& file_path,
 
 bool PreventExecuteMapping(const FilePath& path) {
   if (!base::FeatureList::IsEnabled(
-          features::kEnforceNoExecutableFileHandles)) {
+          features::kEnforceNoExecutableFileHandles) || base::win::GetVersion() == base::win::Version::PRE_XP) {
     return true;
   }
 
