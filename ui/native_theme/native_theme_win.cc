@@ -268,26 +268,61 @@ void NativeThemeWin::Paint(cc::PaintCanvas* canvas,
   if (rect.IsEmpty())
     return;
 
-  switch (part) {
-    case kMenuPopupGutter:
-      PaintMenuGutter(canvas, color_provider, rect);
-      return;
-    case kMenuPopupSeparator:
-      PaintMenuSeparator(canvas, color_provider,
-                         absl::get<MenuSeparatorExtraParams>(extra));
-      return;
-    case kMenuPopupBackground:
-      PaintMenuBackground(canvas, color_provider, rect);
-      return;
-    case kMenuItemBackground:
-      CommonThemePaintMenuItemBackground(this, color_provider, canvas, state,
-                                         rect,
-                                         absl::get<MenuItemExtraParams>(extra));
-      return;
-    default:
-      PaintIndirect(canvas, part, state, rect, extra);
-      return;
+  if(!base::CommandLine::ForCurrentProcess()->HasSwitch("native-ui-style")) {
+	  switch (part) {
+		case kMenuPopupGutter:
+		  PaintMenuGutter(canvas, color_provider, rect);
+		  return;
+		case kMenuPopupSeparator:
+		  PaintMenuSeparator(canvas, color_provider,
+							 absl::get<MenuSeparatorExtraParams>(extra));
+		  return;
+		case kMenuPopupBackground:
+		  PaintMenuBackground(canvas, color_provider, rect);
+		  return;
+		case kMenuItemBackground:
+		  CommonThemePaintMenuItemBackground(this, color_provider, canvas, state,
+											 rect,
+											 absl::get<MenuItemExtraParams>(extra));
+		  return;     
+		default:
+		  break;
+	  }
   }
+  
+  PaintIndirect(canvas, part, state, rect, extra);
+  return;
+}
+
+HRESULT PaintMenuItemBackgroundClassic(
+    HDC hdc,
+    NativeThemeWin::State state,
+    const gfx::Rect& rect,
+    const NativeThemeWin::MenuItemExtraParams& extra) {
+  HANDLE handle = OpenThemeData(nullptr, L"MENU_POPUPBACKGROUND");
+  RECT rect_win = rect.ToRECT();
+  int state_id = MPI_NORMAL;
+  switch (state) {
+    case NativeThemeWin::kDisabled:
+      state_id = extra.is_selected ? MPI_DISABLEDHOT : MPI_DISABLED;
+      break;
+    case NativeThemeWin::kHovered:
+      state_id = MPI_HOT;
+      break;
+    case NativeThemeWin::kNormal:
+      break;
+    case NativeThemeWin::kPressed:
+    case NativeThemeWin::kNumStates:
+      NOTREACHED();
+      break;
+  }
+
+  if (handle)
+    return DrawThemeBackground(handle, hdc, MENU_POPUPITEM, state_id, &rect_win, NULL);
+
+  if (extra.is_selected)
+    FillRect(hdc, &rect_win, GetSysColorBrush(COLOR_HIGHLIGHT));
+  return S_OK;
 }
 
 NativeThemeWin::NativeThemeWin(bool configure_web_instance,
@@ -512,6 +547,8 @@ void NativeThemeWin::PaintDirect(SkCanvas* destination_canvas,
       case kTextField:
         break;  // Handled entirely below.
       case kMenuItemBackground:
+	     PaintMenuItemBackgroundClassic(hdc, state, rect, absl::get<MenuItemExtraParams>(extra));
+		 return;
       case kMenuPopupBackground:
       case kMenuPopupGutter:
       case kMenuPopupSeparator:
@@ -921,6 +958,46 @@ void NativeThemeWin::PaintScrollbarArrowClassic(HDC hdc,
                                                 Part part,
                                                 State state,
                                                 RECT* rect) const {
+  static const int state_id_matrix[4][4] = {
+      {ABS_DOWNDISABLED, ABS_DOWNHOT, ABS_DOWNNORMAL, ABS_DOWNPRESSED},
+	  {ABS_LEFTDISABLED, ABS_LEFTHOT, ABS_LEFTNORMAL, ABS_LEFTPRESSED},
+	  {ABS_RIGHTDISABLED, ABS_RIGHTHOT, ABS_RIGHTNORMAL, ABS_RIGHTPRESSED},
+	  {ABS_UPDISABLED, ABS_UPHOT, ABS_UPNORMAL, ABS_UPPRESSED}
+  };
+  HANDLE handle = OpenThemeData(nullptr, L"SCROLLBAR");
+  if (handle) {
+    int index = part - kScrollbarDownArrow;
+    DCHECK(index >=0 && index < 4);
+    int state_id = state_id_matrix[index][state];
+
+    // Hovering means that the cursor is over the scroolbar, but not over the
+    // specific arrow itself.  We don't want to show it "hot" mode, but only
+    // in "hover" mode.
+	/*
+    if (state == kHovered && extra.is_hovering) {
+      switch (part) {
+        case kScrollbarDownArrow:
+          state_id = ABS_DOWNHOVER;
+          break;
+        case kScrollbarLeftArrow:
+          state_id = ABS_LEFTHOVER;
+          break;
+        case kScrollbarRightArrow:
+          state_id = ABS_RIGHTHOVER;
+          break;
+        case kScrollbarUpArrow:
+          state_id = ABS_UPHOVER;
+          break;
+        default:
+          NOTREACHED() << "Invalid part: " << part;
+          break;
+      }
+    }
+    */
+    DrawThemeBackground(handle, hdc, SBP_ARROWBTN, state_id, rect, NULL);
+	return;
+  }
+													
   int classic_state = DFCS_SCROLLDOWN;
   switch (part) {
     case kScrollbarDownArrow:
@@ -954,7 +1031,8 @@ void NativeThemeWin::PaintScrollbarArrowClassic(HDC hdc,
       NOTREACHED();
       break;
   }
-  DrawFrameControl(hdc, rect, DFC_SCROLL, classic_state);
+  
+  DrawFrameControl(hdc, rect, DFC_SCROLL, classic_state | DFCS_BUTTONPUSH);
 }
 
 void NativeThemeWin::PaintScrollbarTrackClassic(
