@@ -22,8 +22,10 @@
 #if BUILDFLAG(IS_WIN)
 #include <Windows.h>
 extern "C" {
-VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+VOID __stdcall TLSInit_DllMain_ThreadAttach(IMAGE_DOS_HEADER* DllBase);
 }
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 #endif
 
 namespace {
@@ -120,7 +122,7 @@ PA_ALWAYS_INLINE void* ShimMalloc(size_t size, void* context) {
 
 PA_ALWAYS_INLINE void* ShimCalloc(size_t n, size_t size, void* context) {
   #if BUILDFLAG(IS_WIN)
-	TLSInit_DllMain_ThreadAttach(::GetModuleHandleA("chrome.dll"));
+	TLSInit_DllMain_ThreadAttach(&__ImageBase);
   #endif
   const allocator_shim::AllocatorDispatch* const chain_head =
       allocator_shim::internal::GetChainHead();

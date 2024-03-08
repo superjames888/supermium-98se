@@ -23,9 +23,10 @@
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
 extern "C" {
-VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+VOID __stdcall TLSInit_DllMain_ThreadAttach(IMAGE_DOS_HEADER* DllBase);
 }
-
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 #endif
 
 namespace base {
@@ -251,7 +252,7 @@ void PoissonAllocationSampler::DoRecordAllocation(
     const char* context) {
 		
   #if BUILDFLAG(IS_WIN)
-	TLSInit_DllMain_ThreadAttach(::GetModuleHandleA("chrome.dll"));
+	TLSInit_DllMain_ThreadAttach(&__ImageBase);
   #endif
   ThreadLocalData* const thread_local_data = GetThreadLocalData();
 
