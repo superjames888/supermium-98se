@@ -1,3 +1,6 @@
+
+![supermium logo + wordmark fw](https://github.com/win32ss/supermium/assets/68521531/f34ceb1c-15b2-4818-af1f-c0251c77af2f)
+
 # Supermium
 An up-to-date Chromium-based web browser compatible with Windows XP, 2003, Vista, 7 and 8.x.
 
