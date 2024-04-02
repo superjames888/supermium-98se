@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "base/command_line.h"
 #include "base/containers/fixed_flat_map.h"
 #include "base/logging.h"
 #include "ui/base/ui_base_features.h"
@@ -205,6 +206,8 @@ ShapeSysTokens GetShapeSysToken(ShapeContextTokens id) {
 
 int LayoutProvider::GetCornerRadiusMetric(ShapeContextTokens id,
                                           const gfx::Size& size) const {
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+	  return 0;
   if (!features::IsChromeRefresh2023()) {
     switch (id) {
       case ShapeContextTokens::kBadgeRadius:

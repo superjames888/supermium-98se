@@ -204,7 +204,8 @@ LocationBarView::LocationBarView(Browser* browser,
     if (features::IsChromeRefresh2023()) {
       views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
     }
-    views::InstallPillHighlightPathGenerator(this);
+	if (!base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+		views::InstallPillHighlightPathGenerator(this);
 
 #if BUILDFLAG(IS_MAC)
     geolocation_permission_observation_.Observe(
@@ -435,6 +436,8 @@ bool LocationBarView::IsInitialized() const {
 }
 
 int LocationBarView::GetBorderRadius() const {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+	  return 0;
   return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kMaximum, size());
 }
@@ -1155,13 +1158,13 @@ void LocationBarView::RefreshBackground() {
     border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
 
-  if (is_popup_mode_) {
+    if (is_popup_mode_) {
     SetBackground(views::CreateSolidBackground(background_color));
-  } else {
+    } else {
     SetBackground(CreateRoundRectBackground(
         background_color, border_color, /*blend_mode=*/SkBlendMode::kSrcOver,
         /*antialias=*/true, /*should_border_scale=*/true));
-  }
+    }
 
   // Keep the views::Textfield in sync. It needs an opaque background to
   // correctly enable subpixel AA.
