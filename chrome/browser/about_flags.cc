@@ -11402,12 +11402,16 @@ const FeatureEntry kFeatureEntries[] = {
      kOsDesktop, SINGLE_VALUE_TYPE("rectangular-tabs")},
     {"classic-omnibox",
      "Classic Omnibox",
-     "Makes the location/address bar square and will add borders around it.",
+     "Makes the location/address bar square and adds a border.",
      kOsDesktop, SINGLE_VALUE_TYPE("classic-omnibox")},
     {"disable-alternate-ds",
      "Disable Alternate Data Streams",
      "Disables an alternate data stream on downloads on Windows. This manifests itself as a \"blocked file\" in its properties.",
-     kOsDesktop, SINGLE_VALUE_TYPE("disable-alternate-ds")},
+     kOsWin, SINGLE_VALUE_TYPE("disable-alternate-ds")},
+    {"native-ui-style",
+     "Enable Native User Interface Elements",
+     "Enables native user interface elements on Windows. At this time, it only applies to elements outside the area of the web page itself.",
+     kOsWin, SINGLE_VALUE_TYPE("native-ui-style")},
 	// TODO: move all Supermium-specific flags to new source file.
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
