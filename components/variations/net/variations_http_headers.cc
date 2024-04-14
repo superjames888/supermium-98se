@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/memory/raw_ptr.h"
@@ -26,7 +27,6 @@
 #include "url/gurl.h"
 
 #if BUILDFLAG(IS_IOS)
-#include "base/command_line.h"
 #include "components/variations/net/variations_flags.h"
 #include "net/base/url_util.h"
 #endif  // BUILDFLAG(IS_IOS)
@@ -250,6 +250,8 @@ class VariationsHeaderHelper {
   VariationsHeaderHelper& operator=(const VariationsHeaderHelper&) = delete;
 
   bool AppendHeaderIfNeeded(const GURL& url, InIncognito incognito) {
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+		return false;
     AppendOmniboxOnDeviceSuggestionsHeaderIfNeeded(url, resource_request_);
 
     // Note the criteria for attaching client experiment headers:
@@ -338,7 +340,8 @@ void RemoveVariationsHeaderIfNeeded(
     const net::RedirectInfo& redirect_info,
     const network::mojom::URLResponseHead& response_head,
     std::vector<std::string>* to_be_removed_headers) {
-  if (!ShouldAppendVariationsHeader(redirect_info.new_url, "Remove"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && 
+      !ShouldAppendVariationsHeader(redirect_info.new_url, "Remove"))
     to_be_removed_headers->push_back(kClientDataHeader);
 }
 
@@ -376,22 +379,30 @@ CreateSimpleURLLoaderWithVariationsHeaderUnknownSignedIn(
 
 bool HasVariationsHeader(const network::ResourceRequest& request) {
   std::string unused_header;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   return GetVariationsHeader(request, &unused_header);
 }
 
 bool GetVariationsHeader(const network::ResourceRequest& request,
                          std::string* out) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   return request.cors_exempt_headers.GetHeader(kClientDataHeader, out);
 }
 
 bool ShouldAppendVariationsHeaderForTesting(
     const GURL& url,
     const std::string& histogram_suffix) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   return ShouldAppendVariationsHeader(url, histogram_suffix);
 }
 
 void UpdateCorsExemptHeaderForVariations(
     network::mojom::NetworkContextParams* params) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return;
   params->cors_exempt_header_list.push_back(kClientDataHeader);
 
   if (base::FeatureList::IsEnabled(kReportOmniboxOnDeviceSuggestionsHeader)) {

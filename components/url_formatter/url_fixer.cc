@@ -577,7 +577,9 @@ GURL FixupURLInternal(const std::string& text,
                       .possibly_invalid_spec());
     }
   }
-
+  if (scheme == url::kTraceScheme && base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+    return GURL();
+  }
   // We handle the file scheme separately.
   if (scheme == url::kFileScheme)
     return GURL(parts.scheme.is_valid() ? text : FixupPath(text));

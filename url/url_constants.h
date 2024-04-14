@@ -48,6 +48,8 @@ COMPONENT_EXPORT(URL) extern const char kMailToScheme[];
 COMPONENT_EXPORT(URL) extern const char16_t kMailToScheme16[];
 COMPONENT_EXPORT(URL) extern const char kTelScheme[];
 COMPONENT_EXPORT(URL) extern const char16_t kTelScheme16[];
+COMPONENT_EXPORT(URL) extern const char kTraceScheme[];
+COMPONENT_EXPORT(URL) extern const char16_t kTraceScheme16[];
 COMPONENT_EXPORT(URL) extern const char kUrnScheme[];
 COMPONENT_EXPORT(URL) extern const char16_t kUrnScheme16[];
 COMPONENT_EXPORT(URL) extern const char kUuidInPackageScheme[];

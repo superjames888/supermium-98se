@@ -78,6 +78,7 @@ struct SchemeRegistry {
       kWssScheme,
       kDataScheme,
       kAboutScheme,
+	  kTraceScheme,
   };
 
   // Schemes that normal pages cannot link to or access (i.e., with the same
@@ -92,6 +93,7 @@ struct SchemeRegistry {
       kAboutScheme,
       kJavaScriptScheme,
       kDataScheme,
+	  kTraceScheme,
   };
 
   // Schemes that can be sent CORS requests.

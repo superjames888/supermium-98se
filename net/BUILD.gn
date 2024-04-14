@@ -974,6 +974,8 @@ component("net") {
     "url_request/referrer_policy.h",
     "url_request/static_http_user_agent_settings.cc",
     "url_request/static_http_user_agent_settings.h",
+    "url_request/trk_protocol_handler.cc",
+    "url_request/trk_protocol_handler.h",
     "url_request/url_request.cc",
     "url_request/url_request.h",
     "url_request/url_request_context.cc",
