@@ -72,7 +72,8 @@ SoftwareImageDecodeCacheUtils::DoDecodeImage(
     base::OnceClosure on_no_memory) {
   const SkISize target_size =
       SkISize::Make(key.target_size().width(), key.target_size().height());
-  if((target_size.fWidth * target_size.fHeight) > 500000)
+  if(!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-webbloat-mitigation") &&
+     (target_size.fWidth * target_size.fHeight) > 1000000)
 	  return nullptr;
   DCHECK(target_size == paint_image.GetSupportedDecodeSize(target_size));
   sk_sp<SkColorSpace> target_color_space =
