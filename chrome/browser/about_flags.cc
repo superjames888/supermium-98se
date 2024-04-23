@@ -11412,7 +11412,7 @@ const FeatureEntry kFeatureEntries[] = {
      "Enable Native User Interface Elements",
      "Enables native user interface elements on Windows. At this time, it only applies to elements outside the area of the web page itself.",
      kOsWin, SINGLE_VALUE_TYPE("native-ui-style")},
-    {disable-webbloat-mitigation",
+    {"disable-webbloat-mitigation",
      "Disable Blockage Of Unnecessarily Bloated Web Elements",
      "Disable blockage of unnecessarily bloated web elements, including large images that can force the browser to allocate hundreds of megabytes of memory.",
      kOsAll, SINGLE_VALUE_TYPE("native-ui-style")},
