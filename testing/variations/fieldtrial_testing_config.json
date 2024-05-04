@@ -5732,7 +5732,7 @@
                 {
                     "name": "Disabled_20230815",
                     "disable_features": [
-                        "DeprecatedNonStreamingDeclarativeShadowDOM")
+                        "DeprecatedNonStreamingDeclarativeShadowDOM"
                     ]
                 }
             ]

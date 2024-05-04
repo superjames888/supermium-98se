@@ -583,7 +583,7 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
   
 #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
   if (ftp_enabled_) {
-    storage->set_ftp_auth_cache(std::make_unique<FtpAuthCache>());
+    context->set_ftp_auth_cache(new FtpAuthCache());
     job_factory->SetProtocolHandler(
         url::kFtpScheme, FtpProtocolHandler::Create(context->host_resolver(),
                                                     context->ftp_auth_cache()));

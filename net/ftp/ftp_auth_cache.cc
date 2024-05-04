@@ -34,7 +34,7 @@ FtpAuthCache::Entry* FtpAuthCache::Lookup(const GURL& origin) {
 
 void FtpAuthCache::Add(const GURL& origin, const AuthCredentials& credentials) {
   DCHECK(origin.SchemeIs("ftp"));
-  DCHECK_EQ(origin.GetOrigin(), origin);
+  DCHECK_EQ(origin.DeprecatedGetOriginAsURL(), origin);
 
   Entry* entry = Lookup(origin);
   if (entry) {

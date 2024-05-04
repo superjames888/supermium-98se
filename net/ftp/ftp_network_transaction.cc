@@ -6,9 +6,11 @@
 
 #include <vector>
 
-#include "base/bind.h"
-#include "base/callback_helpers.h"
+#include "base/functional/bind.h"
+#include "base/functional/callback_helpers.h"
 #include "base/compiler_specific.h"
+#include "base/memory/scoped_refptr.h"
+#include "base/strings/escape.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
@@ -16,7 +18,6 @@
 #include "base/values.h"
 #include "net/base/address_list.h"
 #include "net/base/completion_once_callback.h"
-#include "net/base/escape.h"
 #include "net/base/ip_endpoint.h"
 #include "net/base/net_errors.h"
 #include "net/base/network_isolation_key.h"
@@ -204,9 +205,9 @@ bool ExtractPortFromPASVResponse(const FtpCtrlResponse& response, int* port) {
   // Ignore the IP address supplied in the response. We are always going
   // to connect back to the same server to prevent FTP PASV port scanning.
   uint32_t p0, p1;
-  if (!ParseUint32(pieces[4], &p0))
+  if (!ParseUint32(pieces[4], ParseIntFormat::NON_NEGATIVE, &p0))
     return false;
-  if (!ParseUint32(pieces[5], &p1))
+  if (!ParseUint32(pieces[5], ParseIntFormat::NON_NEGATIVE, &p1))
     return false;
   if (p0 > 0xFF || p1 > 0xFF)
     return false;
@@ -225,7 +226,7 @@ FtpNetworkTransaction::FtpNetworkTransaction(
                                        base::Unretained(this))),
       request_(nullptr),
       resolver_(resolver),
-      read_ctrl_buf_(base::MakeRefCounted<IOBuffer>(kCtrlBufLen)),
+      read_ctrl_buf_(base::MakeRefCounted<IOBufferWithSize>(kCtrlBufLen)),
       read_data_buf_len_(0),
       last_error_(OK),
       system_type_(SYSTEM_TYPE_UNKNOWN),
@@ -368,7 +369,7 @@ void FtpNetworkTransaction::ResetStateForRestart() {
   command_sent_ = COMMAND_NONE;
   user_callback_.Reset();
   response_ = FtpResponseInfo();
-  read_ctrl_buf_ = base::MakeRefCounted<IOBuffer>(kCtrlBufLen);
+  read_ctrl_buf_ = base::MakeRefCounted<IOBufferWithSize>(kCtrlBufLen);
   ctrl_response_buffer_ = std::make_unique<FtpCtrlResponseBuffer>(net_log_);
   read_data_buf_ = nullptr;
   read_data_buf_len_ = 0;
@@ -662,11 +663,9 @@ int FtpNetworkTransaction::DoLoop(int result) {
 int FtpNetworkTransaction::DoCtrlResolveHost() {
   next_state_ = STATE_CTRL_RESOLVE_HOST_COMPLETE;
 
-  // Using an empty NetworkIsolationKey here, since FTP support is deprecated,
-  // and should go away soon.
   resolve_request_ =
       resolver_->CreateRequest(url::SchemeHostPort(request_->url),
-                               NetworkIsolationKey(), net_log_, absl::nullopt);
+                               NetworkAnonymizationKey(), net_log_, absl::nullopt);
   return resolve_request_->Start(base::BindOnce(
       &FtpNetworkTransaction::OnIOComplete, base::Unretained(this)));
 }
@@ -684,7 +683,7 @@ int FtpNetworkTransaction::DoCtrlConnect() {
 
   DCHECK(resolve_request_ && resolve_request_->GetAddressResults());
   ctrl_socket_ = socket_factory_->CreateTransportClientSocket(
-      resolve_request_->GetAddressResults().value(), nullptr,
+      AddressList(*resolve_request_->GetAddressResults()), nullptr,
       network_quality_estimator, net_log_.net_log(), net_log_.source());
   net_log_.AddEventReferencingSource(NetLogEventType::FTP_CONTROL_CONNECTION,
                                      ctrl_socket_->NetLog().source());

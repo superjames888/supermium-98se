@@ -3592,7 +3592,7 @@ fuzzer_test("net_spdy_headers_to_http_response_headers_fuzzer") {
   ]
   dict = "data/fuzzer_dictionaries/net_http_stream_parser_fuzzer.dict"
   libfuzzer_options = [ "max_len = 512" ]
-
+}
 if (!disable_ftp_support) {
   fuzzer_test("net_ftp_ctrl_response_fuzzer") {
     sources = [ "ftp/ftp_ctrl_response_fuzzer.cc" ]

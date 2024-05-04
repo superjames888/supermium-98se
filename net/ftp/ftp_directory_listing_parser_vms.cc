@@ -6,7 +6,6 @@
 
 #include <vector>
 
-#include "base/cxx17_backports.h"
 #include "base/numerics/safe_math.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
@@ -152,7 +151,7 @@ bool LooksLikeVMSError(const std::u16string& text) {
     "privilege",
   };
 
-  for (size_t i = 0; i < base::size(kPermissionDeniedMessages); i++) {
+  for (size_t i = 0; i < std::ranges::size(kPermissionDeniedMessages); i++) {
     if (text.find(base::ASCIIToUTF16(kPermissionDeniedMessages[i])) !=
         std::u16string::npos)
       return true;

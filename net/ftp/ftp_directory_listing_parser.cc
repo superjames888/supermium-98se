@@ -4,9 +4,8 @@
 
 #include "net/ftp/ftp_directory_listing_parser.h"
 
-#include "base/bind.h"
-#include "base/callback.h"
-#include "base/cxx17_backports.h"
+#include "base/functional/callback.h"
+#include "base/functional/bind.h"
 #include "base/i18n/encoding_detection.h"
 #include "base/i18n/icu_string_conversions.h"
 #include "base/strings/string_split.h"
@@ -66,7 +65,7 @@ int ParseListing(const std::u16string& text,
     },
   };
 
-  for (size_t i = 0; i < base::size(parsers); i++) {
+  for (size_t i = 0; i < std::ranges::size(parsers); i++) {
     entries->clear();
     if (std::move(parsers[i].callback).Run()) {
       *server_type = parsers[i].server_type;
@@ -95,7 +94,7 @@ int DecodeAndParse(const std::string& text,
                             &converted_text)) {
     const char* const kNewlineSeparators[] = {"\n", "\r\n"};
 
-    for (size_t j = 0; j < base::size(kNewlineSeparators); j++) {
+    for (size_t j = 0; j < std::ranges::size(kNewlineSeparators); j++) {
       int rv = ParseListing(converted_text,
                             base::ASCIIToUTF16(kNewlineSeparators[j]),
                             encoding_name, current_time, entries, server_type);

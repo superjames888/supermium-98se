@@ -140,7 +140,7 @@ bool IsPortAllowedForScheme(int port, std::string_view url_scheme) {
     return true;
 
   // FTP requests are permitted to use port 21.
-  if (base::LowerCaseEqualsASCII(url_scheme, url::kFtpScheme) && port == 21) {
+  if ((base::ToLowerASCII(url_scheme) == url::kFtpScheme) && port == 21) {
     return true;
   }
 

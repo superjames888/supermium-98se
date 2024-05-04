@@ -8,7 +8,6 @@
 #include <memory>
 #include <string>
 
-#include "base/macros.h"
 #include "base/memory/weak_ptr.h"
 #include "net/base/auth.h"
 #include "net/base/ip_endpoint.h"
@@ -43,7 +42,9 @@ class NET_EXPORT_PRIVATE URLRequestFtpJob : public URLRequestJob {
                    FtpAuthCache* ftp_auth_cache);
   ~URLRequestFtpJob() override;
   void Start() override;
-
+  URLRequestFtpJob(const URLRequestFtpJob&) = delete;
+  URLRequestFtpJob& operator=(const URLRequestFtpJob&) =
+      delete;
  protected:
   // Overridden from URLRequestJob:
   bool IsSafeRedirect(const GURL& location) override;
@@ -93,8 +94,6 @@ class NET_EXPORT_PRIVATE URLRequestFtpJob : public URLRequestJob {
   FtpAuthCache* ftp_auth_cache_;
 
   base::WeakPtrFactory<URLRequestFtpJob> weak_factory_{this};
-
-  DISALLOW_COPY_AND_ASSIGN(URLRequestFtpJob);
 };
 
 }  // namespace net

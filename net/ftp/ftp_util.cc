@@ -11,7 +11,6 @@
 #include "base/i18n/case_conversion.h"
 #include "base/i18n/char_iterator.h"
 #include "base/i18n/unicodestring.h"
-#include "base/macros.h"
 #include "base/memory/singleton.h"
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
@@ -211,11 +210,11 @@ class AbbreviatedMonthsMap {
     CHECK_EQ(11, map_[u"nov"]);
     CHECK_EQ(12, map_[u"dec"]);
   }
-
+  AbbreviatedMonthsMap(const AbbreviatedMonthsMap&) = delete;
+  AbbreviatedMonthsMap& operator=(const AbbreviatedMonthsMap&) =
+      delete;
   // Maps lowercase month names to numbers in range 1-12.
   std::map<std::u16string, int> map_;
-
-  DISALLOW_COPY_AND_ASSIGN(AbbreviatedMonthsMap);
 };
 
 }  // namespace

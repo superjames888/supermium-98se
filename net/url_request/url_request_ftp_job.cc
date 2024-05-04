@@ -4,13 +4,12 @@
 
 #include "net/url_request/url_request_ftp_job.h"
 
-#include "base/bind.h"
+#include "base/functional/bind.h"
 #include "base/compiler_specific.h"
 #include "base/location.h"
 #include "base/metrics/histogram_macros.h"
-#include "base/single_thread_task_runner.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/threading/thread_task_runner_handle.h"
+#include "base/task/single_thread_task_runner.h"
 #include "net/base/auth.h"
 #include "net/base/host_port_pair.h"
 #include "net/base/load_flags.h"
@@ -100,10 +99,8 @@ void URLRequestFtpJob::Start() {
   } else {
     DCHECK_EQ(request_->context()->proxy_resolution_service(),
               proxy_resolution_service_);
-    // "Fine" to use an empty NetworkIsolationKey() because FTP is slated for
-    // removal.
     rv = proxy_resolution_service_->ResolveProxy(
-        request_->url(), "GET", NetworkIsolationKey(), &proxy_info_,
+        request_->url(), "GET", NetworkAnonymizationKey(), &proxy_info_,
         base::BindOnce(&URLRequestFtpJob::OnResolveProxyComplete,
                        base::Unretained(this)),
         &proxy_resolve_request_, request_->net_log());
@@ -144,7 +141,7 @@ void URLRequestFtpJob::OnResolveProxyComplete(int result) {
   }
 
   // Remove unsupported proxies from the list.
-  proxy_info_.RemoveProxiesWithoutScheme(ProxyServer::SCHEME_DIRECT);
+  proxy_info_.RemoveProxiesWithoutScheme(ProxyServer::SCHEME_QUIC);
 
   if (proxy_info_.is_direct()) {
     StartFtpTransaction();
@@ -203,7 +200,7 @@ void URLRequestFtpJob::OnStartCompleted(int result) {
 }
 
 void URLRequestFtpJob::OnStartCompletedAsync(int result) {
-  base::ThreadTaskRunnerHandle::Get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
       FROM_HERE, base::BindOnce(&URLRequestFtpJob::OnStartCompleted,
                                 weak_factory_.GetWeakPtr(), result));
 }
@@ -240,7 +237,7 @@ std::unique_ptr<AuthChallengeInfo> URLRequestFtpJob::GetAuthChallengeInfo() {
   std::unique_ptr<AuthChallengeInfo> result =
       std::make_unique<AuthChallengeInfo>();
   result->is_proxy = false;
-  result->challenger = url::Origin::Create(request_->url());
+  result->challenger = url::SchemeHostPort(request_->url());
   // scheme, realm, path, and challenge are kept empty.
   DCHECK(result->scheme.empty());
   DCHECK(result->realm.empty());
@@ -256,7 +253,7 @@ void URLRequestFtpJob::SetAuth(const AuthCredentials& credentials) {
   auth_data_->state = AUTH_STATE_HAVE_AUTH;
   auth_data_->credentials = credentials;
 
-  ftp_auth_cache_->Add(request_->url().GetOrigin(), auth_data_->credentials);
+  ftp_auth_cache_->Add(request_->url().DeprecatedGetOriginAsURL(), auth_data_->credentials);
 
   RestartTransactionWithAuth();
 }
@@ -289,7 +286,7 @@ int URLRequestFtpJob::ReadRawData(IOBuffer* buf, int buf_size) {
 }
 
 void URLRequestFtpJob::HandleAuthNeededResponse() {
-  GURL origin = request_->url().GetOrigin();
+  GURL origin = request_->url().DeprecatedGetOriginAsURL();
 
   if (auth_data_.get()) {
     if (auth_data_->state == AUTH_STATE_CANCELED) {

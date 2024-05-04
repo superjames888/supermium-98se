@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "base/compiler_specific.h"
-#include "base/macros.h"
 #include "net/base/net_export.h"
 #include "net/url_request/url_request_job_factory.h"
 
@@ -24,6 +23,9 @@ class NET_EXPORT FtpProtocolHandler :
     public URLRequestJobFactory::ProtocolHandler {
  public:
   ~FtpProtocolHandler() override;
+  FtpProtocolHandler(const FtpProtocolHandler&) = delete;
+  FtpProtocolHandler& operator=(const FtpProtocolHandler&) =
+      delete;
 
   // Creates an FtpProtocolHandler using the specified HostResolver and
   // FtpAuthCache. |auth_cache| cannot be null.
@@ -47,8 +49,6 @@ class NET_EXPORT FtpProtocolHandler :
 
   std::unique_ptr<FtpTransactionFactory> ftp_transaction_factory_;
   FtpAuthCache* ftp_auth_cache_;
-
-  DISALLOW_COPY_AND_ASSIGN(FtpProtocolHandler);
 };
 
 }  // namespace net

@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "base/containers/queue.h"
-#include "base/macros.h"
 #include "net/base/net_export.h"
 #include "net/log/net_log_with_source.h"
 
@@ -30,7 +29,9 @@ class NET_EXPORT_PRIVATE FtpCtrlResponseBuffer {
  public:
   FtpCtrlResponseBuffer(const NetLogWithSource& net_log);
   ~FtpCtrlResponseBuffer();
-
+  FtpCtrlResponseBuffer(const FtpCtrlResponseBuffer&) = delete;
+  FtpCtrlResponseBuffer& operator=(const FtpCtrlResponseBuffer&) =
+      delete;
   // Called when data is received from the control socket. Returns error code.
   int ConsumeData(const char* data, int data_length);
 
@@ -93,8 +94,6 @@ class NET_EXPORT_PRIVATE FtpCtrlResponseBuffer {
   base::queue<FtpCtrlResponse> responses_;
 
   NetLogWithSource net_log_;
-
-  DISALLOW_COPY_AND_ASSIGN(FtpCtrlResponseBuffer);
 };
 
 }  // namespace net

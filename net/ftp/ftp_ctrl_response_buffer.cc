@@ -83,15 +83,15 @@ int FtpCtrlResponseBuffer::ConsumeData(const char* data, int data_length) {
 
 namespace {
 
-base::Value NetLogFtpCtrlResponseParams(const FtpCtrlResponse* response) {
-  base::ListValue lines;
+base::Value::Dict NetLogFtpCtrlResponseParams(const FtpCtrlResponse* response) {
+  base::Value::List lines;
   for (const auto& line : response->lines)
     lines.Append(NetLogStringValue(line));
 
-  base::DictionaryValue dict;
-  dict.SetInteger("status_code", response->status_code);
-  dict.SetKey("lines", std::move(lines));
-  return std::move(dict);
+  base::Value::Dict dict;
+  dict.Set("status_code", response->status_code);
+  dict.Set("lines", std::move(lines));
+  return dict;
 }
 
 }  // namespace

@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "base/compiler_specific.h"
-#include "base/macros.h"
 #include "net/base/net_export.h"
 #include "net/ftp/ftp_transaction_factory.h"
 
@@ -21,6 +20,9 @@ class NET_EXPORT FtpNetworkLayer : public FtpTransactionFactory {
  public:
   explicit FtpNetworkLayer(HostResolver* host_resolver);
   ~FtpNetworkLayer() override;
+  FtpNetworkLayer(const FtpNetworkLayer&) = delete;
+  FtpNetworkLayer& operator=(const FtpNetworkLayer&) =
+      delete;
 
   // FtpTransactionFactory methods:
   std::unique_ptr<FtpTransaction> CreateTransaction() override;
@@ -29,7 +31,6 @@ class NET_EXPORT FtpNetworkLayer : public FtpTransactionFactory {
  private:
   std::unique_ptr<FtpNetworkSession> session_;
   bool suspended_;
-  DISALLOW_COPY_AND_ASSIGN(FtpNetworkLayer);
 };
 
 }  // namespace net

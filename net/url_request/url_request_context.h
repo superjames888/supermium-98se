@@ -302,7 +302,6 @@ class NET_EXPORT URLRequestContext final {
       std::unique_ptr<NetworkErrorLoggingService>
           network_error_logging_service);
 #endif  // BUILDFLAG(ENABLE_REPORTING)
-<<<<<<< HEAD
   void set_enable_brotli(bool enable_brotli) { enable_brotli_ = enable_brotli; }
   void set_enable_zstd(bool enable_zstd) { enable_zstd_ = enable_zstd; }
   void set_check_cleartext_permitted(bool check_cleartext_permitted) {
@@ -365,11 +364,10 @@ class NET_EXPORT URLRequestContext final {
   raw_ptr<NetworkQualityEstimator> network_quality_estimator_ = nullptr;
 
   std::unique_ptr<TransportSecurityPersister> transport_security_persister_;
-=======
+
 #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
   FtpAuthCache* ftp_auth_cache_;
 #endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
->>>>>>> parent of f3f69ef49f864 (Remove FTP code from net/url_request/.)
 
   std::unique_ptr<std::set<const URLRequest*>> url_requests_;
 
