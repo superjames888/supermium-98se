@@ -350,6 +350,8 @@ class CORE_EXPORT DocumentLoader : public GarbageCollected<DocumentLoader>,
     return devtools_navigation_token_;
   }
 
+  bool IsListingFtpDirectory() const { return listing_ftp_directory_; }
+
   UseCounterImpl& GetUseCounter() { return use_counter_; }
 
   PrefetchedSignedExchangeManager* GetPrefetchedSignedExchangeManager() const;
