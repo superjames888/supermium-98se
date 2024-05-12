@@ -295,9 +295,9 @@ vars = {
   'chrome_git': 'https://chrome-internal.googlesource.com',
   'chromium_git': 'https://chromium.googlesource.com',
   'dawn_git': 'https://dawn.googlesource.com',
-  'pdfium_git': 'https://pdfium.googlesource.com',
+  'pdfium_git': 'https://github.com/Alex313031/pdfium-supermium',
   'quiche_git': 'https://quiche.googlesource.com',
-  'skia_git': 'https://skia.googlesource.com',
+  'skia_git': 'https://github.com/Alex313031/skia-supermium',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
   'betocore_git': 'https://beto-core.googlesource.com',
@@ -308,7 +308,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '8464f41cf051974e499be9caeab3243506e025c2',
+  'skia_revision': '6e6bdc3bd65cc4da27ef54b857e6352049031ce5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -324,7 +324,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '4c4f9ab25dab142d7888f3258ab54df24b97b44f',
+  'pdfium_revision': 'efb5503f8a6923f12a4d771edf9183300be0c1e1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -526,6 +526,7 @@ allowed_hosts = [
   'chromium.googlesource.com',
   'dawn.googlesource.com',
   'pdfium.googlesource.com',
+  'github.com',
   'quiche.googlesource.com',
   'skia.googlesource.com',
   'swiftshader.googlesource.com',
@@ -1658,7 +1659,7 @@ deps = {
   },
 
   'src/third_party/pdfium':
-    Var('pdfium_git') + '/pdfium.git' + '@' +  Var('pdfium_revision'),
+    Var('pdfium_git') + '@' +  Var('pdfium_revision'),
 
   'src/third_party/perfetto':
     Var('android_git') + '/platform/external/perfetto.git' + '@' + '1e15d01da5d619ca617dcdd870efe3c35046a89c',
@@ -1742,7 +1743,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/ruy.git' + '@' + 'cd7b92695b5d3f0c9ff65b865c2a1e19b99d766d',
 
   'src/third_party/skia':
-    Var('skia_git') + '/skia.git' + '@' +  Var('skia_revision'),
+    Var('skia_git') + '@' +  Var('skia_revision'),
 
   'src/third_party/smhasher/src':
     Var('chromium_git') + '/external/smhasher.git' + '@' + 'e87738e57558e0ec472b2fc3a643b838e5b6e88f',
@@ -1851,7 +1852,7 @@ deps = {
   # Wuffs' canonical repository is at github.com/google/wuffs, but we use
   # Skia's mirror of Wuffs, the same as in upstream Skia's DEPS file.
   'src/third_party/wuffs/src':
-    Var('skia_git') + '/external/github.com/google/wuffs-mirror-release-c.git' + '@' +  Var('wuffs_revision'),
+    'https://skia.googlesource.com' + '/external/github.com/google/wuffs-mirror-release-c.git' + '@' +  Var('wuffs_revision'),
 
   'src/third_party/weston/src': {
       'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/weston.git' + '@' + 'ccf29cb237c3ed09c5f370f35239c93d07abfdd7',
