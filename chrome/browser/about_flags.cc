@@ -11426,6 +11426,10 @@ const FeatureEntry kFeatureEntries[] = {
      "Disable Blockage Of Unnecessarily Bloated Web Elements",
      "Disable blockage of unnecessarily bloated web elements, including large images that can force the browser to allocate hundreds of megabytes of memory.",
      kOsWin, SINGLE_VALUE_TYPE("disable-webbloat-mitigation")},
+    {"old-tab-strip-bounds",
+     "Enable Old Tab Strip Bounds",
+     "Enable the old tab strip bounds, specifically on the left (or right in an RTL configuration).",
+     kOsDesktop, SINGLE_VALUE_TYPE("old-tab-strip-bounds")},
 	// TODO: move all Supermium-specific flags to new source file.
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum

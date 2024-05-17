@@ -135,7 +135,7 @@ bool BrowserFrameViewWin::CaptionButtonsOnLeadingEdge() const {
 gfx::Rect BrowserFrameViewWin::GetBoundsForTabStripRegion(
     const gfx::Size& tabstrip_minimum_size) const {
   int x = CaptionButtonsOnLeadingEdge() ? CaptionButtonsRegionWidth() : 0;
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("old-tab-strip-bounds"))
 	  x = 8;
   int end_x = width();
   if (!CaptionButtonsOnLeadingEdge()) {
