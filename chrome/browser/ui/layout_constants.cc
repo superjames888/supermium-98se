@@ -36,6 +36,8 @@ int GetLayoutConstant(LayoutConstant constant) {
              bookmark_bar_attached_vertical_margin;
     }
     case BOOKMARK_BAR_BUTTON_HEIGHT:
+	  if (compact_ui)
+		  return touch_ui ? 29 : 21;
       return touch_ui ? 36 : 28;
     case BOOKMARK_BAR_BUTTON_PADDING:
       return GetLayoutConstant(TOOLBAR_ELEMENT_PADDING);
@@ -142,6 +144,8 @@ int GetLayoutConstant(LayoutConstant constant) {
         return touch_ui ? 48 : 28;
       }
     case TOOLBAR_DIVIDER_CORNER_RADIUS:
+	  if(compact_ui)
+		  return 0;
       return 1;
     case TOOLBAR_DIVIDER_HEIGHT:
       return touch_ui ? 20 : 16;
@@ -150,6 +154,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case TOOLBAR_DIVIDER_WIDTH:
       return 2;
     case TOOLBAR_ELEMENT_PADDING:
+	  if (compact_ui)
+		  return 0;
       return touch_ui ? 0 : 4;
     case TOOLBAR_ICON_DEFAULT_MARGIN:
       if (features::IsChromeRefresh2023()) {
@@ -168,6 +174,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case DOWNLOAD_ICON_SIZE:
       return features::IsChromeRefresh2023() ? 20 : 16;
     case TOOLBAR_CORNER_RADIUS:
+	  if(compact_ui)
+		  return 0;
       return 8;
     default:
       break;

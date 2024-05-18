@@ -224,6 +224,8 @@ int LayoutProvider::GetCornerRadiusMetric(ShapeContextTokens id,
         return GetCornerRadiusMetric(Emphasis::kMedium, size);
       case ShapeContextTokens::kMenuRadius:
       case ShapeContextTokens::kMenuAuxRadius:
+	    if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+			return 0;
         return kMenuCornerRadius;
       case ShapeContextTokens::kMenuTouchRadius:
         return kMenuCornerRadius;
