@@ -48,10 +48,7 @@ bool ShouldCustomDrawSystemTitlebar() {
 
 bool ShouldBrowserCustomDrawTitlebar(BrowserView* browser_view) {
 
-  return ShouldCustomDrawSystemTitlebar() ||
-         (!browser_view->browser()->is_type_normal() &&
-          !browser_view->browser()->is_type_popup() &&
-          !browser_view->browser()->is_type_devtools());
+  return ShouldCustomDrawSystemTitlebar();
 }
 
 
