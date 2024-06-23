@@ -6,7 +6,7 @@ import './commerce/shopping_list.js';
 
 import type {BrowserProxy as ShoppingServiceApiProxy} from '//resources/cr_components/commerce/browser_proxy.js';
 import {BrowserProxyImpl as ShoppingServiceApiProxyImpl} from '//resources/cr_components/commerce/browser_proxy.js';
-import {BookmarkProductInfo} from '//bookmarks-side-panel.top-chrome/shared/shopping_list.mojom-webui.js';
+import {BookmarkProductInfo} from '//resources/cr_components/commerce/shopping_service.mojom-webui.js';
 import {getInstance as getAnnouncerInstance} from 'chrome://resources/cr_elements/cr_a11y_announcer/cr_a11y_announcer.js';
 import {FocusOutlineManager} from 'chrome://resources/js/focus_outline_manager.js';
 import {loadTimeData} from 'chrome://resources/js/load_time_data.js';
