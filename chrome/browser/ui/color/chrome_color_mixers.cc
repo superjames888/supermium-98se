@@ -67,13 +67,11 @@ void AddChromeColorMixers(ui::ColorProvider* provider,
   AddProductSpecificationsColorMixer(provider, key);
   AddTabStripColorMixer(provider, key);
 
-  if (features::IsChromeRefresh2023()) {
-    AddMaterialChromeColorMixer(provider, key);
-    AddMaterialNewTabPageColorMixer(provider, key);
-    AddMaterialOmniboxColorMixer(provider, key);
-    AddMaterialSidePanelColorMixer(provider, key);
-    AddMaterialTabStripColorMixer(provider, key);
-  }
+  AddMaterialChromeColorMixer(provider, key);
+  AddMaterialNewTabPageColorMixer(provider, key);
+  AddMaterialOmniboxColorMixer(provider, key);
+  AddMaterialSidePanelColorMixer(provider, key);
+  AddMaterialTabStripColorMixer(provider, key);
 
   // Must be the last one in order to override other mixer colors.
   AddNativeChromeColorMixer(provider, key);
