@@ -104,7 +104,10 @@ void AddUserDefinedMixer(ui::ColorProvider* provider, const ui::ColorProviderKey
 
         if (equalPos != std::string::npos) {
             DataItem dataItem;
-            dataItem.datakey = std::stoi(dataItemStr.substr(0, equalPos));
+			std::string strkey = dataItemStr.substr(0, equalPos);
+			if(!std::all_of(strkey.begin(), strkey.end(), [](char c) {return c >= '0' && c <= '9';}))
+			    break;
+            dataItem.datakey = std::stoi(strkey);
             std::string valuesStr = dataItemStr.substr(equalPos + 1);
 
             // Parse the values
