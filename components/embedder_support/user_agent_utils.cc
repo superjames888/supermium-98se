@@ -62,7 +62,7 @@ constexpr wchar_t kUniversalApiContractName[] =
 // to rely on querying the IsApiContractPresentByMajor function used by
 // user_agent_utils_unittest.cc.
 const int kHighestKnownUniversalApiContractVersion = 15;
-
+/*
 int GetPreRS5UniversalApiContractVersion() {
   // This calls Kernel32Version() to get the real non-spoofable version (as
   // opposed to base::win::GetVersion() which as of writing this seems to return
@@ -122,7 +122,7 @@ int GetLegacyWindowsVersion() {
 	}	
 	return 0;
 }
-
+*/
 // Returns the UniversalApiContract version number, which is available for
 // Windows versions greater than RS5. Otherwise, returns a version value
 // representing the Windows version (non-zero major version for early Windows 10,
@@ -139,8 +139,7 @@ const std::string& GetUniversalApiContractVersion() {
         int minor_version = 0;
         if (base::win::OSInfo::Kernel32Version() <=
             base::win::Version::WIN10_RS4) {
-          major_version = GetPreRS5UniversalApiContractVersion();
-		  minor_version = GetLegacyWindowsVersion();
+          major_version = kHighestKnownUniversalApiContractVersion;
         } else {
           base::win::RegKey version_key(
               HKEY_LOCAL_MACHINE, kWindowsRuntimeWellKnownContractsRegKeyName,
@@ -222,6 +221,8 @@ const blink::UserAgentBrandList GetUserAgentBrandList(
   std::optional<std::string> brand;
 #if !BUILDFLAG(CHROMIUM_BRANDING)
   brand = version_info::GetProductName();
+#else
+  brand = std::string("Google Chrome");
 #endif
   std::optional<std::string> maybe_brand_override =
       base::GetFieldTrialParamValueByFeature(features::kGreaseUACH,
