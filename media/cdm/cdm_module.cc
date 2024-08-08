@@ -172,7 +172,9 @@ bool CdmModule::Initialize(const base::FilePath& cdm_path) {
 	  
 	  base::File cdm_file = base::File(cdm_path, 0);
 	  
-	  cdm_host_files.push_back(cdm::HostFile(cdm_path.value().c_str(), cdm_file.GetPlatformFile(), nullptr));
+	  base::File cdm_file_sig = base::File(cdm_path.AddExtension(FILE_PATH_LITERAL(".sig")), 0);
+	  
+	  cdm_host_files.push_back(cdm::HostFile(cdm_path.value().c_str(), cdm_file.GetPlatformFile(), cdm_file_sig.GetPlatformFile()));
 
       // std::vector::data() is not guaranteed to be nullptr when empty().
       const cdm::HostFile* cdm_host_files_ptr =

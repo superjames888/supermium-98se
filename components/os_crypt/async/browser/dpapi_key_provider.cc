@@ -37,7 +37,7 @@ constexpr uint8_t kDPAPIKeyPrefix[] = {'D', 'P', 'A', 'P', 'I'};
 std::optional<std::vector<uint8_t>> DecryptKeyWithDPAPI(
     base::span<const uint8_t> ciphertext) {
 		
-   if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-encryption")) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-encryption")) {
         return std::vector<uint8_t>(ciphertext.data(),
                               ciphertext.data() + ciphertext.size());
   }

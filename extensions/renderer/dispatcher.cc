@@ -571,10 +571,10 @@ void Dispatcher::WillEvaluateServiceWorkerOnWorkerThread(
     // should be rare, since this is running right after the context is
     // created).
     // https://crbug.com/1260773.
-    if (!result->IsFunction()) {
-      DUMP_WILL_BE_NOTREACHED_NORETURN();
-      return;
-    }
+   // if (!result->IsFunction()) {
+     // DUMP_WILL_BE_NOTREACHED_NORETURN();
+   //   return;
+  //  }
     main_function = result.As<v8::Function>();
   }
 
