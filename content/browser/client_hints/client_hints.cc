@@ -13,18 +13,15 @@
 #include "base/containers/contains.h"
 #include "base/dcheck_is_on.h"
 #include "base/feature_list.h"
-#include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/metrics/field_trial_params.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/numerics/safe_conversions.h"
-#include "base/path_service.h"
 #include "base/rand_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
-#include "chrome/common/chrome_paths.h"
 #include "content/browser/devtools/devtools_instrumentation.h"
 #include "content/browser/preloading/prerender/prerender_host.h"
 #include "content/browser/renderer_host/frame_tree.h"
@@ -692,75 +689,6 @@ enum class ClientUaHeaderCallType {
   kAfterCreated,
 };
 
-std::vector<std::string> split(const std::string& str, const std::string& delimiter) {
-    std::vector<std::string> tokens;
-    size_t start = 0;
-    size_t end = str.find(delimiter);
-
-    while (end != std::string::npos) {
-        tokens.push_back(str.substr(start, end - start));
-        start = end + delimiter.length();
-        end = str.find(delimiter, start);
-    }
-
-    tokens.push_back(str.substr(start, end - start)); // add the last token
-    return tokens;
-}
-
-void ClearUACHValues(){
-    base::CommandLine::ForCurrentProcess()->RemoveSwitch("uach-custom-name");
-}
-
-void SetUACHValues(std::vector<std::string>& fields){
-    base::CommandLine::ForCurrentProcess()->AppendSwitchASCII("uach-custom-name", fields[2].c_str());
-}
-
-// Function to parse the file
-void parseFile(const std::optional<GURL>& url) {
-    int64_t file_size = 0;
-	bool success = false;
-    base::FilePath userdir;
-	LOG(0) << url->HostNoBrackets();
-    if(!base::PathService::Get(chrome::DIR_USER_DATA, &userdir)) {
-		ClearUACHValues();
-        return; // Things are seriously wrong if the user data directory cannot be located.
-	}
-    const base::FilePath userpath = userdir.Append(FILE_PATH_LITERAL("uao"));
-    base::GetFileSize(userpath, &file_size);
-    if(!file_size) {
-		ClearUACHValues();
-        return;
-	}
-    std::vector<char> buf(file_size);
-    base::ReadFile(userpath, reinterpret_cast<char*>(buf.data()), file_size);
-    std::string bufstr = std::string(reinterpret_cast<char*>(buf.data()));
-
-	std::vector<std::string> lines = split(bufstr, "\n");
-    for (size_t i = 0; i < lines.size(); i++) {
-        std::vector<std::string> fields = split(lines[i], ";;;");
-        if (fields.size() == 3) {
-            if(fields[0] == "Default") {
-				SetUACHValues(fields);
-				success = true;
-			}
-			if(fields[0] == url->HostNoBrackets()) {
-				success = true;
-				SetUACHValues(fields);
-				return;
-			}
-        } else {
-			ClearUACHValues();
-            LOG(0) << "UAO file invalid; all 3 fields are not present";
-			return;
-        }
-    }
-
-	if(success)
-		return;
-	else
-		ClearUACHValues();
-}
-
 // Implementation of UpdateNavigationRequestClientUaHeaders().
 void UpdateNavigationRequestClientUaHeadersImpl(
     ClientHintsControllerDelegate* delegate,
@@ -791,7 +719,6 @@ void UpdateNavigationRequestClientUaHeadersImpl(
     // value, disable them. This overwrites previous decision from UI.
     disable_due_to_custom_ua = !ua_metadata.has_value();
   }
-  parseFile(request_url);
 
   if (!disable_due_to_custom_ua) {
     if (!ua_metadata.has_value())
