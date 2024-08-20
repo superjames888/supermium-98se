@@ -4711,6 +4711,11 @@
     "expiry_milestone": -1
   },
   {
+    "name": "force-xp-theme",
+    "owners": [ "win32", "supermium" ],
+    "expiry_milestone": -1
+  },
+  {
     "name": "forced-colors",
     "owners": [ "almaher@microsoft.com" ],
     "expiry_milestone": 127
@@ -5071,11 +5076,6 @@
     "name": "info-card-acknowledgement-tracking",
     "owners": [ "//chrome/android/feed/OWNERS", "jianli@chromium.org" ],
     "expiry_milestone": 130
-  },
-  {
-    "name": "insecure-download-warnings",
-    "owners": [ "jdeblasio@chromium.org", "trusty-transport@chromium.org" ],
-    "expiry_milestone": 120
   },
   {
     "name": "install-isolated-web-app-from-url",

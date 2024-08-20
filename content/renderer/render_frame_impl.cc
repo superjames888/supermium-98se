@@ -1252,6 +1252,8 @@ WindowOpenDisposition NavigationPolicyToDisposition(
     case blink::kWebNavigationPolicyNewWindow:
       return WindowOpenDisposition::NEW_WINDOW;
     case blink::kWebNavigationPolicyNewPopup:
+	  if (base::CommandLine::ForCurrentProcess()->HasSwitch("popups-to-tabs"))
+         return WindowOpenDisposition::NEW_FOREGROUND_TAB;
       return WindowOpenDisposition::NEW_POPUP;
     case blink::kWebNavigationPolicyPictureInPicture:
       return WindowOpenDisposition::NEW_PICTURE_IN_PICTURE;
@@ -2277,11 +2279,11 @@ void RenderFrameImpl::Delete(mojom::FrameDeleteIntention intent) {
       // main frame when a commit (and ownership transfer) is imminent.
       // TODO(dcheng): This is the case of https://crbug.com/838348.
       DCHECK(is_main_frame_);
-#if !BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_WIN)
       // This check is not enabled on Android, since it seems like it's much
       // easier to trigger data races there.
       CHECK(!in_frame_tree_);
-#endif  // !BUILDFLAG(IS_ANDROID)
+#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_WIN)
       break;
   }
 
@@ -2476,6 +2478,10 @@ RenderFrameImpl::GetRemoteAssociatedInterfaces() {
             GetTaskRunner(blink::TaskType::kInternalNavigationAssociated));
   }
   return remote_associated_interfaces_.get();
+}
+
+bool RenderFrameImpl::IsFTPDirectoryListing() {
+  return frame_->GetDocumentLoader()->IsListingFtpDirectory();
 }
 
 void RenderFrameImpl::SetSelectedText(const std::u16string& selection_text,

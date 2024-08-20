@@ -83,6 +83,8 @@ extern uint32_t GetDataPipeDefaultAllocationSize(
 COMPONENT_EXPORT(NETWORK_CPP)
 extern size_t GetNetAdapterMaxBufSize();
 
+COMPONENT_EXPORT(NETWORK_CPP) BASE_DECLARE_FEATURE(kFtpProtocol);
+
 COMPONENT_EXPORT(NETWORK_CPP)
 extern size_t GetLoaderChunkSize();
 

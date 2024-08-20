@@ -22,6 +22,7 @@
 #include "base/barrier_closure.h"
 #include "base/base64.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/containers/contains.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -809,7 +810,7 @@ void WebTestControlHost::OverrideWebkitPrefs(
     ApplyWebTestDefaultPreferences(prefs);
   }
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kForceDarkMode)) {
+          switches::kForceDarkMode) || base::FeatureList::IsEnabled(base::features::kForceDarkModeFlag)) {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kDark;
   } else {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kLight;

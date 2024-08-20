@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/layout_constants.h"
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/notreached.h"
 #include "build/build_config.h"
@@ -18,6 +19,7 @@
 #endif
 
 int GetLayoutConstant(LayoutConstant constant) {
+  const bool compact_ui = base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui");
   const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
   switch (constant) {
     case APP_MENU_PROFILE_ROW_AVATAR_ICON_SIZE:
@@ -33,6 +35,8 @@ int GetLayoutConstant(LayoutConstant constant) {
              bookmark_bar_attached_vertical_margin;
     }
     case BOOKMARK_BAR_BUTTON_HEIGHT:
+	  if (compact_ui)
+		  return touch_ui ? 29 : 21;
       return touch_ui ? 36 : 28;
     case BOOKMARK_BAR_BUTTON_PADDING:
       return GetLayoutConstant(TOOLBAR_ELEMENT_PADDING);
@@ -45,10 +49,14 @@ int GetLayoutConstant(LayoutConstant constant) {
       // stretching the container view.
       return 16;
     case LOCATION_BAR_BUBBLE_FONT_VERTICAL_PADDING:
+     if(compact_ui)
+    	 return 0;
       return 2;
     case LOCATION_BAR_BUBBLE_ANCHOR_VERTICAL_INSET:
       return 1;
     case LOCATION_BAR_CHILD_INTERIOR_PADDING:
+     if(compact_ui)
+    	 return 0;
       return 3;
     case LOCATION_BAR_CHILD_CORNER_RADIUS:
       return 12;
@@ -57,6 +65,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case LOCATION_BAR_CHIP_PADDING:
       return 4;
     case LOCATION_BAR_ELEMENT_PADDING:
+     if(compact_ui)
+    	 return 0;
       return touch_ui ? 3 : 2;
     case LOCATION_BAR_PAGE_INFO_ICON_VERTICAL_PADDING:
       return touch_ui ? 3 : 5;
@@ -70,6 +80,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case LOCATION_BAR_TRAILING_DECORATION_EDGE_PADDING:
       return touch_ui ? 3 : 12;
     case LOCATION_BAR_HEIGHT:
+      if(compact_ui)
+          return 28;
       return touch_ui ? 36 : 34;
     case LOCATION_BAR_ICON_SIZE:
       return touch_ui ? 20 : 16;
@@ -86,6 +98,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case TAB_CLOSE_BUTTON_SIZE:
       return touch_ui ? 24 : 16;
     case TAB_HEIGHT: {
+	  if(compact_ui)
+		  return 24;
       bool use_touch_padding = touch_ui && !features::IsChromeRefresh2023();
 #if BUILDFLAG(IS_CHROMEOS)
       use_touch_padding &= !chromeos::features::IsRoundedWindowsEnabled();
@@ -123,6 +137,8 @@ int GetLayoutConstant(LayoutConstant constant) {
         return touch_ui ? 48 : 28;
       }
     case TOOLBAR_DIVIDER_CORNER_RADIUS:
+	  if(compact_ui)
+		  return 0;
       return 1;
     case TOOLBAR_DIVIDER_HEIGHT:
       return touch_ui ? 20 : 16;
@@ -131,6 +147,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case TOOLBAR_DIVIDER_WIDTH:
       return 2;
     case TOOLBAR_ELEMENT_PADDING:
+	  if (compact_ui)
+		  return 0;
       return touch_ui ? 0 : 4;
     case TOOLBAR_ICON_DEFAULT_MARGIN:
       if (features::IsChromeRefresh2023()) {
@@ -149,6 +167,8 @@ int GetLayoutConstant(LayoutConstant constant) {
     case DOWNLOAD_ICON_SIZE:
       return features::IsChromeRefresh2023() ? 20 : 16;
     case TOOLBAR_CORNER_RADIUS:
+	  if(compact_ui)
+		  return 0;
       return 8;
     default:
       break;

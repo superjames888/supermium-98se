@@ -20,6 +20,7 @@
 #include "chrome/grit/generated_resources.h"
 #include "components/dom_distiller/core/url_constants.h"
 #include "components/omnibox/browser/omnibox_edit_model.h"
+#include "components/omnibox/browser/vector_icons.h"
 #include "components/security_state/core/security_state.h"
 #include "components/strings/grit/components_strings.h"
 #include "content/public/browser/web_contents.h"
@@ -301,8 +302,15 @@ void LocationIconView::UpdateIcon() {
   }
 #endif
 
-  if (!icon.IsEmpty())
-    SetImageModel(icon);
+  if (!icon.IsEmpty()) {
+	  if (icon.IsVectorIcon() && icon.GetVectorIcon().vector_icon()->name != omnibox::kProductChromeRefreshIcon.name &&
+       icon.GetVectorIcon().vector_icon()->name != omnibox::kProductIcon.name)
+	    SetImageModel(icon);
+	   else if (!icon.IsVectorIcon())	   
+		SetImageModel(icon);
+	  else
+		SetImageModel(ui::ImageModel());
+  }
 }
 
 void LocationIconView::UpdateBackground() {

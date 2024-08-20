@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string_view>
 
+#include "base/command_line.h"
 #include "base/metrics/field_trial_params.h"
 #include "base/strings/string_util.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
@@ -25,6 +26,8 @@ const int kExtraBufferTimerDelayMillis = 50;
 }  // namespace
 
 std::optional<std::string> GetGoogleHostnamePrefix(const GURL& url) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return std::optional<std::string>();
   const size_t registry_length =
       net::registry_controlled_domains::GetRegistryLength(
           url,
@@ -60,6 +63,8 @@ std::optional<std::string> GetGoogleHostnamePrefix(const GURL& url) {
 }
 
 bool IsGoogleHostname(const GURL& url) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   return GetGoogleHostnamePrefix(url).has_value();
 }
 

@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/frame/tab_strip_region_view.h"
 
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
@@ -71,6 +72,8 @@ class FrameGrabHandle : public views::View {
     // Reserve some space for the frame to be grabbed by, even if the tabstrip
     // is full.
     // TODO(tbergquist): Define this relative to the NTB insets again.
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("remove-grab-handle")) 
+		return gfx::Size(0, 0);
     return gfx::Size(42, 0);
   }
 };
@@ -104,7 +107,8 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
 
   // Add and configure the TabSearchContainer.
   std::unique_ptr<TabSearchContainer> tab_search_container;
-  if (browser && browser->is_type_normal()) {
+  if (browser && browser->is_type_normal() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
     tab_search_container = std::make_unique<TabSearchContainer>(
         tab_strip_->controller(), browser->tab_strip_model(),
         render_tab_search_before_tab_strip_, this);

@@ -189,6 +189,9 @@ void CollectHardwareOverlayInfo(OverlayInfo* overlay_info) {
 bool CollectDriverInfoD3D(GPUInfo* gpu_info) {
   TRACE_EVENT0("gpu", "CollectDriverInfoD3D");
 
+  if (!::GetProcAddress(::GetModuleHandleW(L"dxgi.dll"), "CreateDXGIFactory1"))
+    return false;
+
   Microsoft::WRL::ComPtr<IDXGIFactory1> dxgi_factory;
   HRESULT hr = ::CreateDXGIFactory1(IID_PPV_ARGS(&dxgi_factory));
   if (FAILED(hr))

@@ -782,6 +782,10 @@ const char kRelauncherProcessDMGDevice[] = "dmg-device";
 const char kMakeChromeDefault[] = "make-chrome-default";
 #endif  // BUILDFLAG(IS_MAC)
 
+const char kDisableDownloadUpload[] = "disable-download-upload";
+
+const char kUngoogledSupermium[] = "ungoogled-supermium";
+
 #if BUILDFLAG(IS_WIN)
 // Force-enables the profile shortcut manager. This is needed for tests since
 // they use a custom-user-data-dir which disables this.

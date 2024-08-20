@@ -752,6 +752,9 @@ BASE_DECLARE_FEATURE(kThirdPartyModulesBlocking);
 #endif
 
 COMPONENT_EXPORT(CHROME_FEATURES)
+BASE_DECLARE_FEATURE(kInsecureDownloadWarnings);
+
+COMPONENT_EXPORT(CHROME_FEATURES)
 BASE_DECLARE_FEATURE(kTreatUnsafeDownloadsAsActive);
 
 // TrustSafetySentimentSurvey

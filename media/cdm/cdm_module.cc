@@ -160,6 +160,28 @@ bool CdmModule::Initialize(const base::FilePath& cdm_path) {
   LoadLibraryA("dxva2.dll");
 #endif  // BUILDFLAG(IS_WIN)
 
+  static const char kInitVerificationFuncName[] = "VerifyCdmHost_0";
+
+  init_verification_func_ =
+      reinterpret_cast<InitVerificationFunc>(
+	  library_.GetFunctionPointer(kInitVerificationFuncName));
+													
+  if (init_verification_func_) {
+	  
+	  std::vector<cdm::HostFile> cdm_host_files;
+	  
+	  base::File cdm_file = base::File(cdm_path, 0);
+	  
+	  base::File cdm_file_sig = base::File(cdm_path.AddExtension(FILE_PATH_LITERAL(".sig")), 0);
+	  
+	  cdm_host_files.push_back(cdm::HostFile(cdm_path.value().c_str(), cdm_file.GetPlatformFile(), cdm_file_sig.GetPlatformFile()));
+
+      // std::vector::data() is not guaranteed to be nullptr when empty().
+      const cdm::HostFile* cdm_host_files_ptr =
+      cdm_host_files.empty() ? nullptr : cdm_host_files.data();	  
+	  init_verification_func_(cdm_host_files_ptr, cdm_host_files.size());
+  }
+
 #if BUILDFLAG(ENABLE_CDM_HOST_VERIFICATION)
   if (base::FeatureList::IsEnabled(media::kCdmHostVerification))
     InitCdmHostVerification(library_.get(), cdm_path_, cdm_host_file_paths);

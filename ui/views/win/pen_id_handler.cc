@@ -35,7 +35,9 @@ class PenIdStatics {
     if (skip_initialization_) {
       return;
     }
+
     SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+	
     base::win::AssertComInitialized();
     base::win::RoGetActivationFactory(
         base::win::HStringReference(

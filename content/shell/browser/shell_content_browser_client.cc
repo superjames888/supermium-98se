@@ -17,6 +17,7 @@
 #include "base/command_line.h"
 #include "base/containers/flat_set.h"
 #include "base/feature_list.h"
+#include "base/features.h"
 #include "base/files/file.h"
 #include "base/files/file_util.h"
 #include "base/functional/callback_helpers.h"
@@ -63,7 +64,6 @@
 #include "content/public/browser/web_contents_view_delegate.h"
 #include "content/public/common/content_features.h"
 #include "content/public/common/content_switch_dependent_feature_overrides.h"
-#include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/public/common/user_agent.h"
 #include "content/shell/browser/shell.h"
@@ -476,6 +476,11 @@ std::string ShellContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+base::FilePath ShellContentBrowserClient::GetFontLookupTableCacheDir() {
+  return browser_context()->GetPath().Append(
+      FILE_PATH_LITERAL("FontLookupTableCache"));
+}
+
 std::unique_ptr<WebContentsViewDelegate>
 ShellContentBrowserClient::GetWebContentsViewDelegate(
     WebContents* web_contents) {
@@ -555,7 +560,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
     WebContents* web_contents,
     blink::web_pref::WebPreferences* prefs) {
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kForceDarkMode)) {
+          switches::kForceDarkMode) || base::FeatureList::IsEnabled(base::features::kForceDarkModeFlag)) {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kDark;
   } else {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kLight;

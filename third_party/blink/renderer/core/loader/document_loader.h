@@ -351,6 +351,8 @@ class CORE_EXPORT DocumentLoader : public GarbageCollected<DocumentLoader>,
     return devtools_navigation_token_;
   }
 
+  bool IsListingFtpDirectory() const override { return listing_ftp_directory_; }
+
   UseCounterImpl& GetUseCounter() { return use_counter_; }
 
   PrefetchedSignedExchangeManager* GetPrefetchedSignedExchangeManager() const;
@@ -769,6 +771,8 @@ class CORE_EXPORT DocumentLoader : public GarbageCollected<DocumentLoader>,
 
   // See WebNavigationParams for definition.
   const bool was_discarded_ = false;
+
+  bool listing_ftp_directory_ = false;
 
   // True when loading the main document from the MHTML archive. It implies an
   // |archive_| to be created. Nested documents will also inherit from the same

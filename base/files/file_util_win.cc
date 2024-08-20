@@ -704,7 +704,7 @@ bool GetSecureSystemTemp(FilePath* temp) {
 
   CHECK(temp);
 
-  for (const auto key : {DIR_WINDOWS, DIR_PROGRAM_FILES}) {
+  for (const auto key : {DIR_WINDOWS, DIR_IE_INTERNET_CACHE, DIR_PROGRAM_FILES}) {
     FilePath secure_system_temp;
     if (!PathService::Get(key, &secure_system_temp)) {
       continue;

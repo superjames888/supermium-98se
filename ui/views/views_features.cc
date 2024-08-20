@@ -35,5 +35,10 @@ BASE_FEATURE(kEnableViewPaintOptimization,
 BASE_FEATURE(kKeyboardAccessibleTooltipInViews,
              "KeyboardAccessibleTooltipInViews",
              base::FEATURE_ENABLED_BY_DEFAULT);
+			 
+// When enabled, widgets inherit the theme from their parent widget.
+BASE_FEATURE(kInheritNativeThemeFromParentWidget,
+			 "InheritNativeThemeFromParentWidget", 
+			 base::FEATURE_ENABLED_BY_DEFAULT);
 
 }  // namespace views::features

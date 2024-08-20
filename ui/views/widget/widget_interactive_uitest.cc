@@ -57,6 +57,7 @@
 #endif
 
 #if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/views/win/hwnd_util.h"
@@ -540,6 +541,11 @@ class TouchEventHandler : public ui::EventHandler {
 
 // TODO(dtapuska): Disabled due to it being flaky crbug.com/817531
 TEST_F(DesktopWidgetTestInteractive, DISABLED_TouchNoActivateWindow) {
+  // ui_controls::SendTouchEvents which uses InjectTouchInput API only works
+  // on Windows 8 and up.
+  if (base::win::GetVersion() <= base::win::Version::WIN7)
+    return;
+
   View* focusable_view = new View;
   focusable_view->SetFocusBehavior(View::FocusBehavior::ALWAYS);
   WidgetAutoclosePtr widget(CreateTopLevelNativeWidget());

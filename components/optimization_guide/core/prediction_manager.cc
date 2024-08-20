@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/containers/contains.h"
 #include "base/containers/fixed_flat_set.h"
 #include "base/containers/flat_map.h"
@@ -112,7 +113,8 @@ void RecordLifecycleState(proto::OptimizationTarget optimization_target,
 // Returns whether models should be fetched from the
 // remote Optimization Guide Service.
 bool ShouldFetchModels(bool off_the_record, bool component_updates_enabled) {
-  return features::IsRemoteFetchingEnabled() && !off_the_record &&
+  return !base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && 
+         features::IsRemoteFetchingEnabled() && !off_the_record &&
          features::IsModelDownloadingEnabled() && component_updates_enabled;
 }
 

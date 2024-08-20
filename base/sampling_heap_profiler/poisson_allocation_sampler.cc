@@ -20,6 +20,15 @@
 #include "build/build_config.h"
 #include "third_party/abseil-cpp/absl/base/attributes.h"
 
+#if BUILDFLAG(IS_WIN)
+#include <windows.h>
+extern "C" {
+VOID __stdcall TLSInit_DllMain_ThreadAttach(IMAGE_DOS_HEADER* DllBase);
+}
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
+#endif
+
 namespace base {
 
 namespace {
@@ -241,6 +250,10 @@ void PoissonAllocationSampler::DoRecordAllocation(
     size_t size,
     base::allocator::dispatcher::AllocationSubsystem type,
     const char* context) {
+		
+  #if BUILDFLAG(IS_WIN)
+	TLSInit_DllMain_ThreadAttach(&__ImageBase);
+  #endif
   ThreadLocalData* const thread_local_data = GetThreadLocalData();
 
   thread_local_data->accumulated_bytes += size;
