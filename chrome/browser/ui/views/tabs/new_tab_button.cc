@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include "base/command_line.h"
 #include "base/strings/string_number_conversions.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
@@ -112,11 +113,11 @@ void NewTabButton::AnimateToStateForTesting(views::InkDropState state) {
 
 void NewTabButton::AddLayerToRegion(ui::Layer* new_layer,
                                     views::LayerRegion region) {
-  ink_drop_container_->AddLayerToRegion(new_layer, region);
+	ink_drop_container_->AddLayerToRegion(new_layer, region);
 }
 
 void NewTabButton::RemoveLayerFromRegions(ui::Layer* old_layer) {
-  ink_drop_container_->RemoveLayerFromRegions(old_layer);
+	ink_drop_container_->RemoveLayerFromRegions(old_layer);
 }
 
 SkColor NewTabButton::GetForegroundColor() const {
@@ -136,20 +137,10 @@ int NewTabButton::GetCornerRadius() const {
 
 SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
                                    bool extend_to_top) const {
-  const float radius = GetCornerRadius();
-
   SkPath path;
-  if (extend_to_top) {
-    path.moveTo(origin.x(), 0);
-    const float diameter = radius * 2;
-    path.rLineTo(diameter, 0);
-    path.rLineTo(0, origin.y() + radius);
-    path.rArcTo(radius, radius, 0, SkPath::kSmall_ArcSize, SkPathDirection::kCW,
-                -diameter, 0);
-    path.close();
-  } else {
-    path.addCircle(origin.x() + radius, origin.y() + radius, radius);
-  }
+  SkPoint pts [] = {SkPoint(0.0, 8.0), SkPoint(24.0, 8.0), SkPoint(30.0, 20.0), SkPoint(6.0, 20.0)};
+  path.moveTo(origin.x() * 1.10, SkScalar(8.0));
+  path.addPoly(pts, 4, true);
   return path;
 }
 
@@ -179,7 +170,7 @@ void NewTabButton::OnMouseReleased(const ui::MouseEvent& event) {
     views::ImageButton::OnMouseReleased(event);
     return;
   }
-
+  
   // TODO(pkasting): If we handled right-clicks on the frame, and we made sure
   // this event was not handled, it seems like things would Just Work.
   gfx::Point point = event.location();
@@ -258,10 +249,12 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     canvas->Translate(GetContentsBounds().OffsetFromOrigin());
-    flags.setColor(GetColorProvider()->GetColor(
-        GetWidget()->ShouldPaintAsActive()
-            ? background_frame_active_color_id_
-            : background_frame_inactive_color_id_));
+	flags.setColor(GetColorProvider()->GetColor(
+		GetWidget()->ShouldPaintAsActive()
+			? background_frame_active_color_id_
+			: background_frame_inactive_color_id_));
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs"))
+		flags.setAlphaf(0.7f);
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
   }
 }

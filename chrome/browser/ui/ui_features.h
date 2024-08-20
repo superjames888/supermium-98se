@@ -115,6 +115,8 @@ BASE_DECLARE_FEATURE(kKeyboardAndPointerLockPrompt);
 BASE_DECLARE_FEATURE(kLightweightExtensionOverrideConfirmations);
 #endif
 
+BASE_DECLARE_FEATURE(kPowerBookmarksSidePanel);
+
 BASE_DECLARE_FEATURE(kPreloadTopChromeWebUI);
 // This enum entry values must be in sync with
 // WebUIContentsPreloadManager::PreloadMode.

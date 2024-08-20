@@ -871,6 +871,7 @@ bool MessagePumpForIO::GetIOItem(DWORD timeout, IOItem* item) {
                                    &overlapped, timeout)) {
     if (!overlapped)
       return false;  // Nothing in the queue.
+  
     item->error = GetLastError();
     item->bytes_transfered = 0;
   }

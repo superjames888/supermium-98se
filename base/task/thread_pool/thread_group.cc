@@ -19,7 +19,9 @@
 
 #if BUILDFLAG(IS_WIN)
 #include "base/win/com_init_check_hook.h"
+#include "base/win/scoped_com_initializer.h"
 #include "base/win/scoped_winrt_initializer.h"
+#include "base/win/windows_version.h"
 #endif
 
 namespace base {
@@ -462,7 +464,12 @@ std::unique_ptr<win::ScopedWindowsThreadEnvironment>
 ThreadGroup::GetScopedWindowsThreadEnvironment(WorkerEnvironment environment) {
   std::unique_ptr<win::ScopedWindowsThreadEnvironment> scoped_environment;
   if (environment == WorkerEnvironment::COM_MTA) {
-    scoped_environment = std::make_unique<win::ScopedWinrtInitializer>();
+    if (win::GetVersion() >= win::Version::WIN8) {
+      scoped_environment = std::make_unique<win::ScopedWinrtInitializer>();
+    } else {
+      scoped_environment = std::make_unique<win::ScopedCOMInitializer>(
+          win::ScopedCOMInitializer::kMTA);
+    }
 
     // TODO(crbug.com/40076080): rollback the change or replace it with a CHECK
     // before closing the bug.

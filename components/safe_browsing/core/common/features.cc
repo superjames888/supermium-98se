@@ -77,6 +77,10 @@ BASE_FEATURE(kDlpRegionalizedEndpoints,
              "kDlpRegionalizedEndpoints",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
+BASE_FEATURE(kDownloadBubble,
+             "DownloadBubble",
+             base::FEATURE_ENABLED_BY_DEFAULT);
+
 BASE_FEATURE(kDownloadReportWithoutUserDecision,
              "DownloadReportWithoutUserDecision",
              base::FEATURE_DISABLED_BY_DEFAULT);
@@ -376,6 +380,7 @@ constexpr struct {
     {&kCreateWarningShownClientSafeBrowsingReports, false},
     {&kDelayedWarnings, true},
     {&kDlpRegionalizedEndpoints, true},
+    {&kDownloadBubble, true},
     {&kDownloadReportWithoutUserDecision, true},
     {&kDownloadTailoredWarnings, true},
     {&kExtensionTelemetryDeclarativeNetRequestActionSignal, true},

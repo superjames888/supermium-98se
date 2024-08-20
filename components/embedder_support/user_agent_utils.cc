@@ -10,7 +10,10 @@
 #include "base/command_line.h"
 #include "base/debug/stack_trace.h"
 #include "base/feature_list.h"
+#include "base/files/file_util.h"
+#include "base/logging.h"
 #include "base/no_destructor.h"
+#include "base/path_service.h"
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
@@ -18,6 +21,7 @@
 #include "base/version.h"
 #include "build/branding_buildflags.h"
 #include "build/build_config.h"
+#include "chrome/common/chrome_paths.h"
 #include "components/embedder_support/pref_names.h"
 #include "components/embedder_support/switches.h"
 #include "components/policy/core/common/policy_pref_names.h"
@@ -41,6 +45,60 @@
 namespace embedder_support {
 
 namespace {
+	
+typedef enum UACHSpoofType{
+	UA,
+	UACHCustomName,
+	UACHCustomVersion,
+	UACHCustomFullVersion,
+	UACHCustomPlatform,
+	UACHCustomPlatformVersion,
+	UACHCustomModel,
+	UACHCustomArchitecture,
+	UACHCustomBitness,
+	UACHCustomIsMobile,
+	UACHCustomWOW64
+}UACHSpoofType;
+	
+std::vector<std::string> split(const std::string& str, const std::string& delimiter) {
+    std::vector<std::string> tokens;
+    size_t start = 0;
+    size_t end = str.find(delimiter);
+
+    while (end != std::string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+        start = end + delimiter.length();
+        end = str.find(delimiter, start);
+    }
+
+    tokens.push_back(str.substr(start, end - start)); // add the last token
+    return tokens;
+}
+
+// Function to parse the file
+std::string parseFile(UACHSpoofType SpoofTarget) {
+    int64_t file_size = 0;
+    base::FilePath userdir;
+    if(!base::PathService::Get(chrome::DIR_USER_DATA, &userdir)) {
+        return std::string(); // Things are seriously wrong if the user data directory cannot be located.
+	}
+    const base::FilePath userpath = userdir.Append(FILE_PATH_LITERAL("uao"));
+    base::GetFileSize(userpath, &file_size);
+    if(!file_size) {
+        return std::string();
+	}
+    std::vector<char> buf(file_size);
+    base::ReadFile(userpath, reinterpret_cast<char*>(buf.data()), file_size);
+    std::string bufstr = std::string(reinterpret_cast<char*>(buf.data()));
+
+    std::vector<std::string> fields = split(bufstr, ";;;");
+    if (fields.size() > SpoofTarget) {
+	   return fields[SpoofTarget];
+    } else {
+       LOG(0) << "UAO file invalid; all fields are not present";
+       return std::string();
+    }
+}
 
 #if BUILDFLAG(IS_WIN)
 
@@ -62,7 +120,7 @@ constexpr wchar_t kUniversalApiContractName[] =
 // to rely on querying the IsApiContractPresentByMajor function used by
 // user_agent_utils_unittest.cc.
 const int kHighestKnownUniversalApiContractVersion = 15;
-
+/*
 int GetPreRS5UniversalApiContractVersion() {
   // This calls Kernel32Version() to get the real non-spoofable version (as
   // opposed to base::win::GetVersion() which as of writing this seems to return
@@ -88,13 +146,45 @@ int GetPreRS5UniversalApiContractVersion() {
     return 6;
   }
   // The list above should account for all Windows versions prior to
-  // RS5.
-  NOTREACHED();
+  // RS5. 0 represents all pre-Win10 releases.
   return 0;
 }
 
+int GetLegacyWindowsVersion() {
+// The User Agent Client Hints specification indicates that Windows 7 through 8.x
+// should be handled as having a major version of 0 while using the OS' minor version.
+// (i.e. Windows 7 is 0.1). This does not account for how to handle Windows Vista and below.
+// As a result, Vista will report as 0.60 and NT 5.x as 0.5x.
+// TODO: introduce UA-CH spoofer to avoid any undesirable impacts of having the "wrong" values in future.
+	const base::win::Version version = base::win::OSInfo::Kernel32Version();
+	if (version == base::win::Version::WIN8_1) {
+		return 3;
+	}
+	if (version == base::win::Version::WIN8) {
+		return 2;
+	}
+	if (version == base::win::Version::WIN7) {
+		return 1;
+	}
+	if (version == base::win::Version::VISTA) {
+		return 60;
+	}
+	if (version == base::win::Version::SERVER_2003) {
+		return 52;
+	}
+	if (version == base::win::Version::XP) {
+		return 51;
+	}	
+	if (version == base::win::Version::PRE_XP) {
+		return 50;
+	}	
+	return 0;
+}
+*/
 // Returns the UniversalApiContract version number, which is available for
-// Windows versions greater than RS5. Otherwise, returns 0.
+// Windows versions greater than RS5. Otherwise, returns a version value
+// representing the Windows version (non-zero major version for early Windows 10,
+// non-zero minor version for pre-Windows 10).
 const std::string& GetUniversalApiContractVersion() {
   // Do not use this for runtime environment detection logic. This method should
   // only be used to help populate the Sec-CH-UA-Platform client hint. If
@@ -107,7 +197,7 @@ const std::string& GetUniversalApiContractVersion() {
         int minor_version = 0;
         if (base::win::OSInfo::Kernel32Version() <=
             base::win::Version::WIN10_RS4) {
-          major_version = GetPreRS5UniversalApiContractVersion();
+          major_version = kHighestKnownUniversalApiContractVersion;
         } else {
           base::win::RegKey version_key(
               HKEY_LOCAL_MACHINE, kWindowsRuntimeWellKnownContractsRegKeyName,
@@ -187,8 +277,15 @@ const blink::UserAgentBrandList GetUserAgentBrandList(
   bool parse_result = base::StringToInt(major_version, &major_version_number);
   DCHECK(parse_result);
   std::optional<std::string> brand;
+  std::string custom_brand;
+  custom_brand = parseFile(UACHCustomName);
 #if !BUILDFLAG(CHROMIUM_BRANDING)
   brand = version_info::GetProductName();
+#else
+  if (!custom_brand.empty())
+	brand = custom_brand;
+  else
+    brand = std::string("Google Chrome");
 #endif
   std::optional<std::string> maybe_brand_override =
       base::GetFieldTrialParamValueByFeature(features::kGreaseUACH,
@@ -201,10 +298,16 @@ const blink::UserAgentBrandList GetUserAgentBrandList(
   if (maybe_version_override->empty())
     maybe_version_override = std::nullopt;
 
+  std::string custom_brand_version = parseFile(UACHCustomVersion);
+
   std::string brand_version =
       output_version_type == blink::UserAgentBrandVersionType::kFullVersion
           ? full_version
           : major_version;
+		  
+  if(!custom_brand_version.empty()){
+	  brand_version = custom_brand_version;
+  }
 
   return GenerateBrandVersionList(major_version_number, brand, brand_version,
                                   maybe_brand_override, maybe_version_override,
@@ -471,12 +574,22 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   // Low entropy client hints.
   metadata.brand_version_list =
       GetUserAgentBrandMajorVersionList(enable_updated_grease_by_policy);
-  metadata.mobile = false;
+  std::string is_mobile;
+  is_mobile = parseFile(UACHCustomIsMobile);
+  if(is_mobile == std::string("true"))
+	  metadata.mobile = true;
+  else
+      metadata.mobile = false;
 #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
   metadata.mobile = base::CommandLine::ForCurrentProcess()->HasSwitch(
       switches::kUseMobileUserAgent);
 #endif
-  metadata.platform = GetPlatformForUAMetadata();
+  std::string is_platform;
+  is_platform = parseFile(UACHCustomPlatform);
+  if(!is_platform.empty())
+	  metadata.platform = is_platform;
+  else
+      metadata.platform = GetPlatformForUAMetadata();
 
   // For users providing a valid user-agent override via the command line:
   // If kUACHOverrideBlank is enabled, set user-agent metadata with the
@@ -498,22 +611,53 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   // High entropy client hints.
   metadata.brand_full_version_list =
       GetUserAgentBrandFullVersionList(enable_updated_grease_by_policy);
-  metadata.full_version = std::string(version_info::GetVersionNumber());
-  metadata.architecture = content::GetCpuArchitecture();
-  metadata.model = content::BuildModelInfo();
+  std::string full_version_custom;
+  full_version_custom = parseFile(UACHCustomFullVersion);
+  if(!full_version_custom.empty())
+	  metadata.full_version = full_version_custom;
+  else
+      metadata.full_version = std::string(version_info::GetVersionNumber());
+  std::string model_custom;
+  model_custom = parseFile(UACHCustomModel);
+  if(!model_custom.empty())
+	  metadata.model = model_custom;
+  else
+      metadata.model = content::BuildModelInfo();
   metadata.form_factors = GetFormFactorsClientHint(metadata, metadata.mobile);
 
 #if BUILDFLAG(IS_WIN)
-  metadata.platform_version = GetWindowsPlatformVersion();
+  std::string platform_version_custom;
+  platform_version_custom = parseFile(UACHCustomPlatformVersion);
+  if(!platform_version_custom.empty())
+	  metadata.platform_version = platform_version_custom;
+  else
+      metadata.platform_version = GetWindowsPlatformVersion();
 #else
   int32_t major, minor, bugfix = 0;
   base::SysInfo::OperatingSystemVersionNumbers(&major, &minor, &bugfix);
   metadata.platform_version =
       base::StringPrintf("%d.%d.%d", major, minor, bugfix);
 #endif
-  metadata.architecture = content::GetCpuArchitecture();
-  metadata.bitness = content::GetCpuBitness();
-  metadata.wow64 = content::IsWoW64();
+  std::string architecture_custom;
+  architecture_custom = parseFile(UACHCustomArchitecture);
+  if(!architecture_custom.empty())
+	  metadata.architecture = architecture_custom;
+  else
+      metadata.architecture = content::GetCpuArchitecture();
+  std::string bitness_custom;
+  bitness_custom = parseFile(UACHCustomBitness);
+  if(!bitness_custom.empty())
+	  metadata.bitness = bitness_custom;
+  else
+      metadata.bitness = content::GetCpuBitness();
+  std::string wow64_custom;
+  wow64_custom = parseFile(UACHCustomWOW64);
+  if (wow64_custom == std::string("true"))
+	  metadata.wow64 = true;
+  else if (wow64_custom == std::string("false"))
+	  metadata.wow64 = false;
+  else
+      metadata.wow64 = content::IsWoW64();
 
   return metadata;
 }

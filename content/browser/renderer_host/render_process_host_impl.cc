@@ -3570,7 +3570,9 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
       switches::kRendererWaitForJavaDebugger,
 #endif
 #if BUILDFLAG(IS_WIN)
+      switches::kDisableDirectWrite,
       switches::kDisableHighResTimer,
+      switches::kEnableWin7WebRtcHWH264Decoding,
       switches::kTextContrast,
       switches::kTextGamma,
       switches::kTrySupportedChannelLayouts,

@@ -238,6 +238,7 @@ class VIEWS_EXPORT LayoutProvider {
 
  private:
   TypographyProvider typography_provider_;
+  int kMenuCornerRadius = 3;
 };
 
 }  // namespace views

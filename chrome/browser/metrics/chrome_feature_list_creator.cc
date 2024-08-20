@@ -102,6 +102,9 @@ GetSwitchDependentFeatureOverrides(const base::CommandLine& command_line) {
        std::cref(safe_browsing::kDeepScanningPromptRemoval),
        base::FeatureList::OVERRIDE_ENABLE_FEATURE},
       {switches::kEnableDownloadWarningImprovements,
+       std::cref(safe_browsing::kDownloadBubble),
+       base::FeatureList::OVERRIDE_ENABLE_FEATURE},
+      {switches::kEnableDownloadWarningImprovements,
        std::cref(safe_browsing::kDownloadReportWithoutUserDecision),
        base::FeatureList::OVERRIDE_ENABLE_FEATURE},
 

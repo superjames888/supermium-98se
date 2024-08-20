@@ -8,6 +8,7 @@
 #include <random>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/check_deref.h"
 #include "base/check_is_test.h"
 #include "base/containers/contains.h"

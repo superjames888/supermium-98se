@@ -4,8 +4,6 @@
 
 #include "content/public/common/content_features.h"
 
-#include <string>
-
 #include "base/feature_list.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
@@ -13,6 +11,10 @@
 #include "build/config/chromebox_for_meetings/buildflags.h"
 #include "content/common/buildflags.h"
 #include "content/public/common/dips_utils.h"
+
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
 
 namespace features {
 
@@ -1267,6 +1269,11 @@ VideoCaptureServiceConfiguration GetVideoCaptureServiceConfiguration() {
 #if BUILDFLAG(IS_ANDROID)
   return VideoCaptureServiceConfiguration::kEnabledForBrowserProcess;
 #else
+#if BUILDFLAG(IS_WIN)
+  if (base::win::GetVersion() <= base::win::Version::WIN7) {
+    return VideoCaptureServiceConfiguration::kEnabledForBrowserProcess;
+  }
+#endif
   return base::FeatureList::IsEnabled(
              features::kRunVideoCaptureServiceInBrowserProcess)
              ? VideoCaptureServiceConfiguration::kEnabledForBrowserProcess

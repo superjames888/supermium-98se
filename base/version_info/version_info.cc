@@ -15,7 +15,7 @@ namespace version_info {
 
 int GetMajorVersionNumberAsInt() {
   DCHECK(GetVersion().IsValid());
-  return GetVersion().components()[0];
+  return 127;
 }
 
 std::string GetMajorVersionNumber() {

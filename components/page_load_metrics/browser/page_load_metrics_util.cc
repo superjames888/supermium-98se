@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string_view>
 
+#include "base/command_line.h"
 #include "components/page_load_metrics/common/page_load_timing.h"
 #include "components/page_load_metrics/common/page_visit_final_status.h"
 #include "services/metrics/public/cpp/ukm_builders.h"
@@ -284,6 +285,8 @@ bool DidObserveLoadingBehaviorInAnyFrame(
 }
 
 bool IsGoogleSearchHostname(const GURL& url) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   std::optional<std::string> result =
       page_load_metrics::GetGoogleHostnamePrefix(url);
   return result && result.value() == "www";

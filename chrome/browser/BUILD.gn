@@ -2341,6 +2341,7 @@ static_library("browser") {
     "//components/net_log",
     "//components/network_hints/common:mojo_bindings",
     "//components/network_session_configurator/browser",
+    "//components/network_session_configurator/common",
     "//components/network_time",
     "//components/no_state_prefetch/browser",
     "//components/no_state_prefetch/common",

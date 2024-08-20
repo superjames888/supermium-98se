@@ -12,6 +12,7 @@
 #include "sandbox/policy/mojom/sandbox.mojom.h"
 
 #if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
 #include "sandbox/policy/win/sandbox_win.h"
 #include "sandbox/win/src/process_mitigations.h"
 #include "sandbox/win/src/sandbox_policy.h"
@@ -33,9 +34,12 @@ bool PpapiPluginSandboxedProcessLauncherDelegate::InitializeConfig(
   // The Pepper process is as locked-down as a renderer except that it can
   // create the server side of Chrome pipes.
   sandbox::ResultCode result;
+  // We don't support PPAPI win32k lockdown prior to Windows 10.
+  if (base::win::GetVersion() >= base::win::Version::WIN10) {
   result = sandbox::policy::SandboxWin::AddWin32kLockdownPolicy(config);
   if (result != sandbox::SBOX_ALL_OK) {
     return false;
+  }
   }
 
   // No plugins can generate executable code.

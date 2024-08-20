@@ -57,6 +57,20 @@ BASE_FEATURE(kUseRustJsonParser,
              FEATURE_DISABLED_BY_DEFAULT);
 
 BASE_FEATURE(kJsonNegativeZero, "JsonNegativeZero", FEATURE_ENABLED_BY_DEFAULT);
+			 
+BASE_FEATURE(kForceDarkModeFlag,
+             "ForceDarkModeFlag",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+ 
+BASE_FEATURE(kIncognitoBrandConsistencyForDesktop,
+			"IncognitoBrandConsistencyForDesktop",
+			base::FEATURE_DISABLED_BY_DEFAULT);			 
+			 
+#if BUILDFLAG(IS_WIN)
+BASE_FEATURE(kForceGdi,
+             "ForceGdi",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+#endif
 
 #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_CHROMEOS)
 // Force to enable LowEndDeviceMode partially on Android 3Gb devices.

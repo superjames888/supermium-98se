@@ -27,6 +27,7 @@
 #include "base/win/registry.h"
 #include "base/win/scoped_hstring.h"
 #include "base/win/scoped_winrt_initializer.h"
+#include "base/win/windows_version.h"
 #include "chrome/browser/password_manager/password_manager_util_win.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
@@ -121,6 +122,11 @@ void GetBiometricAvailabilityFromWindows(
   // Mitigate the issues caused by loading DLLs on a background thread
   // (http://crbug/973868).
   SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+
+  if (base::win::GetVersion() < base::win::Version::WIN8) {
+    ReportCantCheckAvailability(thread, std::move(callback));
+    return;
+  }
 
   ComPtr<IUserConsentVerifierStatics> factory;
   HRESULT hr = base::win::GetActivationFactory<
