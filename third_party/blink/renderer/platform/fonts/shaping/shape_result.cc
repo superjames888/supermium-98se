@@ -993,6 +993,14 @@ void ShapeResult::ApplySpacingImpl(
   }
 }
 
+void ShapeResult::DeallocRuns() 
+{
+	for(auto runs : this->runs_) {
+		delete(runs);
+		runs = nullptr;
+	}
+}
+
 void ShapeResult::ApplySpacing(ShapeResultSpacing<String>& spacing,
                                int text_start_offset) {
   // For simplicity, we apply spacing once only. If you want to do multiple
