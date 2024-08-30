@@ -31,7 +31,7 @@ namespace features {
 // `RuntimeEnabledFeatures)`, they should still be ordered in this section based
 // on the identifier name of the generated feature.
 
-BASE_FEATURE(kRemoveClientHints, "RemoveClientHints", base::FEATURE_DISABLED_BY_DEFAULT);
+BASE_FEATURE(kRemoveClientHints, "DisableUserAgentClientHint", base::FEATURE_DISABLED_BY_DEFAULT);
 
 // Enable the Protected Audience's reporting with ad macro API.
 BASE_FEATURE(kAdAuctionReportingWithMacroApi,

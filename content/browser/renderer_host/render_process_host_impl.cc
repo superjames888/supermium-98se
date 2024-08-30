@@ -1675,7 +1675,7 @@ bool RenderProcessHostImpl::Init() {
   GetRendererInterface()->InitializeRenderer(
       GetContentClient()->browser()->GetUserAgentBasedOnPolicy(
           browser_context_),
-      GetContentClient()->browser()->GetUserAgentMetadata(),
+      base::FeatureList::IsEnabled(blink::features::kRemoveClientHints) ? blink::UserAgentMetadata() : GetContentClient()->browser()->GetUserAgentMetadata(),
       storage_partition_impl_->cors_exempt_header_list(),
       GetContentClient()->browser()->GetOriginTrialsSettings());
 
