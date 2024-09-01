@@ -256,10 +256,16 @@ void LocationBarView::Init() {
   const gfx::FontList& font_list = typography_provider.GetFont(
       CONTEXT_OMNIBOX_PRIMARY, views::style::STYLE_PRIMARY);
 
-  const gfx::FontList& omnibox_chip_font_list = typography_provider.GetFont(
-      CONTEXT_OMNIBOX_PRIMARY, views::style::STYLE_BODY_4_EMPHASIS);
-  const gfx::FontList& page_action_font_list = typography_provider.GetFont(
-      CONTEXT_OMNIBOX_PRIMARY, views::style::STYLE_BODY_3_EMPHASIS);
+  const gfx::FontList& omnibox_chip_font_list =
+      features::IsChromeRefresh2023()
+          ? typography_provider.GetFont(CONTEXT_OMNIBOX_PRIMARY,
+                                        views::style::STYLE_BODY_4_EMPHASIS)
+          : font_list;
+  const gfx::FontList& page_action_font_list =
+      features::IsChromeRefresh2023()
+          ? typography_provider.GetFont(CONTEXT_OMNIBOX_PRIMARY,
+                                        views::style::STYLE_BODY_3_EMPHASIS)
+          : font_list;
 
   auto location_icon_view =
       std::make_unique<LocationIconView>(omnibox_chip_font_list, this, this);
@@ -407,8 +413,8 @@ void LocationBarView::Init() {
   if (browser_ && !is_popup_mode_)
     params.types_enabled.push_back(PageActionIconType::kBookmarkStar);
 
-  params.icon_color = color_provider->GetColor(kColorPageActionIcon);
-  params.between_icon_spacing = 8;
+  params.icon_color = features::IsChromeRefresh2023() ? color_provider->GetColor(kColorPageActionIcon) : icon_color;
+  params.between_icon_spacing = features::IsChromeRefresh2023() ? 8 : 0;
   params.font_list = &page_action_font_list;
   params.browser = browser_;
   params.command_updater = command_updater();
@@ -711,18 +717,28 @@ void LocationBarView::Layout(PassKey) {
   // The padding between the left edges of the location bar and the LHS icon
   // (e.g. the page info icon, the google G icon, the selected suggestion icon,
   // etc)
-  int icon_left = 5;
+  int icon_left = 2;
   // The padding between the LHS icon and the text.
-  int text_left = 8;
+  int text_left = 0;
   // Indentation to match the suggestion icons & texts.
-  int icon_indent = 7;
-  int text_indent = 6;
+  int icon_indent = 0;
+  int text_indent = 11;
   // Indentation to match the suggestion icons & texts when in keyword mode.
-  int icon_keyword_indent = 9;
-  int text_keyword_indent = -9;
+  int icon_keyword_indent = 0;
+  int text_keyword_indent = 0;
   // Indentation add padding when the permission chip is visible and replacing
   // the LHS icon.
-  int text_overriding_permission_chip_indent = 0;
+  int text_overriding_permission_chip_indent = 8;
+  
+  if (features::IsChromeRefresh2023()) {
+    icon_left = 5;
+    text_left = 8;
+    icon_indent = 7;
+    text_indent = 6;
+    icon_keyword_indent = 9;
+    text_keyword_indent = -9;
+    text_overriding_permission_chip_indent = 0;
+  }
   if (should_indent) {
     icon_left += icon_indent;
     text_left += text_indent;
@@ -744,10 +760,12 @@ void LocationBarView::Layout(PassKey) {
   // to position our child views in this case, because other things may be
   // positioned relative to them (e.g. the "bookmark added" bubble if the user
   // hits ctrl-d).
-  const int vertical_padding =
-      GetLayoutConstant(LOCATION_BAR_PAGE_INFO_ICON_VERTICAL_PADDING);
-  const int trailing_decorations_edge_padding =
-      GetLayoutConstant(LOCATION_BAR_TRAILING_DECORATION_EDGE_PADDING);
+  const int vertical_padding = features::IsChromeRefresh2023() 
+      ? GetLayoutConstant(LOCATION_BAR_PAGE_INFO_ICON_VERTICAL_PADDING)
+	  : GetLayoutConstant(LOCATION_BAR_ELEMENT_PADDING);
+  const int trailing_decorations_edge_padding = features::IsChromeRefresh2023() 
+      ? GetLayoutConstant(LOCATION_BAR_TRAILING_DECORATION_EDGE_PADDING)
+      : edge_padding;
 
   const int location_height = std::max(height() - (vertical_padding * 2), 0);
   // The largest fraction of the omnibox that can be taken by the EV or search
@@ -924,7 +942,9 @@ void LocationBarView::OnThemeChanged() {
   if (!IsInitialized())
     return;
 
-  const SkColor icon_color = GetColorProvider()->GetColor(kColorPageActionIcon);
+  const SkColor icon_color = GetColorProvider()->GetColor(features::IsChromeRefresh2023()
+                                                          ? kColorPageActionIcon
+														  : kColorOmniboxResultsIcon);
   page_action_icon_controller_->SetIconColor(icon_color);
   for (ContentSettingImageView* image_view : content_setting_views_) {
     image_view->SetIconColor(icon_color);
@@ -1007,12 +1027,15 @@ SkColor LocationBarView::GetIconLabelBubbleSurroundingForegroundColor() const {
   // will inherit the selected "surrounding foreground color".
   const auto color_id = ShouldShowKeywordBubble()
                             ? kColorOmniboxKeywordSeparator
-                            : kColorPageActionIcon;
+                            : (features::IsChromeRefresh2023() ? kColorPageActionIcon : kColorOmniboxText);
   return GetColorProvider()->GetColor(color_id);
 }
 
 SkAlpha LocationBarView::GetIconLabelBubbleSeparatorAlpha() const {
-  return 0xFF;
+  if (features::IsChromeRefresh2023())
+    return 0xFF;
+  else
+	return IconLabelBubbleView::Delegate::GetIconLabelBubbleSeparatorAlpha();
 }
 
 SkColor LocationBarView::GetIconLabelBubbleBackgroundColor() const {
@@ -1128,7 +1151,7 @@ void LocationBarView::RefreshBackground() {
     // Match the background color to the popup if the Omnibox is visibly
     // focused.
     background_color = color_provider->GetColor(kColorOmniboxResultsBackground);
-  } else if (input_in_progress && !high_contrast) {
+  } else if (features::IsChromeRefresh2023() && input_in_progress && !high_contrast) {
     // Under CR23 guidelines, if the Omnibox is unfocused, but still contains
     // in-progress user input, the background color matches the popup (unless
     // high-contrast mode is enabled).
@@ -1144,7 +1167,7 @@ void LocationBarView::RefreshBackground() {
         is_caret_visible
             ? color_provider->GetColor(kColorOmniboxResultsBackground)
             : color_provider->GetColor(kColorLocationBarBorder);
-  } else if (!is_caret_visible && input_in_progress) {
+  } else if (features::IsChromeRefresh2023() && !is_caret_visible && input_in_progress) {
     // Under CR23 guidelines, if the (regular contrast) Omnibox is unfocused,
     // but still contains in-progress user input, a unique border color will be
     // applied.
@@ -1546,7 +1569,7 @@ void LocationBarView::OnLocationIconDragged(const ui::MouseEvent& event) {
 
 SkColor LocationBarView::GetSecurityChipColor(
     security_state::SecurityLevel security_level) const {
-  ui::ColorId id = kColorOmniboxText;
+  ui::ColorId id = features::IsChromeRefresh2023() ? kColorOmniboxText : kColorOmniboxSecurityChipDefault;
   if (security_level == security_state::SECURE_WITH_POLICY_INSTALLED_CERT) {
     id = kColorOmniboxTextDimmed;
   } else if (security_level == security_state::DANGEROUS) {
@@ -1612,7 +1635,7 @@ void LocationBarView::RecordPageInfoMetrics() {
 ui::ImageModel LocationBarView::GetLocationIcon(
     LocationIconView::Delegate::IconFetchedCallback on_icon_fetched) const {
   bool dark_mode = false;
-    if (location_icon_view_ && location_icon_view_->GetBackground()) {
+    if (features::IsChromeRefresh2023() && location_icon_view_ && location_icon_view_->GetBackground()) {
       dark_mode = color_utils::IsDark(
           location_icon_view_->GetBackground()->get_color());
     }
