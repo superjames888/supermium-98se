@@ -42,6 +42,9 @@ void MenuConfig::InitPlatform() {
       separator_upper_height = 5;
       separator_lower_height = 5;
     }
+  } else {
+     separator_upper_height = 5;
+     separator_lower_height = 7;
   }
   
   BOOL show_cues;
@@ -50,8 +53,6 @@ void MenuConfig::InitPlatform() {
        show_cues == TRUE);
 
   SystemParametersInfo(SPI_GETMENUSHOWDELAY, 0, &show_delay, 0);
-  separator_upper_height = 5;
-  separator_lower_height = 7;
 
   use_bubble_border = corner_radius > 0;
 }
