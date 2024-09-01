@@ -75,10 +75,10 @@ LocationIconView::LocationIconView(
   label()->SetAutoColorReadabilityEnabled(false);
 
   SetAccessibleProperties(/*is_initialization*/ true);
-
-    ConfigureInkDropForRefresh2023(this, kColorPageInfoIconHover,
+  if (features::IsChromeRefresh2023()) {
+     ConfigureInkDropForRefresh2023(this, kColorPageInfoIconHover,
                                    kColorPageInfoIconPressed);
-
+  }
   UpdateBorder();
 }
 
@@ -98,7 +98,7 @@ SkColor LocationIconView::GetForegroundColor() const {
   const bool is_text_dangerous =
       display_text == l10n_util::GetStringUTF16(IDS_DANGEROUS_VERBOSE_STATE);
 
-  if (is_text_dangerous) {
+  if (features::IsChromeRefresh2023() && is_text_dangerous) {
     return GetColorProvider()->GetColor(kColorOmniboxSecurityChipText);
   }
 
@@ -110,7 +110,7 @@ SkColor LocationIconView::GetForegroundColor() const {
 }
 
 bool LocationIconView::ShouldShowSeparator() const {
-  return false;
+  return !features::IsChromeRefresh2023() && ShouldShowLabel();
 }
 
 bool LocationIconView::ShouldShowLabelAfterAnimation() const {
@@ -314,6 +314,7 @@ void LocationIconView::UpdateIcon() {
 }
 
 void LocationIconView::UpdateBackground() {
+  if (features::IsChromeRefresh2023()) {
     CHECK(GetColorProvider());
     const std::u16string& display_text = GetText();
     const bool is_text_dangerous =
@@ -335,6 +336,9 @@ void LocationIconView::UpdateBackground() {
       ConfigureInkDropForRefresh2023(this, kColorPageInfoIconHover,
                                      kColorPageInfoIconPressed);
     }
+  } else {
+    IconLabelBubbleView::UpdateBackground();
+  }
 }
 
 void LocationIconView::OnIconFetched(const gfx::Image& image) {
@@ -355,7 +359,7 @@ void LocationIconView::Update(bool suppress_animations,
   // level.
   UpdateLabelColors();
 
-  if (force_hide_background) {
+  if (force_hide_background && features::IsChromeRefresh2023()) {
     SetBackground(
         views::CreateRoundedRectBackground(SK_ColorTRANSPARENT, height() / 2));
   }
@@ -412,8 +416,9 @@ void LocationIconView::UpdateBorder() {
   // child views in the location bar have the same height. The visible height of
   // the bubble should be smaller, so use an empty border to shrink down the
   // content bounds so the background gets painted correctly.
-    gfx::Insets insets = GetLayoutInsets(LOCATION_BAR_PAGE_INFO_ICON_PADDING);
-    if (ShouldShowLabel()) {
+    gfx::Insets insets = GetLayoutInsets(LOCATION_BAR_PAGE_INFO_ICON_PADDING);\
+    if (features::IsChromeRefresh2023()) {
+     if (ShouldShowLabel()) {
       SecurityLevel level =
           delegate_->GetLocationBarModel()->GetSecurityLevel();
       if (level == security_state::DANGEROUS) {
@@ -428,8 +433,11 @@ void LocationIconView::UpdateBorder() {
         const int kExtraRightPadding = 4;
         insets.set_right(insets.right() + kExtraRightPadding);
       }
-    }
+     }
     SetBorder(views::CreateEmptyBorder(insets));
+	} else {
+      IconLabelBubbleView::UpdateBorder();	
+    }
 }
 
 gfx::Size LocationIconView::GetMinimumSizeForPreferredSize(
