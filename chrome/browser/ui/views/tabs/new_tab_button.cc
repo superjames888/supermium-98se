@@ -113,11 +113,23 @@ void NewTabButton::AnimateToStateForTesting(views::InkDropState state) {
 
 void NewTabButton::AddLayerToRegion(ui::Layer* new_layer,
                                     views::LayerRegion region) {
-	ink_drop_container_->AddLayerToRegion(new_layer, region);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			!base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default")) ||
+			(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default"))) {    
+	}
+	else
+		ink_drop_container_->AddLayerToRegion(new_layer, region);
 }
 
 void NewTabButton::RemoveLayerFromRegions(ui::Layer* old_layer) {
-	ink_drop_container_->RemoveLayerFromRegions(old_layer);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+		!base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default")) ||
+		(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+		base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default"))) { 
+	}
+	else
+		ink_drop_container_->RemoveLayerFromRegions(old_layer);
 }
 
 SkColor NewTabButton::GetForegroundColor() const {
@@ -138,9 +150,29 @@ int NewTabButton::GetCornerRadius() const {
 SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
                                    bool extend_to_top) const {
   SkPath path;
-  SkPoint pts [] = {SkPoint(0.0, 8.0), SkPoint(24.0, 8.0), SkPoint(30.0, 20.0), SkPoint(6.0, 20.0)};
-  path.moveTo(origin.x() * 1.10, SkScalar(8.0));
-  path.addPoly(pts, 4, true);
+  const float radius = GetCornerRadius();
+
+  if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default")) ||
+		(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    !base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default"))) {  
+	  if (extend_to_top) {
+		path.moveTo(origin.x(), 0);
+		const float diameter = radius * 2;
+		path.rLineTo(diameter, 0);
+		path.rLineTo(0, origin.y() + radius);
+		path.rArcTo(radius, radius, 0, SkPath::kSmall_ArcSize, SkPathDirection::kCW,
+					-diameter, 0);
+		path.close();
+	  } else {
+		path.addCircle(origin.x() + radius, origin.y() + radius,
+					   radius);
+	  }
+   } else {
+	   SkPoint pts [] = {SkPoint(0.0, 8.0), SkPoint(24.0, 8.0), SkPoint(30.0, 20.0), SkPoint(6.0, 20.0)};
+	   path.moveTo(origin.x() * 1.10, SkScalar(8.0));
+	   path.addPoly(pts, 4, true);
+   }
   return path;
 }
 
@@ -200,7 +232,12 @@ void NewTabButton::NotifyClick(const ui::Event& event) {
 
 void NewTabButton::PaintButtonContents(gfx::Canvas* canvas) {
   PaintFill(canvas);
-  PaintIcon(canvas);
+  if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default")) ||
+		(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    !base::CommandLine::ForCurrentProcess()->HasSwitch("override-new-tab-button-shape-default"))) {
+	PaintIcon(canvas);
+  }
 }
 
 gfx::Size NewTabButton::CalculatePreferredSize(
@@ -249,13 +286,32 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     canvas->Translate(GetContentsBounds().OffsetFromOrigin());
-	flags.setColor(GetColorProvider()->GetColor(
-		GetWidget()->ShouldPaintAsActive()
-			? background_frame_active_color_id_
-			: background_frame_inactive_color_id_));
+	if(((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			!base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default")) ||
+			(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default"))) && 
+			GetState() == STATE_HOVERED) {
+		flags.setColor(SkColorSetRGB(90, 90, 90));
+	} else {
+		flags.setColor(GetColorProvider()->GetColor(
+			GetWidget()->ShouldPaintAsActive()
+				? background_frame_active_color_id_
+				: background_frame_inactive_color_id_));
+	}
     if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs"))
 		flags.setAlphaf(0.7f);
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			!base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default")) ||
+			(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+			base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default"))) {
+	flags.setAlphaf(1.0f);
+	flags.setColor(SkColorSetRGB(0, 0, 0));
+	flags.setStyle(cc::PaintFlags::kStroke_Style);
+	flags.setStrokeWidth(0.5f);
+	canvas->DrawPath(GetBorderPath(gfx::Point(), false),
+						flags);
+	}
   }
 }
 
