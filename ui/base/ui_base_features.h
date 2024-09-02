@@ -262,6 +262,9 @@ BASE_DECLARE_FEATURE(kUseGammaContrastRegistrySettings);
 COMPONENT_EXPORT(UI_BASE_FEATURES)
 BASE_DECLARE_FEATURE(kBubbleFrameViewTitleIsHeading);
 
+// Enables customization of the shape of the browser tabs.
+COMPONENT_EXPORT(UI_BASE_FEATURES) BASE_DECLARE_FEATURE(kSupermiumCustomTabs);
+
 }  // namespace features
 
 #endif  // UI_BASE_UI_BASE_FEATURES_H_

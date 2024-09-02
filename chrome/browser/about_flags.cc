@@ -11620,6 +11620,11 @@ const FeatureEntry kFeatureEntries[] = {
      "Remove Client Hints",
      "Removes client hints (information sent to servers about your system, similar to a user agent). ungoogled-chromium flag.",
      kOsAll, FEATURE_VALUE_TYPE(blink::features::kRemoveClientHints)},
+    {"custom-tab-shapes",
+     "Supermium Custom Tab UI",
+     "Changes the look of browser tabs to appear with a trapezoidal shape.",
+     kOsAll,
+     FEATURE_VALUE_TYPE(features::kSupermiumCustomTabs)},
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
