@@ -131,11 +131,13 @@ int GM2TabStyle::GetDragHandleExtension(int height) const {
 }
 
 gfx::Size GM2TabStyle::GetSeparatorSize() const {
-	  if(base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
-		  return gfx::Size(kGM2SeparatorThickness,
+    if (base::FeatureList::IsEnabled(features::kSupermiumCustomTabs))
+        return gfx::Size(0, 0);
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+        return gfx::Size(kGM2SeparatorThickness,
                    GetLayoutConstant(TAB_SEPARATOR_HEIGHT) * 0.6);
-	return gfx::Size(kGM2SeparatorThickness,
-                   GetLayoutConstant(TAB_SEPARATOR_HEIGHT));
+    return gfx::Size(kGM2SeparatorThickness,
+                     GetLayoutConstant(TAB_SEPARATOR_HEIGHT));
 }
 
 gfx::Insets GM2TabStyle::GetSeparatorMargins() const {

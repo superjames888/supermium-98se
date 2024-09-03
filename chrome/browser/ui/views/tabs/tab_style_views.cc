@@ -7,9 +7,13 @@
 #include <algorithm>
 #include <utility>
 
+#include "base/command_line.h"
+#include "base/logging.h"
+#include "base/files/file_util.h"
 #include "base/i18n/rtl.h"
 #include "base/memory/raw_ptr.h"
 #include "base/numerics/safe_conversions.h"
+#include "base/path_service.h"
 #include "base/strings/strcat.h"
 #include "cc/paint/paint_record.h"
 #include "cc/paint/paint_shader.h"
@@ -27,6 +31,7 @@
 #include "chrome/browser/ui/views/tabs/tab_group_underline.h"
 #include "chrome/browser/ui/views/tabs/tab_slot_controller.h"
 #include "chrome/browser/ui/views/tabs/tab_slot_view.h"
+#include "chrome/common/chrome_paths.h"
 #include "chrome/grit/theme_resources.h"
 #include "components/tab_groups/tab_group_visual_data.h"
 #include "third_party/skia/include/core/SkRRect.h"
@@ -205,6 +210,117 @@ GM2TabStyleViews::GM2TabStyleViews(Tab* tab)
   // repurposing CONTEXT_BUTTON_MD.
 }
 
+typedef struct DataItem {
+	int datakey; // index of point on the tab
+	std::vector<float> values; // 
+}DataItem;
+
+bool UserDefinedTabShape(SkPath& path, bool IsActive, bool IsPinned, bool IsFirst, float left, float tab_top) {
+    int64_t file_size = 0;
+    base::FilePath userdir;
+    if(!base::PathService::Get(chrome::DIR_USER_DATA, &userdir))
+        return false; // Things are seriously wrong if the user data directory cannot be located.
+    const base::FilePath userpath = userdir.Append(FILE_PATH_LITERAL("scs"));
+    base::GetFileSize(userpath, &file_size);
+    if(!file_size)
+        return false;
+    std::vector<char> buf(file_size);
+    base::ReadFile(userpath, reinterpret_cast<char*>(buf.data()), file_size);
+    std::string bufstr = std::string(reinterpret_cast<char*>(buf.data()));
+
+    std::string::size_type sectionstart = bufstr.find("tab");
+    std::string::size_type sectionend = bufstr.find("endtab");
+
+    std::string::size_type fallbacksectionstart = sectionstart;
+    std::string::size_type fallbacksectionend = sectionend;
+
+    if(IsPinned) {
+        sectionstart = bufstr.find("pinnedtab");
+      sectionend = bufstr.find("endpinnedtab");
+      if(sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   }
+
+   if(IsActive) {
+      sectionstart = bufstr.find("activetab");
+      sectionend = bufstr.find("endactivetab");
+      if(sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   }
+   else {
+      sectionstart = bufstr.find("inactivetab");
+      sectionend = bufstr.find("endinactivetab");
+      if(sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }      
+   }
+   
+   if(IsFirst) {
+      sectionstart = bufstr.find("firsttab");
+      sectionend = bufstr.find("endfirsttab");
+      if(sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   }
+   
+   if(sectionstart == std::string::npos || sectionend == std::string::npos)
+      return false;
+   
+    sectionstart += std::string("tab").length();
+
+    std::string sectionContent = bufstr.substr(sectionstart, sectionend - sectionstart);
+
+    std::string::size_type pos = 0;
+    while ((pos = sectionContent.find("{", pos)) != std::string::npos) {
+        std::string::size_type endPos = sectionContent.find("}", pos);
+        if (endPos == std::string::npos) {
+            break;
+        }
+
+        std::string dataItemStr = sectionContent.substr(pos + 1, endPos - pos - 1);
+        std::string::size_type equalPos = dataItemStr.find('=');
+
+        if (equalPos != std::string::npos) {
+            DataItem dataItem;
+         std::string key = dataItemStr.substr(0, equalPos);
+         if(!std::all_of(key.begin(), key.end(), [](char c) {return c >= '0' && c <= '9';}))
+             break;
+            dataItem.datakey = std::stoi(key);
+            std::string valuesStr = dataItemStr.substr(equalPos + 1);
+
+            // Parse the values
+            std::istringstream valuesStream(valuesStr);
+            std::string value;
+            while (std::getline(valuesStream, value, ',')) {
+            if(!std::all_of(value.begin(), value.end(), [](char c) {return (c >= '0' && c <= '9') || c == '.';}))
+               break; // No exceptions, so we must verify that there are only integers in the value before continuing.
+                       // If not, the config file is considered to be "compromised" and needs to be replaced or fixed.
+                     // We will not tolerate any unexpected values in the data.
+            if(value.size() > 6)
+               break; // Any "unnecessarily large" numbers will also be blocked.
+            float val = std::stof(value);
+
+                dataItem.values.push_back(val);
+            }
+         
+         if(dataItem.values.size() != 6)
+            break; // Fail if there is an incorrect quantity of values in the data item.
+          path.cubicTo(left + dataItem.values.at(0), tab_top + dataItem.values.at(1), left + dataItem.values.at(2), tab_top + dataItem.values.at(3), left + dataItem.values.at(4),
+                      tab_top + dataItem.values.at(5));
+        }
+
+        pos = endPos + 1;
+    }
+   
+   return true;
+}
+
 SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
                                  float scale,
                                  bool force_active,
@@ -322,90 +438,112 @@ SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
     // stroke width.
 
     // Start with the left side of the shape.
-    path.moveTo(left, extended_bottom);
+   path.moveTo(left, extended_bottom);
+   if(!UserDefinedTabShape(path, tab_->controller()->IsActiveTab(tab_), tab_->controller()->IsTabPinned(tab_), 
+                           tab_->controller()->IsTabFirst(tab_), left, tab_top)) {
+    
+    if (!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs)) {
+      path.moveTo(left, extended_bottom);
+      if (tab_left != left) {
+        // Draw the left edge of the extension.
+        //   ╭─────────╮
+        //   │ Content │
+        // ┏─╯         ╰─┐
+        if (tab_bottom != extended_bottom)
+         path.lineTo(left, tab_bottom);
 
-    if (tab_left != left) {
-      // Draw the left edge of the extension.
-      //   ╭─────────╮
-      //   │ Content │
-      // ┏─╯         ╰─┐
-      if (tab_bottom != extended_bottom)
-        path.lineTo(left, tab_bottom);
-
-      // Draw the bottom-left corner.
-      //   ╭─────────╮
-      //   │ Content │
-      // ┌━╝         ╰─┐
-      if (extend_left_to_bottom) {
-        path.lineTo(tab_left, tab_bottom);
-      } else {
-        path.lineTo(tab_left - extension_corner_radius, tab_bottom);
-        path.arcTo(extension_corner_radius, extension_corner_radius, 0,
-                   SkPath::kSmall_ArcSize, SkPathDirection::kCCW, tab_left,
-                   tab_bottom - extension_corner_radius);
+        // Draw the bottom-left corner.
+        //   ╭─────────╮
+        //   │ Content │
+        // ┌━╝         ╰─┐
+        if (extend_left_to_bottom) {
+         path.lineTo(tab_left, tab_bottom);
+        } else {
+         path.lineTo(tab_left - extension_corner_radius, tab_bottom);
+         path.arcTo(extension_corner_radius, extension_corner_radius, 0,
+                  SkPath::kSmall_ArcSize, SkPathDirection::kCCW, tab_left,
+                  tab_bottom - extension_corner_radius);
+        }
       }
-    }
 
-    // Draw the ascender and top-left curve, if present.
-    if (extend_to_top) {
-      //   ┎─────────╮
-      //   ┃ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_left, tab_top);
-    } else {
-      //   ╔─────────╮
-      //   ┃ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_left, tab_top + content_corner_radius);
-      path.arcTo(content_corner_radius, content_corner_radius, 0,
-                 SkPath::kSmall_ArcSize, SkPathDirection::kCW,
-                 tab_left + content_corner_radius, tab_top);
-    }
-
-    // Draw the top crossbar and top-right curve, if present.
-    if (extend_to_top) {
-      //   ┌━━━━━━━━━┑
-      //   │ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_right, tab_top);
-    } else {
-      //   ╭━━━━━━━━━╗
-      //   │ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_right - content_corner_radius, tab_top);
-      path.arcTo(content_corner_radius, content_corner_radius, 0,
-                 SkPath::kSmall_ArcSize, SkPathDirection::kCW, tab_right,
-                 tab_top + content_corner_radius);
-    }
-
-    if (tab_right != right) {
-      // Draw the descender and bottom-right corner.
-      //   ╭─────────╮
-      //   │ Content ┃
-      // ┌─╯         ╚━┐
-      if (extend_right_to_bottom) {
-        path.lineTo(tab_right, tab_bottom);
+      // Draw the ascender and top-left curve, if present.
+      if (extend_to_top) {
+        //   ┎─────────╮
+        //   ┃ Content │
+        // ┌─╯         ╰─┐
+        path.lineTo(tab_left, tab_top);
       } else {
-        path.lineTo(tab_right, tab_bottom - extension_corner_radius);
-        path.arcTo(extension_corner_radius, extension_corner_radius, 0,
-                   SkPath::kSmall_ArcSize, SkPathDirection::kCCW,
-                   tab_right + extension_corner_radius, tab_bottom);
+        //   ╔─────────╮
+        //   ┃ Content │
+        // ┌─╯         ╰─┐
+        path.lineTo(tab_left, tab_top + content_corner_radius);
+        path.arcTo(content_corner_radius, content_corner_radius, 0,
+                SkPath::kSmall_ArcSize, SkPathDirection::kCW,
+                tab_left + content_corner_radius, tab_top);
       }
-      if (tab_bottom != extended_bottom)
-        path.lineTo(right, tab_bottom);
-    }
 
-    // Draw anything remaining: the descender, the bottom right horizontal
-    // stroke, or the right edge of the extension, depending on which
-    // conditions fired above.
-    //   ╭─────────╮
-    //   │ Content │
-    // ┌─╯         ╰─┓
-    path.lineTo(right, extended_bottom);
+      // Draw the top crossbar and top-right curve, if present.
+      if (extend_to_top) {
+        //   ┌━━━━━━━━━┑
+        //   │ Content │
+        // ┌─╯         ╰─┐
+        path.lineTo(tab_right, tab_top);
+      } else {
+        //   ╭━━━━━━━━━╗
+        //   │ Content │
+        // ┌─╯         ╰─┐
+        path.lineTo(tab_right - content_corner_radius, tab_top);
+        path.arcTo(content_corner_radius, content_corner_radius, 0,
+                SkPath::kSmall_ArcSize, SkPathDirection::kCW, tab_right,
+                tab_top + content_corner_radius);
+      }
 
-    if (path_type != TabStyle::PathType::kBorder) {
-      path.close();
+      if (tab_right != right) {
+        // Draw the descender and bottom-right corner.
+        //   ╭─────────╮
+        //   │ Content ┃
+        // ┌─╯         ╚━┐
+        if (extend_right_to_bottom) {
+         path.lineTo(tab_right, tab_bottom);
+        } else {
+         path.lineTo(tab_right, tab_bottom - extension_corner_radius);
+         path.arcTo(extension_corner_radius, extension_corner_radius, 0,
+                  SkPath::kSmall_ArcSize, SkPathDirection::kCCW,
+                  tab_right + extension_corner_radius, tab_bottom);
+        }
+        if (tab_bottom != extended_bottom)
+         path.lineTo(right, tab_bottom);
+      }
+
+      // Draw anything remaining: the descender, the bottom right horizontal
+      // stroke, or the right edge of the extension, depending on which
+      // conditions fired above.
+      //   ╭─────────╮
+      //   │ Content │
+      // ┌─╯         ╰─┓
+      path.lineTo(right, extended_bottom);
     }
+   else {
+      path.moveTo(left, extended_bottom);
+      if (extend_to_top) {
+        // Create the vertical extension by extending the side diagonals until
+        // they reach the top of the bounds.
+         path.cubicTo(left, extended_bottom, (((tab_left + 10) + left) / 2), ((tab_top + extended_bottom) / 2), tab_left + 10,
+                    tab_top);
+         path.lineTo(tab_right - 10, tab_top);
+         path.cubicTo(tab_right - 10, tab_top, (((tab_right - 10) + right) / 2), ((tab_top + extended_bottom) / 2), right,
+                 extended_bottom);
+      } else {
+         path.cubicTo(left, extended_bottom, (((tab_left + 4) + left) / 2), (((tab_top * 0.5) + extended_bottom) / 2), tab_left + 4,
+                  (tab_top * 0.5));
+         path.cubicTo(tab_left + 4, (tab_top * 0.5), tab_left + 4, tab_top * 0.5, tab_right - 4, tab_top * 0.5);
+         path.cubicTo(tab_right - 4, (tab_top * 0.5), (((tab_right - 4) + right) / 2), (((tab_top * 0.5) + extended_bottom) / 2), right,
+                 extended_bottom);
+      }
+      if(!force_active)
+           path.close();
+    }
+   }
   }
 
   // Convert path to be relative to the tab origin.
@@ -664,12 +802,16 @@ float GM2TabStyleViews::GetSeparatorOpacity(bool for_layout,
 
   const Tab* adjacent_tab =
       tab_->controller()->GetAdjacentTab(tab_, leading ? -1 : 1);
+  // The separator should never appear at the end of the tab strip.
+  if (!adjacent_tab && !leading)
+	  return 0.0f;
 
   const Tab* left_tab = leading ? adjacent_tab : tab_.get();
   const Tab* right_tab = leading ? tab_.get() : adjacent_tab;
   const bool adjacent_to_header =
       right_tab && right_tab->group().has_value() &&
       (!left_tab || left_tab->group() != right_tab->group());
+  
 
   // If the current tab is selected, default to hiding the separator. Only show
   // the separator if it's adjacent to other selected tabs.
@@ -936,8 +1078,21 @@ void GM2TabStyleViews::PaintTabBackgroundFill(
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     flags.setColor(GetCurrentTabBackgroundColor(selection_state, hovered));
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs") &&
+	    selection_state != TabStyle::TabSelectionState::kActive)
+		flags.setAlphaf(0.7f);
     canvas->DrawRect(gfx::ScaleToEnclosingRect(tab_->GetLocalBounds(), scale),
                      flags);
+	if ((base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    !base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default")) ||
+		(!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs) && 
+	    base::CommandLine::ForCurrentProcess()->HasSwitch("override-tab-outline-default"))) {
+	flags.setAlphaf(1.0f);
+	flags.setColor(SkColorSetRGB(0, 0, 0));
+	flags.setStyle(cc::PaintFlags::kStroke_Style);
+	canvas->DrawPath(fill_path,
+                     flags);
+	}
   }
 
   if (fill_id.has_value()) {
