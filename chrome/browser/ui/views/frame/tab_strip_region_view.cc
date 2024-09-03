@@ -179,16 +179,30 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
   }
 
   if (ShouldShowNewTabButton(browser)) {
-    std::unique_ptr<TabStripControlButton> tab_strip_control_button =
+    if (features::IsChromeRefresh2023()) {
+      std::unique_ptr<TabStripControlButton> tab_strip_control_button =
         std::make_unique<TabStripControlButton>(
             tab_strip_->controller(),
             base::BindRepeating(&TabStrip::NewTabButtonPressed,
                                 base::Unretained(tab_strip_)),
-            vector_icons::kAddChromeRefreshIcon);
-    tab_strip_control_button->SetProperty(views::kElementIdentifierKey,
+            kAddIcon);
+      tab_strip_control_button->SetProperty(views::kElementIdentifierKey,
                                           kNewTabButtonElementId);
 
-    new_tab_button_ = AddChildView(std::move(tab_strip_control_button));
+      new_tab_button_ = AddChildView(std::move(tab_strip_control_button));
+
+    } else {
+      std::unique_ptr<NewTabButton> new_tab_button =
+          std::make_unique<NewTabButton>(
+              tab_strip_, base::BindRepeating(&TabStrip::NewTabButtonPressed,
+                                              base::Unretained(tab_strip_)));
+      new_tab_button->SetImageVerticalAlignment(
+          views::ImageButton::ALIGN_BOTTOM);
+      new_tab_button->SetEventTargeter(
+          std::make_unique<views::ViewTargeter>(new_tab_button.get()));
+
+      new_tab_button_ = AddChildView(std::move(new_tab_button));
+    }
 
     new_tab_button_->SetTooltipText(
         l10n_util::GetStringUTF16(IDS_TOOLTIP_NEW_TAB));
