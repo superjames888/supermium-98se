@@ -406,7 +406,7 @@ std::string GetUserAgent(
     return custom_ua.value();
   }
   custom_ua = parseFile(UA);
-  if (custom_ua.has_value()) {
+  if (!custom_ua->empty()) {
     return custom_ua.value();
   }
   return GetUserAgentInternal(user_agent_reduction);
