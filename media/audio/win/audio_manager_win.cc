@@ -381,7 +381,8 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
   int default_buffer_size = 0;
   bool attempt_audio_offload = CoreAudioUtil::IsAudioOffloadSupported(nullptr);
 
-  if (cmd_line->HasSwitch(switches::kEnableExclusiveAudio) && CoreAudioUtil::IsSupported()) {
+  if (CoreAudioUtil::IsSupported()) {
+    if (cmd_line->HasSwitch(switches::kEnableExclusiveAudio)) {
     // TODO(rtoy): tune these values for best possible WebAudio
     // performance. WebRTC works well at 48kHz and a buffer size of 480
     // samples will be used for this case. Note that exclusive mode is
@@ -389,9 +390,10 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
     // 256 samples, which corresponds to an output delay of ~5.33ms.
     sample_rate = 48000;
     buffer_size = 256;
-    if (input_params.IsValid())
+    if (input_params.IsValid()) {
       channel_layout_config = input_params.channel_layout_config();
-  } else {
+	}
+    } else {
     AudioParameters params;
 
     HRESULT hr = CoreAudioUtil::GetPreferredAudioParameters(
@@ -424,7 +426,7 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
     default_buffer_size = hardware_capabilities.default_frames_per_buffer;
   }
 
-  if (input_params.IsValid() && CoreAudioUtil::IsSupported()) {
+    if (input_params.IsValid()) {
     // If the user has enabled checking supported channel layouts or we don't
     // have a valid channel layout yet, try to use the input layout.  See bugs
     // http://crbug.com/259165 and http://crbug.com/311906 for more details.
@@ -452,6 +454,7 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
                    << channel_layout_config.channel_layout() << ")";
         }
       }
+     }
     }
 
     effects |= input_params.effects();
