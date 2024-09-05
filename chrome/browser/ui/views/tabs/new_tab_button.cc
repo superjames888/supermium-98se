@@ -169,7 +169,7 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
 					   radius);
 	  }
    } else {
-       SkPoint pts [] = {SkPoint(4.0, 8.0), SkPoint(22.0, 8.0), SkPoint(28.0, 20.0), SkPoint(10.0, 20.0)};
+       SkPoint pts [] = {SkPoint(0.0, 8.0), SkPoint(22.0, 8.0), SkPoint(28.0, 20.0), SkPoint(6.0, 20.0)};
        path.moveTo(origin.x() * 1.10, SkScalar(8.0));
        path.addPoly(pts, 4, true);
    }
