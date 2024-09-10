@@ -20,6 +20,7 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/base/pointer/touch_ui_controller.h"
+#include "ui/base/ui_base_features.h"
 #include "ui/gfx/vector_icon_types.h"
 #include "ui/views/accessibility/view_accessibility.h"
 #include "ui/views/controls/button/button_controller.h"
@@ -29,7 +30,11 @@ namespace {
 const gfx::VectorIcon& GetIcon(ExtensionsToolbarButton::State state) {
   switch (state) {
     case ExtensionsToolbarButton::State::kDefault:
-      return vector_icons::kExtensionChromeRefreshIcon;
+      return (features::IsChromeRefresh2023() ||
+              base::FeatureList::IsEnabled(
+                  extensions_features::kExtensionsMenuAccessControl))
+                 ? vector_icons::kExtensionChromeRefreshIcon
+                 : vector_icons::kExtensionIcon;
     case ExtensionsToolbarButton::State::kAllExtensionsBlocked:
       return vector_icons::kExtensionOffIcon;
     case ExtensionsToolbarButton::State::kAnyExtensionHasAccess:
@@ -206,7 +211,11 @@ int ExtensionsToolbarButton::GetIconSize() const {
     return kDefaultTouchableIconSize;
   }
 
-  return kDefaultIconSizeChromeRefresh;
+  return features::IsChromeRefresh2023() ||
+                 base::FeatureList::IsEnabled(
+                     extensions_features::kExtensionsMenuAccessControl)
+             ? kDefaultIconSizeChromeRefresh
+             : kDefaultIconSize;
 }
 
 std::u16string ExtensionsToolbarButton::GetTooltipText(

@@ -50,6 +50,7 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/base/models/image_model.h"
+#include "ui/base/ui_base_features.h"
 #include "ui/views/interaction/element_tracker_views.h"
 #include "ui/views/layout/animating_layout_manager.h"
 #include "ui/views/layout/flex_layout.h"
@@ -188,8 +189,12 @@ ExtensionsToolbarContainer::ExtensionsToolbarContainer(Browser* browser,
       break;
   }
 
-  GetTargetLayoutManager()->SetDefault(views::kMarginsKey,
-                                       gfx::Insets::VH(0, 2));
+  if (features::IsChromeRefresh2023() ||
+      base::FeatureList::IsEnabled(
+          extensions_features::kExtensionsMenuAccessControl)) {
+    GetTargetLayoutManager()->SetDefault(views::kMarginsKey,
+                                         gfx::Insets::VH(0, 2));
+  }
 
   UpdateControlsVisibility();
 
