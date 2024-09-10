@@ -11623,8 +11623,13 @@ const FeatureEntry kFeatureEntries[] = {
     {"custom-tab-shapes",
      "Supermium Custom Tab UI",
      "Changes the look of browser tabs to appear with a trapezoidal shape.",
-     kOsAll,
+     kOsDesktop,
      FEATURE_VALUE_TYPE(features::kSupermiumCustomTabs)},
+    {"chrome-refresh-2023",
+     "Chrome Refresh 2023",
+     "Enable Chrome Refresh 2023, the default theme in standard Chrome since version 124.",
+     kOsDesktop,
+     FEATURE_VALUE_TYPE(features::kChromeRefresh2023)},
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
