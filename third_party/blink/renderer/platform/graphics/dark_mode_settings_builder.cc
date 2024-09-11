@@ -23,7 +23,7 @@ namespace {
 const constexpr DarkModeInversionAlgorithm kDefaultDarkModeInversionAlgorithm =
     DarkModeInversionAlgorithm::kInvertLightnessLAB;
 const constexpr DarkModeImagePolicy kDefaultDarkModeImagePolicy =
-    DarkModeImagePolicy::kFilterSmart;
+    DarkModeImagePolicy::kFilterNone;
 const constexpr DarkModeImageClassifierPolicy
     kDefaultDarkModeImageClassifierPolicy =
         DarkModeImageClassifierPolicy::kNumColorsWithMlFallback;
