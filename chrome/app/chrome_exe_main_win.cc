@@ -253,10 +253,8 @@ int main() {
   }
   // If we are already a fiber then continue normal execution.
 #endif  // defined(ARCH_CPU_32_BITS)
-
   SetCwdForBrowserProcess();
   install_static::InitializeFromPrimaryModule();
-  SignalInitializeCrashReporting();
   if (IsBrowserProcess())
     chrome::DisableDelayLoadFailureHooksForMainExecutable();
 #if defined(ARCH_CPU_32_BITS)
@@ -272,6 +270,9 @@ int main() {
   base::CommandLine::Init(0, nullptr);
   const base::CommandLine* command_line =
       base::CommandLine::ForCurrentProcess();
+
+  if (!command_line->HasSwitch("disable-crashpad"))
+      SignalInitializeCrashReporting();
 
   const std::string process_type =
       command_line->GetSwitchValueASCII(switches::kProcessType);
