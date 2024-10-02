@@ -11614,7 +11614,7 @@ const FeatureEntry kFeatureEntries[] = {
      kOsWin, SINGLE_VALUE_TYPE("disable-browser-font-smoothing-win")},
     {"force-generic-download-icons",
      "Force Generic Download Icons",
-     "If the browser is slow or crashes when opening the Recent Downloads page, use this switch.",
+     "The traditional Chromium method of gathering icons for the download page and views. May be buggy in a few cases.",
      kOsWin, SINGLE_VALUE_TYPE("force-generic-download-icons")},
     {"remove-client-hints",
      "Remove Client Hints",
