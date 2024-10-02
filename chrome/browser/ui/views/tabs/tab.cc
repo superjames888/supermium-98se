@@ -577,7 +577,11 @@ void Tab::OnMouseReleased(const ui::MouseEvent& event) {
   // Close tab on middle click, but only if the button is released over the tab
   // (normal windows behavior is to discard presses of a UI element where the
   // releases happen off the element).
-  if (event.IsOnlyMiddleMouseButton()) {
+  if (event.IsOnlyMiddleMouseButton() ||
+    // Close tab on double click, mirror of IsOnlyMiddleMouseButton
+    // Based on gz83's work.
+    ((event.IsOnlyLeftMouseButton() && event.GetClickCount() == 2) && 
+      base::CommandLine::ForCurrentProcess()->HasSwitch("double-click-close-tab"))) {
     if (HitTestPoint(event.location())) {
       controller_->CloseTab(this, CLOSE_TAB_FROM_MOUSE);
     } else if (closing_) {
