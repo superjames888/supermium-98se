@@ -11630,6 +11630,11 @@ const FeatureEntry kFeatureEntries[] = {
      "Enable Chrome Refresh 2023, the default theme in standard Chrome since version 124.",
      kOsDesktop,
      FEATURE_VALUE_TYPE(features::kChromeRefresh2023)},
+    {"disable-crashpad",
+     "Disable Crashpad",
+     "Disable the creaton of Crashpad processes. This will save a few megabytes of memory and force the use of the system exception handler.",
+     kOsWin,
+     SINGLE_VALUE_TYPE("disable-crashpad")},
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
