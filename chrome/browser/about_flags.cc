@@ -11635,6 +11635,10 @@ const FeatureEntry kFeatureEntries[] = {
      "Disable the creaton of Crashpad processes. This will save a few megabytes of memory and force the use of the system exception handler.",
      kOsWin,
      SINGLE_VALUE_TYPE("disable-crashpad")},
+    {"double-click-close-tab",
+     "Double Click to Close Tab",
+     "Enables double clicking a tab to close it.",
+     kOsDesktop, SINGLE_VALUE_TYPE("double-click-close-tab")}
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
