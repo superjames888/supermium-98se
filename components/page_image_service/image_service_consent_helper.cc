@@ -4,6 +4,7 @@
 
 #include "components/page_image_service/image_service_consent_helper.h"
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/metrics/field_trial_params.h"
 #include "base/metrics/histogram_functions.h"
@@ -46,25 +47,27 @@ ImageServiceConsentHelper::ImageServiceConsentHelper(
           kImageServiceObserveSyncDownloadStatus,
           "timeout_seconds",
           10))) {
-  if (base::FeatureList::IsEnabled(kImageServiceObserveSyncDownloadStatus)) {
-    sync_service_observer_.Observe(sync_service);
-  } else if (model_type == syncer::ModelType::BOOKMARKS) {
-    consent_throttle_ = std::make_unique<unified_consent::ConsentThrottle>(
-        unified_consent::UrlKeyedDataCollectionConsentHelper::
-            NewPersonalizedBookmarksDataCollectionConsentHelper(
-                sync_service,
-                /*require_sync_feature_enabled=*/!base::FeatureList::IsEnabled(
-                    syncer::kReplaceSyncPromosWithSignInPromos) &&
-                    !base::FeatureList::IsEnabled(
-                        syncer::kEnableBookmarkFoldersForAccountStorage)),
-        timeout_duration_);
-  } else if (model_type == syncer::ModelType::HISTORY_DELETE_DIRECTIVES) {
-    consent_throttle_ = std::make_unique<unified_consent::ConsentThrottle>(
-        unified_consent::UrlKeyedDataCollectionConsentHelper::
-            NewPersonalizedDataCollectionConsentHelper(sync_service),
-        timeout_duration_);
-  } else {
-    NOTREACHED();
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-sync")) {
+      if (base::FeatureList::IsEnabled(kImageServiceObserveSyncDownloadStatus)) {
+        sync_service_observer_.Observe(sync_service);
+      } else if (model_type == syncer::ModelType::BOOKMARKS) {
+        consent_throttle_ = std::make_unique<unified_consent::ConsentThrottle>(
+            unified_consent::UrlKeyedDataCollectionConsentHelper::
+                NewPersonalizedBookmarksDataCollectionConsentHelper(
+                    sync_service,
+                    /*require_sync_feature_enabled=*/!base::FeatureList::IsEnabled(
+                        syncer::kReplaceSyncPromosWithSignInPromos) &&
+                        !base::FeatureList::IsEnabled(
+                            syncer::kEnableBookmarkFoldersForAccountStorage)),
+            timeout_duration_);
+      } else if (model_type == syncer::ModelType::HISTORY_DELETE_DIRECTIVES) {
+        consent_throttle_ = std::make_unique<unified_consent::ConsentThrottle>(
+            unified_consent::UrlKeyedDataCollectionConsentHelper::
+                NewPersonalizedDataCollectionConsentHelper(sync_service),
+            timeout_duration_);
+      } else {
+        NOTREACHED();
+      }
   }
 }
 
