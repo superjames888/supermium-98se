@@ -297,7 +297,7 @@ vars = {
   'dawn_git': 'https://dawn.googlesource.com',
   'pdfium_git': 'https://github.com/Alex313031/pdfium-supermium',
   'quiche_git': 'https://quiche.googlesource.com',
-  'skia_git': 'https://github.com/Alex313031/skia-supermium',
+  'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
   'betocore_git': 'https://beto-core.googlesource.com',
