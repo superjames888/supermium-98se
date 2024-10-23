@@ -40,7 +40,7 @@ class NET_EXPORT_PRIVATE FtpTransaction {
   // NOTE: The transaction is not responsible for deleting the callback object.
   //
   // Profiling information for the request is saved to |net_log| if non-NULL.
-  virtual int Start(const FtpRequestInfo* request_info,
+  virtual int Start(raw_ptr <FtpRequestInfo> request_info,
                     CompletionOnceCallback callback,
                     const NetLogWithSource& net_log,
                     const NetworkTrafficAnnotationTag& traffic_annotation) = 0;

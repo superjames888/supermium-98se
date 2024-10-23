@@ -338,6 +338,7 @@ std::ostream& CheckError::stream() {
 }
 
 CheckError::~CheckError() {
+#if !BUILDFLAG(SUPERMIUM_DEBUG)
   // TODO(crbug.com/40254046): Consider splitting out CHECK from DCHECK so that
   // the destructor can be marked [[noreturn]] and we don't need to check
   // severity in the destructor.
@@ -355,6 +356,7 @@ CheckError::~CheckError() {
   if (is_fatal) {
     base::ImmediateCrash();
   }
+#endif
 }
 
 CheckError::CheckError(LogMessage* log_message) : log_message_(log_message) {}

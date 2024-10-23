@@ -13,6 +13,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/gtest_prod_util.h"
+#include "base/memory/raw_ptr.h"
 #include "base/memory/ref_counted.h"
 #include "net/base/auth.h"
 #include "net/base/completion_once_callback.h"
@@ -39,7 +40,7 @@ class NET_EXPORT_PRIVATE FtpNetworkTransaction : public FtpTransaction {
   int Stop(int error);
 
   // FtpTransaction methods:
-  int Start(const FtpRequestInfo* request_info,
+  int Start(raw_ptr <FtpRequestInfo> request_info,
             CompletionOnceCallback callback,
             const NetLogWithSource& net_log,
             const NetworkTrafficAnnotationTag& traffic_annotation) override;
@@ -204,11 +205,11 @@ class NET_EXPORT_PRIVATE FtpNetworkTransaction : public FtpTransaction {
   CompletionOnceCallback user_callback_;
 
   NetLogWithSource net_log_;
-  const FtpRequestInfo* request_;
+  raw_ptr<FtpRequestInfo> request_;
   MutableNetworkTrafficAnnotationTag traffic_annotation_;
   FtpResponseInfo response_;
 
-  HostResolver* resolver_;
+  raw_ptr<HostResolver> resolver_;
   // Cancels the outstanding request on destruction.
   std::unique_ptr<HostResolver::ResolveHostRequest> resolve_request_;
 
@@ -249,7 +250,7 @@ class NET_EXPORT_PRIVATE FtpNetworkTransaction : public FtpTransaction {
 
   uint16_t data_connection_port_;
 
-  ClientSocketFactory* const socket_factory_;
+  raw_ptr<ClientSocketFactory> const socket_factory_;
 
   std::string unescaped_path_;
 
