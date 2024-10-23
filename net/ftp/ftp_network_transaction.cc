@@ -261,7 +261,7 @@ int FtpNetworkTransaction::Stop(int error) {
 }
 
 int FtpNetworkTransaction::Start(
-    const FtpRequestInfo* request_info,
+    raw_ptr <FtpRequestInfo> request_info,
     CompletionOnceCallback callback,
     const NetLogWithSource& net_log,
     const NetworkTrafficAnnotationTag& traffic_annotation) {

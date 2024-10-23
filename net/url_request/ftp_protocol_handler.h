@@ -8,6 +8,8 @@
 #include <memory>
 
 #include "base/compiler_specific.h"
+#include "base/memory/raw_ptr.h"
+#include "base/memory/ref_counted.h"
 #include "net/base/net_export.h"
 #include "net/url_request/url_request_job_factory.h"
 
@@ -48,7 +50,7 @@ class NET_EXPORT FtpProtocolHandler :
       FtpAuthCache* auth_cache);
 
   std::unique_ptr<FtpTransactionFactory> ftp_transaction_factory_;
-  FtpAuthCache* ftp_auth_cache_;
+  raw_ptr<FtpAuthCache> ftp_auth_cache_;
 };
 
 }  // namespace net

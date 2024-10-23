@@ -372,7 +372,7 @@ class NET_EXPORT URLRequestContext final {
   std::unique_ptr<TransportSecurityPersister> transport_security_persister_;
   
   #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
-  FtpAuthCache* ftp_auth_cache_;
+  raw_ptr<FtpAuthCache> ftp_auth_cache_;
   #endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   std::unique_ptr<std::set<raw_ptr<const URLRequest, SetExperimental>>>
