@@ -3637,7 +3637,7 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
     }
   }
 
-#if BUILDFLAG(IS_WIN) && !defined(OFFICIAL_BUILD)
+#if BUILDFLAG(IS_WIN) && defined(OFFICIAL_BUILD)
   // Needed because we can't show the dialog from the sandbox. Don't pass
   // --no-sandbox in official builds because that would bypass the bad_flgs
   // prompt.
