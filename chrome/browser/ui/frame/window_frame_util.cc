@@ -34,10 +34,5 @@ gfx::Size WindowFrameUtil::GetWindowsCaptionButtonAreaSize() {
 // static
 bool WindowFrameUtil::IsWindowsTabSearchCaptionButtonEnabled(
     const Browser* browser) {
-#if BUILDFLAG(IS_WIN)
-  return !features::IsChromeRefresh2023() && browser->is_type_normal() &&
-      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button");
-#else
   return false;
-#endif  // BUILDFLAG(IS_WIN)
 }
