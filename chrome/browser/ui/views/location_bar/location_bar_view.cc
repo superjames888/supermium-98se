@@ -1174,8 +1174,9 @@ void LocationBarView::RefreshBackground() {
     border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
 
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border") && !is_caret_visible) {
 	  border_color = SK_ColorGRAY;
+  }
   if (is_popup_mode_) {
      SetBackground(views::CreateSolidBackground(background_color));
     } else {
@@ -1189,12 +1190,12 @@ void LocationBarView::RefreshBackground() {
   omnibox_view_->SetBackgroundColor(background_color);
   
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border") &&
-    base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+    base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui") && !is_caret_visible) {
     // When the location bar is shrunken, the border above is only drawn on the sides.
     // To resolve this, an extra border is drawn in that area on the top and bottom.
     // Ideally, only one border would be drawn.
     omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorGRAY));
-
+  }
   // The divider between indicators and request chips should have the same color
   // as the omnibox.
   if (base::FeatureList::IsEnabled(
