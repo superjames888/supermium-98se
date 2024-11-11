@@ -240,8 +240,7 @@ bool QuicSessionPool::DirectJob::IsSvcbOptional(
   // If SVCB/HTTPS resolution succeeded, the client supports ECH, and all
   // routes support ECH, disable the A/AAAA fallback. See Section 10.1 of
   // draft-ietf-dnsop-svcb-https-11.
-  if (!pool_->ssl_config_service_->GetSSLContextConfig().ech_enabled ||
-      !base::FeatureList::IsEnabled(features::kEncryptedClientHelloQuic)) {
+  if (!pool_->ssl_config_service_->GetSSLContextConfig().ech_enabled) {
     return true;  // ECH is not supported for this request.
   }
 

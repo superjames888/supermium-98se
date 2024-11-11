@@ -8067,12 +8067,6 @@ const FeatureEntry kFeatureEntries[] = {
      FEATURE_VALUE_TYPE(ash::features::kSettingsAppNotificationSettings)},
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
-    {"encrypted-client-hello", "Encrypted ClientHello",
-     "When enabled, Chrome will enable Encrypted ClientHello support. This will "
-     "encrypt TLS ClientHello if the server enables the extension via the HTTPS "
-     "DNS record.", kOsAll,
-     FEATURE_VALUE_TYPE(net::features::kEncryptedClientHello)},
-
     {"use-dns-https-svcb-alpn", flag_descriptions::kUseDnsHttpsSvcbAlpnName,
      flag_descriptions::kUseDnsHttpsSvcbAlpnDescription,
      kOsLinux | kOsMac | kOsWin | kOsCrOS | kOsAndroid,
