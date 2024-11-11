@@ -809,7 +809,7 @@ int SSLClientSocketImpl::Init() {
     SSL_set_enable_ech_grease(ssl_.get(), 1);
   }
   if (!ssl_config_.ech_config_list.empty()) {
-    DCHECK(context_->config().ech_enabled);
+    DCHECK(context_->config().EncryptedClientHelloEnabled());
     net_log_.AddEvent(NetLogEventType::SSL_ECH_CONFIG_LIST, [&] {
       return base::Value::Dict().Set(
           "bytes", NetLogBinaryValue(ssl_config_.ech_config_list));

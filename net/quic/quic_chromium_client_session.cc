@@ -1600,7 +1600,9 @@ void QuicChromiumClientSession::OnCanCreateNewOutgoingStream(
 
 quic::QuicSSLConfig QuicChromiumClientSession::GetSSLConfig() const {
   quic::QuicSSLConfig config = quic::QuicSpdyClientSessionBase::GetSSLConfig();
-  if (ssl_config_service_->GetSSLContextConfig().ech_enabled) {
+  if (ssl_config_service_->GetSSLContextConfig()
+          .EncryptedClientHelloEnabled() &&
+      base::FeatureList::IsEnabled(features::kEncryptedClientHelloQuic)) {
     config.ech_grease_enabled = true;
     config.ech_config_list.assign(ech_config_list_.begin(),
                                   ech_config_list_.end());

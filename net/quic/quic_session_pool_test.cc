@@ -13870,6 +13870,30 @@ TEST_P(QuicSessionPoolDnsAliasPoolingTest, IPPooling) {
   EXPECT_EQ(expected_dns_aliases2_, stream2->GetDnsAliases());
 }
 
+class QuicStreamFactoryEchTest : public QuicStreamFactoryTestBase,
+                                 public ::testing::TestWithParam<TestParams> {
+ protected:
+  QuicStreamFactoryEchTest()
+      : QuicStreamFactoryTestBase(GetParam().version,
+                                  /*enabled_features=*/
+                                  {features::kEncryptedClientHello,
+                                   features::kEncryptedClientHelloQuic}) {
+    if (GetParam().priority_header_enabled) {
+      feature_list_.InitAndEnableFeature(net::features::kPriorityHeader);
+    } else {
+      feature_list_.InitAndDisableFeature(net::features::kPriorityHeader);
+    }
+  }
+
+ private:
+  base::test::ScopedFeatureList feature_list_;
+};
+
+INSTANTIATE_TEST_SUITE_P(VersionIncludeStreamDependencySequence,
+                         QuicStreamFactoryEchTest,
+                         ::testing::ValuesIn(GetTestParams()),
+                         ::testing::PrintToStringParamName());
+
 // Test that, even if DNS does not provide ECH keys, ECH GREASE is enabled.
 TEST_P(QuicSessionPoolTest, EchGrease) {
   Initialize();

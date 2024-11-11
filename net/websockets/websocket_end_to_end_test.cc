@@ -745,7 +745,8 @@ TEST_F(WebSocketEndToEndTest, HostResolverEndpointResult) {
 // Test that wss connections can use EncryptedClientHello.
 TEST_F(WebSocketEndToEndTest, EncryptedClientHello) {
   base::test::ScopedFeatureList features;
-  features.InitAndEnableFeature(features::kUseDnsHttpsSvcb);
+  features.InitWithFeatures(
+      {features::kUseDnsHttpsSvcb, features::kEncryptedClientHello}, {});
 
   // SpawnedTestServer does not support ECH, while EmbeddedTestServer does not
   // support WebSockets (https://crbug.com/1281277). Until that is fixed, test
