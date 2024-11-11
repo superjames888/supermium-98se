@@ -25,6 +25,9 @@ struct NET_EXPORT SSLContextConfig {
 
   bool operator==(const SSLContextConfig&) const;
 
+  // EncryptedClientHelloEnabled returns whether ECH is enabled.
+  bool EncryptedClientHelloEnabled() const;
+
   // Returns whether post-quantum key agreement is enabled in TLS handshakes.
   bool PostQuantumKeyAgreementEnabled() const;
 
@@ -50,7 +53,9 @@ struct NET_EXPORT SSLContextConfig {
   // flags.
   std::optional<bool> post_quantum_override;
 
-  // Controls whether ECH is enabled.
+  // If false, disables TLS Encrypted ClientHello (ECH). If true, the feature
+  // may be enabled or disabled, depending on feature flags. If querying whether
+  // ECH is enabled, use `EncryptedClientHelloEnabled` instead.
   bool ech_enabled = true;
 };
 

@@ -519,7 +519,9 @@ bool TransportConnectJob::IsSvcbOptional(
   }
 
   if (!common_connect_job_params()->ssl_client_context ||
-      !common_connect_job_params()->ssl_client_context->config().ech_enabled) {
+      !common_connect_job_params()
+           ->ssl_client_context->config()
+           .EncryptedClientHelloEnabled()) {
     return true;  // ECH is not supported for this request.
   }
 

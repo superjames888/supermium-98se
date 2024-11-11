@@ -5412,6 +5412,9 @@ TEST_F(SSLClientSocketTest, Tag) {
 }
 
 TEST_F(SSLClientSocketTest, ECH) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   SSLServerConfig server_config;
   SSLConfig client_config;
   server_config.ech_keys = MakeTestEchKeys(
@@ -5469,6 +5472,9 @@ TEST_F(SSLClientSocketTest, ECH) {
 // Test that, on key mismatch, the public name can be used to authenticate
 // replacement keys.
 TEST_F(SSLClientSocketTest, ECHWrongKeys) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   static const char kPublicName[] = "public.example";
   std::vector<uint8_t> ech_config_list1, ech_config_list2;
   bssl::UniquePtr<SSL_ECH_KEYS> keys1 =
@@ -5510,6 +5516,9 @@ TEST_F(SSLClientSocketTest, ECHWrongKeys) {
 // via the public name. This allows recovery if the server needed to
 // rollback ECH support.
 TEST_F(SSLClientSocketTest, ECHSecurelyDisabled) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   static const char kPublicName[] = "public.example";
   std::vector<uint8_t> ech_config_list;
   bssl::UniquePtr<SSL_ECH_KEYS> keys =
@@ -5544,6 +5553,9 @@ TEST_F(SSLClientSocketTest, ECHSecurelyDisabled) {
 // The same as the above, but testing that it also works in TLS 1.2, which
 // otherwise does not support ECH.
 TEST_F(SSLClientSocketTest, ECHSecurelyDisabledTLS12) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   static const char kPublicName[] = "public.example";
   std::vector<uint8_t> ech_config_list;
   bssl::UniquePtr<SSL_ECH_KEYS> keys =
@@ -5579,6 +5591,9 @@ TEST_F(SSLClientSocketTest, ECHSecurelyDisabledTLS12) {
 
 // Test that the ECH fallback handshake rejects bad certificates.
 TEST_F(SSLClientSocketTest, ECHFallbackBadCert) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   static const char kPublicName[] = "public.example";
   std::vector<uint8_t> ech_config_list1, ech_config_list2;
   bssl::UniquePtr<SSL_ECH_KEYS> keys1 =
@@ -5608,6 +5623,9 @@ TEST_F(SSLClientSocketTest, ECHFallbackBadCert) {
 }
 
 TEST_F(SSLClientSocketTest, InvalidECHConfigList) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   ASSERT_TRUE(
       StartEmbeddedTestServer(EmbeddedTestServer::CERT_OK, SSLServerConfig()));
 
@@ -5622,6 +5640,9 @@ TEST_F(SSLClientSocketTest, InvalidECHConfigList) {
 
 // Test that, if no ECHConfigList is available, the client sends ECH GREASE.
 TEST_F(SSLClientSocketTest, ECHGreaseEnabled) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(features::kEncryptedClientHello);
+
   // Configure the server to expect an ECH extension.
   bool ran_callback = false;
   SSLServerConfig server_config;
@@ -5642,11 +5663,11 @@ TEST_F(SSLClientSocketTest, ECHGreaseEnabled) {
   EXPECT_TRUE(ran_callback);
 }
 
-// Test that, if ECH is disabled, the client does not send ECH GREASE.
+// Test that, if the feature flag is disabled, the client does not send ECH
+// GREASE.
 TEST_F(SSLClientSocketTest, ECHGreaseDisabled) {
-  SSLContextConfig context_config;
-  context_config.ech_enabled = false;
-  ssl_config_service_->UpdateSSLConfigAndNotify(context_config);
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndDisableFeature(features::kEncryptedClientHello);
 
   // Configure the server not to expect an ECH extension.
   bool ran_callback = false;

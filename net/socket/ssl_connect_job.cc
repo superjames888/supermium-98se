@@ -247,7 +247,7 @@ int SSLConnectJob::DoTransportConnect() {
   std::optional<TransportConnectJob::EndpointResultOverride>
       endpoint_result_override;
   if (ech_retry_configs_) {
-    DCHECK(ssl_client_context()->config().ech_enabled);
+    DCHECK(ssl_client_context()->config().EncryptedClientHelloEnabled());
     DCHECK(endpoint_result_);
     endpoint_result_override.emplace(*endpoint_result_, dns_aliases_);
   }
@@ -360,7 +360,7 @@ int SSLConnectJob::DoSSLConnect() {
       *common_connect_job_params()->ignore_certificate_errors;
   ssl_config.network_anonymization_key = params_->network_anonymization_key();
 
-  if (ssl_client_context()->config().ech_enabled) {
+  if (ssl_client_context()->config().EncryptedClientHelloEnabled()) {
     if (ech_retry_configs_) {
       ssl_config.ech_config_list = *ech_retry_configs_;
     } else if (endpoint_result_) {
@@ -413,9 +413,9 @@ int SSLConnectJob::DoSSLConnectComplete(int result) {
   // control and experiment group.
   const bool is_ech_capable =
       endpoint_result_ && !endpoint_result_->metadata.ech_config_list.empty();
-  const bool ech_enabled = ssl_client_context()->config().ech_enabled;
 
-  if (!ech_retry_configs_ && result == ERR_ECH_NOT_NEGOTIATED && ech_enabled) {
+  if (!ech_retry_configs_ && result == ERR_ECH_NOT_NEGOTIATED &&
+      ssl_client_context()->config().EncryptedClientHelloEnabled()) {
     // We used ECH, and the server could not decrypt the ClientHello. However,
     // it was able to handshake with the public name and send authenticated
     // retry configs. If this is not the first time around, retry the connection
@@ -432,12 +432,15 @@ int SSLConnectJob::DoSSLConnectComplete(int result) {
               "bytes", NetLogBinaryValue(*ech_retry_configs_));
         });
 
+    // TODO(https://crbug.com/1091403): Add histograms for how often this
+    // happens.
     ResetStateForRestart();
     next_state_ = GetInitialState(params_->GetConnectionType());
     return OK;
   }
 
-  if (is_ech_capable && ech_enabled) {
+  if (is_ech_capable &&
+      base::FeatureList::IsEnabled(features::kEncryptedClientHello)) {
     // These values are persisted to logs. Entries should not be renumbered
     // and numeric values should never be reused.
     enum class ECHResult {
