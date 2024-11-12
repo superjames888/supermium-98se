@@ -11593,7 +11593,11 @@ const FeatureEntry kFeatureEntries[] = {
     {"double-click-close-tab",
      "Double Click to Close Tab",
      "Enables double clicking a tab to close it.",
-     kOsDesktop, SINGLE_VALUE_TYPE("double-click-close-tab")}
+     kOsDesktop, SINGLE_VALUE_TYPE("double-click-close-tab")},
+    {"disable-ech", "Disable Encrypted ClientHello",
+     "Disables TLS Encrypted ClientHello support in special cases where it may prevent"
+	 " the usage of some websites.", kOsAll,
+     SINGLE_VALUE_TYPE("disable-ech")}
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
