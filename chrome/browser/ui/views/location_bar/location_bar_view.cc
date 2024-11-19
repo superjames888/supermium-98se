@@ -448,7 +448,7 @@ bool LocationBarView::IsInitialized() const {
 
 int LocationBarView::GetBorderRadius() const {
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
-	  return 3;
+	  return 4;
   return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kMaximum, size());
 }
@@ -1175,7 +1175,7 @@ void LocationBarView::RefreshBackground() {
   }
 
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border") && !is_caret_visible) {
-	  border_color = SK_ColorGRAY;
+	  border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
   if (is_popup_mode_) {
      SetBackground(views::CreateSolidBackground(background_color));
