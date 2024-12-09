@@ -912,6 +912,21 @@ std::unique_ptr<views::View> SidePanelCoordinator::CreateHeader() {
   auto* const layout =
       header->SetLayoutManager(std::make_unique<views::FlexLayout>());
 
+  if (!features::IsChromeRefresh2023()) {
+    // ChromeLayoutProvider for providing margins.
+    ChromeLayoutProvider* const chrome_layout_provider =
+        ChromeLayoutProvider::Get();
+
+    // Set the interior margins of the header on the left and right sides.
+    const int horizontal_margin = chrome_layout_provider->GetDistanceMetric(
+        ChromeDistanceMetric::
+            DISTANCE_SIDE_PANEL_HEADER_INTERIOR_MARGIN_HORIZONTAL);
+    layout->SetInteriorMargin(
+        gfx::Insets::TLBR(0, horizontal_margin, 0, horizontal_margin * 2));
+    header->SetBackground(
+        views::CreateThemedSolidBackground(ui::kColorWindowBackground));
+  }
+
   // Set alignments for horizontal (main) and vertical (cross) axes.
   layout->SetMainAxisAlignment(views::LayoutAlignment::kStart);
   layout->SetCrossAxisAlignment(views::LayoutAlignment::kCenter);
