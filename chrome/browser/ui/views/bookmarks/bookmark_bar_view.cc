@@ -214,6 +214,10 @@ class BookmarkFolderButton : public BookmarkMenuButtonBase {
     }
     SetHideInkDropWhenShowingContextMenu(false);
 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     label()->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
+  }
+
     views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
 
     SetImageLabelSpacing(

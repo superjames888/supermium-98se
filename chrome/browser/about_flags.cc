@@ -11597,7 +11597,10 @@ const FeatureEntry kFeatureEntries[] = {
     {"disable-ech", "Disable Encrypted ClientHello",
      "Disables TLS Encrypted ClientHello support in special cases where it may prevent"
 	 " the usage of some websites.", kOsAll,
-     SINGLE_VALUE_TYPE("disable-ech")}
+     SINGLE_VALUE_TYPE("disable-ech")},
+    {"chrome-refresh-2023-top-chrome-font", "Chrome Refresh 2023 Top Chrome Font Style",
+     "Enables the bolder version of font styles for Top Chrome components.", kOsAll,
+     SINGLE_VALUE_TYPE("chrome-refresh-2023-top-chrome-font")}
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
