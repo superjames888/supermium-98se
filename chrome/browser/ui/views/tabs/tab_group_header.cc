@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/memory/raw_ptr.h"
 #include "base/metrics/histogram_functions.h"
@@ -127,6 +128,10 @@ TabGroupHeader::TabGroupHeader(TabSlotController& tab_slot_controller,
     title_->SetLineHeight(20);
   } else {
     title_->SetTextStyle(views::style::STYLE_BODY_4);
+  }
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     title_->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
   }
 
   // Enable keyboard focus.

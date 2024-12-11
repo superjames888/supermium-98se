@@ -9,6 +9,7 @@
 #include <optional>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/location.h"
@@ -121,7 +122,10 @@ ToolbarButton::ToolbarButton(PressedCallback callback,
   // make to the leading margin to handle Fitts' Law, it's easier to just
   // allocate the property once and modify the value.
   SetProperty(views::kInternalPaddingKey, gfx::Insets());
-
+  
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     label()->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
+  }
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
   views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
 }

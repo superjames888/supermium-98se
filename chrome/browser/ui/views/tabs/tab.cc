@@ -236,6 +236,11 @@ Tab::Tab(TabSlotController* controller)
   // onto opaque parts of a not-entirely-opaque layer.
   title_->SetSkipSubpixelRenderingOpacityCheck(true);
 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     title_->SetTextContext(views::style::CONTEXT_LABEL);
+     title_->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
+  }
+
   AddChildView(title_.get());
 
   SetEventTargeter(std::make_unique<views::ViewTargeter>(this));
