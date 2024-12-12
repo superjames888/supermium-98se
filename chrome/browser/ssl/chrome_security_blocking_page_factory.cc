@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
 
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/time/time.h"
@@ -101,6 +102,8 @@ bool IsEnterpriseManaged() {
 // CaptivePortalBlockingPage to be invoked when the user has pressed the
 // connect button.
 void OpenLoginPage(content::WebContents* web_contents) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-captive-portals"))
+     return;
 #if !BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
   // OpenLoginTabForWebContents() is not available on Android (the only
   // platform on which captive portal detection is not enabled). Simply open
