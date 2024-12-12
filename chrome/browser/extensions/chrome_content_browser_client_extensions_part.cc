@@ -394,6 +394,10 @@ bool ChromeContentBrowserClientExtensionsPart::CanCommitURL(
            extension->id() == owner_extension_id;
   }
 
+  if (process_host->GetProcess().is_current() &&
+      base::CommandLine::ForCurrentProcess()->HasSwitch(::switches::kSingleProcess))
+       return true;
+
   // Otherwise, the process is wrong for this extension URL.
   return false;
 }
@@ -424,6 +428,7 @@ bool ChromeContentBrowserClientExtensionsPart::IsSuitableHost(
   // SiteInstances for both extensions and hosted apps.
   const Extension* extension =
       GetEnabledExtensionFromSiteURL(profile, site_url);
+
   if (extension &&
       !process_map->Contains(extension->id(), process_host->GetID())) {
     return false;
