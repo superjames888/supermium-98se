@@ -11600,7 +11600,10 @@ const FeatureEntry kFeatureEntries[] = {
      SINGLE_VALUE_TYPE("disable-ech")},
     {"chrome-refresh-2023-top-chrome-font", "Chrome Refresh 2023 Top Chrome Font Style",
      "Enables the bolder version of font styles for Top Chrome components.", kOsAll,
-     SINGLE_VALUE_TYPE("chrome-refresh-2023-top-chrome-font")}
+     SINGLE_VALUE_TYPE("chrome-refresh-2023-top-chrome-font")},
+    {"disable-captive-portals", "Disable Captive Portals",
+     "Disables captive portals, such as login pages for public WiFi services.", kOsAll,
+     SINGLE_VALUE_TYPE("disable-captive-portals")}
 	// TODO: move all Supermium-specific flags to new source file.
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
