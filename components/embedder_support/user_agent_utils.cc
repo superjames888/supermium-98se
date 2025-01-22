@@ -323,7 +323,7 @@ const blink::UserAgentBrandList GetUserAgentBrandMajorVersionList(
     bool enable_updated_grease_by_policy) {
   return GetUserAgentBrandList(version_info::GetMajorVersionNumber(),
                                enable_updated_grease_by_policy,
-                               std::string(version_info::GetVersionNumber()),
+                               std::string("132.0.6478.261"),
                                blink::UserAgentBrandVersionType::kMajorVersion);
 }
 
@@ -335,7 +335,7 @@ blink::UserAgentBrandList GetUserAgentBrandFullVersionList(
     bool enable_updated_grease_by_policy) {
   return GetUserAgentBrandList(version_info::GetMajorVersionNumber(),
                                enable_updated_grease_by_policy,
-                               std::string(version_info::GetVersionNumber()),
+                               std::string("132.0.6478.261"),
                                blink::UserAgentBrandVersionType::kFullVersion);
 }
 
@@ -619,7 +619,7 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   if(!full_version_custom.empty())
 	  metadata.full_version = full_version_custom;
   else
-      metadata.full_version = std::string(version_info::GetVersionNumber());
+      metadata.full_version = std::string("132.0.6478.261");
   std::string model_custom;
   model_custom = parseFile(UACHCustomModel);
   if(!model_custom.empty())
