@@ -4976,7 +4976,7 @@ Esto puede incluir información sobre el software instalado, los archivos, el na
 <translation id="4477015793815781985">Incluye Ctrl, Alt o ⌘</translation>
 <translation id="4478161224666880173">Puedes usar tu cuenta de <ph name="IDENTITY_PROVIDER_ETLD_PLUS_ONE" /> en este sitio. Para continuar, accede a <ph name="IDENTITY_PROVIDER_ETLD_PLUS_ONE" />.</translation>
 <translation id="4478664379124702289">Guardar vín&amp;culo como...</translation>
-<translation id="4479424953165245642">Administrar las aplicaciones del kiosco</translation>
+<translation id="4479424953165245642">Administrar apps de kiosco</translation>
 <translation id="4479639480957787382">Ethernet</translation>
 <translation id="4479877282574735775">Se está configurando la máquina virtual. Es posible que este proceso demore unos minutos.</translation>
 <translation id="4481448477173043917">Se reinició tu <ph name="DEVICE_TYPE" /> de forma inesperada</translation>
@@ -11540,7 +11540,7 @@ Es posible que se apliquen a esta cuenta los permisos que otorgaste a sitios web
 <translation id="9167813284871066981"><ph name="NUM_ACCOUNTS" /> cuentas</translation>
 <translation id="9168436347345867845">Hacerlo más tarde</translation>
 <translation id="9169093579080634183">Obtén más información sobre las pestañas</translation>
-<translation id="9169496697824289689">Ver combinaciones de teclas para acceso directo</translation>
+<translation id="9169496697824289689">Ver combinaciones de teclas</translation>
 <translation id="916964310188958970">¿Por qué recibo esta sugerencia?</translation>
 <translation id="9170048603158555829">Thunderbolt</translation>
 <translation id="9170061643796692986">Se estableció la configuración de visibilidad actual en Todos los contactos</translation>
@@ -11681,7 +11681,7 @@ Es posible que se apliquen a esta cuenta los permisos que otorgaste a sitios web
 <translation id="976499800099896273">Se muestra el diálogo para deshacer la autocorrección de la palabra <ph name="TYPED_WORD" /> corregida a <ph name="CORRECTED_WORD" />.  Presiona la flecha hacia arriba para acceder al botón Deshacer o Esc para ignorar el diálogo.</translation>
 <translation id="976572010712028687">Verifica que eres madre o padre</translation>
 <translation id="978146274692397928">El ancho de la puntuación inicial está completo</translation>
-<translation id="978978324795544535">Presiona dos veces un elemento, mantenlo presionado y, luego, arrástralo para moverlo</translation>
+<translation id="978978324795544535">Presiona dos veces un elemento, la segunda vez mantenlo presionado y, luego, arrástralo para moverlo</translation>
 <translation id="97905529126098460">Cuando se complete la cancelación, se cerrará esta ventana.</translation>
 <translation id="980731642137034229">Botón del menú de Acción</translation>
 <translation id="981121421437150478">Sin conexión</translation>

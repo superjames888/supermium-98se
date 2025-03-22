@@ -4779,7 +4779,7 @@ Cela peut inclure des renseignements sur les fichiers, les logiciels installés,
 <translation id="4327380114687339519">Menu Extensions</translation>
 <translation id="4330191372652740264">Eau glacée</translation>
 <translation id="4330387663455830245">Ne jamais traduire les pages rédigées en <ph name="LANGUAGE" /></translation>
-<translation id="4332976768901252016">Configurer les Contrôles parentaux</translation>
+<translation id="4332976768901252016">Configurer les contrôles parentaux</translation>
 <translation id="4333854382783149454">PKCS n° 1 SHA-1 avec chiffrement RSA</translation>
 <translation id="4334768748331667190">Vous ne verrez plus <ph name="MODULE_NAME" /></translation>
 <translation id="4335835283689002019">La navigation sécurisée est désactivée</translation>
@@ -4804,7 +4804,7 @@ Cela peut inclure des renseignements sur les fichiers, les logiciels installés,
 <translation id="4348766275249686434">Recueillir les erreurs</translation>
 <translation id="4349828822184870497">Utile</translation>
 <translation id="4350230709416545141">Toujours empêcher <ph name="HOST" /> d'accéder à votre position</translation>
-<translation id="4350782034419308508">Ok Google</translation>
+<translation id="4350782034419308508">Hey Google</translation>
 <translation id="435185728237714178">Accédez à l'application « <ph name="APP_NAME" /> » pour gérer les applications installées et diffusées en continu</translation>
 <translation id="4354073718307267720">Demander une autorisation lorsqu'un site veut créer une carte 3D de votre environnement ou faire le suivi de la position de l'appareil photo</translation>
 <translation id="4354344420232759511">Les sites que vous visiterez apparaîtront ici</translation>
@@ -7413,7 +7413,7 @@ Les autorisations que vous avez déjà accordées à des sites Web et à des app
 <translation id="6247620186971210352">Aucune application trouvée</translation>
 <translation id="6247708409970142803"><ph name="PERCENTAGE" /> %</translation>
 <translation id="6247802389331535091">Système : <ph name="ARC_PROCESS_NAME" /></translation>
-<translation id="6248988683584659830">Paramètres de recherche</translation>
+<translation id="6248988683584659830">Rechercher dans les paramètres</translation>
 <translation id="6249200942125593849">Gérer l'accessibilité</translation>
 <translation id="6250186368828697007">Les renseignements sont masqués quand vous partagez votre écran</translation>
 <translation id="6251870443722440887">Descripteurs GDI</translation>
@@ -7525,7 +7525,7 @@ Les autorisations que vous avez déjà accordées à des sites Web et à des app
 <translation id="6333170995003625229">Impossible de vérifier votre adresse de courriel ni votre mot de passe. Essayez de vous connecter à nouveau.</translation>
 <translation id="6334267141726449402">Copiez ce lien et envoyez-le à l'utilisateur pour collecter les journaux.</translation>
 <translation id="6336038146639916978"><ph name="MANAGER" /> a désactivé le débogage PDA. Cela entraînera la réinitialisation de votre <ph name="DEVICE_TYPE" /> dans 24 heures. Sauvegardez tout fichier que vous souhaitez garder.</translation>
-<translation id="6336194758029258346">Langue de l'application</translation>
+<translation id="6336194758029258346">Langue de l'appli</translation>
 <translation id="6337543438445391085">Certains renseignements personnels peuvent encore être inclus dans les données. Assurez-vous de vérifier les fichiers exportés.</translation>
 <translation id="6338968693068997776">Ajouter un périphérique USB</translation>
 <translation id="6339668969738228384">Créer un autre profil pour <ph name="USER_EMAIL_ADDRESS" /></translation>
@@ -8355,7 +8355,7 @@ Vous pouvez gérer les paramètres à partir du menu de la carte ou afficher plu
 <translation id="6925127338315966709">Vous ajoutez un profil géré à ce navigateur. L'administrateur peut gérer ce profil et accéder à ses données. Vos favoris, votre historique, vos mots de passe et vos autres paramètres peuvent être synchronisés avec votre compte et gérés par votre administrateur.</translation>
 <translation id="6928650056523249512">Retirer automatiquement les autorisations des sites inutilisés</translation>
 <translation id="6929126689972602640">Les contrôles parentaux ne sont pas pris en charge pour les comptes scolaires. Pour ajouter un compte scolaire afin d'accéder à Google Classroom et à d'autres sites Web permettant de faire des devoirs à la maison, connectez-vous d'abord avec le compte personnel de l'enfant. Vous pouvez ajouter le compte scolaire plus tard dans le menu de configuration.</translation>
-<translation id="6929760895658557216">Ok Google</translation>
+<translation id="6929760895658557216">Hey Google</translation>
 <translation id="6930161297841867798">{NUM_EXTENSIONS,plural, =1{Une extension a été refusée}one{# extension a été refusée}other{# extensions ont été refusées}}</translation>
 <translation id="6931539787433490713"><ph name="USER_NAME" /> • <ph name="PROFILE_NAME" /></translation>
 <translation id="6931690462168617033">Niveau de pression du clic</translation>
@@ -9411,7 +9411,7 @@ Vous pouvez gérer les paramètres à partir du menu de la carte ou afficher plu
 <translation id="7690853182226561458">Ajouter un &amp;dossier...</translation>
 <translation id="7691073721729883399">Impossible de monter le cryptohome pour l'application de kiosque.</translation>
 <translation id="7691077781194517083">Impossible de réinitialiser cette clé de sécurité. Erreur <ph name="ERROR_CODE" />.</translation>
-<translation id="7691163173018300413">« Ok Google »</translation>
+<translation id="7691163173018300413">« Hey Google »</translation>
 <translation id="7691698019618282776">Mise à niveau de Crostini</translation>
 <translation id="7694246789328885917">Surligneur</translation>
 <translation id="7694895628076803349">Ne pas afficher Disque</translation>
@@ -11360,7 +11360,7 @@ Les autorisations que vous avez déjà accordées à des sites Web et à des app
 <translation id="9041692268811217999">Votre administrateur a désactivé l'accès aux fichiers locaux sur votre ordinateur</translation>
 <translation id="904224458472510106">Cette opération est irréversible</translation>
 <translation id="9042827002460091668">Vérifiez votre connexion Internet et réessayez</translation>
-<translation id="9042893549633094279">Sécurité et confidentialité</translation>
+<translation id="9042893549633094279">Confidentialité et sécurité</translation>
 <translation id="9043264199499366189">S'abonner aux événements du système ChromeOS Flex</translation>
 <translation id="9044646465488564462">Échec de connexion au réseau : <ph name="DETAILS" /></translation>
 <translation id="9045160989383249058">Votre liste de lecture a été déplacée dans le nouveau panneau latéral. Essayez-la ici.</translation>

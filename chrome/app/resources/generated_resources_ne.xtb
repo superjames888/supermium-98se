@@ -799,7 +799,7 @@
 <translation id="1552752544932680961">एक्सटेन्सन व्यवस्थित गर्नुहोस्</translation>
 <translation id="1553538517812678578">असीमित</translation>
 <translation id="1553947773881524342">आफ्नो Chromebook मा Microsoft 365 का बारेमा <ph name="LINK_BEGIN" />थप जान्नुहोस्<ph name="LINK_END" />।</translation>
-<translation id="1554640914375980459">नोटिफिकेसन प्राप्त हुँदा स्क्रिन फ्ल्यास गर्नुहोस्। उज्यालो प्रकाशका कारणले तपाईंलाई समस्या हुन्छ भने नोटिफिकेसन प्राप्त हुँदा फ्ल्यास हुने सुविधा सावधानीपूर्वक प्रयोग गर्नुहोस्।</translation>
+<translation id="1554640914375980459">नोटिफिकेसन प्राप्त हुँदा स्क्रिन फ्ल्यास गर्नुहोस्। उज्यालो प्रकाशका कारणले तपाईंलाई समस्या हुन्छ भने फ्ल्यास नोटिफिकेसन सुविधा सावधानीपूर्वक प्रयोग गर्नुहोस्।</translation>
 <translation id="1555130319947370107">निलो</translation>
 <translation id="1556127816860282890">ब्याकग्राउन्डमा हुने गतिविधि र निर्वाध रूपमा स्क्रोल गर्ने सुविधालगायतका केही भिजुअल इफेक्टहरू सीमित रूपमा उपलब्ध हुन सक्छन्</translation>
 <translation id="1556537182262721003">प्रोफाइलमा एक्स्टेन्शन निर्देशिका सार्न सकिएन।</translation>
@@ -1125,7 +1125,7 @@
 <translation id="1773329206876345543">अन्य डिभाइसहरूमा इन्टरनेट उपलब्ध गराउन आफ्नो <ph name="DEVICE_TYPE" /> को मोबाइल डेटा प्रयोग गरेर Wi-Fi हटस्पट बनाउनुहोस्। <ph name="BEGIN_LINK_LEARN_MORE" />थप जान्नुहोस्<ph name="END_LINK_LEARN_MORE" /></translation>
 <translation id="177336675152937177">होस्ट गरिएको एप लगत</translation>
 <translation id="177529472352014190">OneDrive मा कनेक्ट गर्नुहोस्</translation>
-<translation id="1776712937009046120">प्रयोगकर्ता कनेक्ट गर्नुहोस्</translation>
+<translation id="1776712937009046120">प्रयोगकर्ता थप्नुहोस्</translation>
 <translation id="1776883657531386793"><ph name="OID" />: <ph name="INFO" /></translation>
 <translation id="177814385589420211">सर्च की थिचिराख्दा फङ्सन की र माथिल्लो लहरका सिस्टम कीका बिचमा अदलबदल हुने पारियोस्</translation>
 <translation id="1778457539567749232">'नपढिएको' सामग्रीका रूपमा चिन्ह लगाउनुहोस्</translation>
@@ -1197,7 +1197,7 @@
 <translation id="1818913467757368489">लग अपलोड गर्ने कार्य जारी छ।</translation>
 <translation id="1819377896744763509">सेटअप गर्न अपेक्षा गरिएभन्दा बढी समय लाग्न सक्छ...</translation>
 <translation id="1819443852740954262">सबै URL इन्कोग्निटो विन्डोमा खोलियोस्</translation>
-<translation id="1819721979226826163">एपसम्बन्धी सूचनाहरू &gt; Google Play services मा ट्याप गर्नुहोस्।</translation>
+<translation id="1819721979226826163">एपसम्बन्धी नोटिफिकेसनहरू &gt; Google Play services मा ट्याप गर्नुहोस्।</translation>
 <translation id="1822140782238030981">पहिल्यैदेखि Chrome को प्रयोगकर्ता हुनुहुन्छ? साइन इन गर्नुहोस्</translation>
 <translation id="1822517323280215012">खरानी रङ</translation>
 <translation id="1822635184853104396">नयाँ ट्याबमा पूर्ण डाउनलोड हिस्ट्री देखाउनुहोस्</translation>
@@ -2171,7 +2171,7 @@
 <translation id="2478176599153288112">"<ph name="EXTENSION" />" को लागि मिडिया</translation>
 <translation id="24786041351753425">डेटा रिकभर गर्ने सेवा अन गर्नुहोस्।</translation>
 <translation id="2480868415629598489">तपाईंले प्रतिलिपि गरी टाँस्नुभएको डेटालाई परिमार्जन गर्नुहोस्</translation>
-<translation id="2482878487686419369">सूचनाहरू</translation>
+<translation id="2482878487686419369">नोटिफिकेसनहरू</translation>
 <translation id="2482895651873876648">यो ट्याब <ph name="GROUP_NAME" /> समूहमा सारियो - <ph name="GROUP_CONTENTS" /></translation>
 <translation id="2483627560139625913">Chrome ब्राउजरको सेटिङमा गई सर्च इन्जिन सेट गर्नुहोस्</translation>
 <translation id="2483698983806594329">पुष्टि नगरिएको फाइल डाउनलोड गरियो</translation>
@@ -3341,7 +3341,7 @@
 <translation id="3333190335304955291">तपाईं सेटिङमा गई यो सेवालाई निष्क्रिय पार्न सक्नुहुन्छ।</translation>
 <translation id="3333961966071413176">सबै कन्ट्याक्टहरू</translation>
 <translation id="3334632933872291866"><ph name="WINDOW_TITLE" /> - भिडियो Picture-in-Picture मोडमा प्ले हुँदै छ</translation>
-<translation id="3335380372402547327">सूचनाहरू आउँदा फ्ल्यास हुने सुविधाको प्रिभ्यू हेर्नुहोस्</translation>
+<translation id="3335380372402547327">फ्ल्यास नोटिफिकेसनको प्रिभ्यू हेर्नुहोस्</translation>
 <translation id="3335947283844343239">बन्द गरिएको ट्याब पुन: खोल्नुहोस्</translation>
 <translation id="3336855445806447827">निश्चित छैन</translation>
 <translation id="3337568642696914359">साइटहरूलाई प्रोटोकोल व्यवस्थापन गर्ने अनुमति नदिनुहोस्</translation>
@@ -6378,7 +6378,7 @@
 <translation id="5490798133083738649">Linux लाई तपाईंको माइक्रोफोन प्रयोग गर्ने अनुमति दिनुहोस्</translation>
 <translation id="549211519852037402">फुस्रो खैरो र सेतो</translation>
 <translation id="5492637351392383067">डिभाइसमै चल्ने इन्क्रिप्सन</translation>
-<translation id="5493455553805432330">बिर्सनुहोस्</translation>
+<translation id="5493455553805432330">हटाउनुहोस्</translation>
 <translation id="5493792505296048976">स्क्रिन सक्रिय छ</translation>
 <translation id="5494016731375030300">भर्खरै बन्द गरिएका ट्याबहरू</translation>
 <translation id="5494362494988149300">&amp;पूरा भएपछि खोल्नुहोस्</translation>
@@ -7692,7 +7692,7 @@
 <translation id="6468773105221177474"><ph name="FILE_COUNT" /> वटा फाइल</translation>
 <translation id="6469557521904094793">सेलुलर नेटवर्क अन गर्नुहोस्</translation>
 <translation id="6469702164109431067">पासवर्ड तथा पासकी</translation>
-<translation id="6470120577693311302">नोटिफिकेसन आउँदा फ्ल्यास हुने सुविधा</translation>
+<translation id="6470120577693311302">फ्ल्यास नोटिफिकेसन</translation>
 <translation id="6470823736074966819">सूचनाहरू म्युट गर्नुहोस्</translation>
 <translation id="6472893788822429178">गृह बटन देखाउनुहोस्</translation>
 <translation id="6473315466413288899">एउटा विकल्प छान्नुहोस्</translation>
@@ -8389,7 +8389,7 @@
 <translation id="6965382102122355670">ठिक छ</translation>
 <translation id="6965607054907047032">निष्क्रिय ट्याबका आधारमा मेमोरी खाली गर्नुहोस्</translation>
 <translation id="6965648386495488594">पोर्ट</translation>
-<translation id="6965978654500191972">यन्त्र</translation>
+<translation id="6965978654500191972">डिभाइस</translation>
 <translation id="6966370001499648704">कुन फोनलाई सुरक्षा साँचोका रूपमा प्रयोग गर्ने भन्ने कुरा तय गर्नुहोस्</translation>
 <translation id="6967112302799758487">यो डिभाइसमा Steam for Chromebook (बिटा) प्रयोग गरी डाउनलोड गरिएका सबै एप र गेमहरू मेटाइने छन्। यी एप र गेमहरूसँग सम्बन्धित डेटा पनि मेटाइने छ। सेभ गरिएका एप र गेमहरू अनइन्स्टल गर्नुअघि ती एप र गेमहरू ब्याकअप गर्न नभुल्नुहोला।</translation>
 <translation id="6967430741871315905">यो डिभाइस प्रयोग गर्ने अनुमति दिइएको छ कि छैन भन्ने कुरा जाँच गर्न सकिएन</translation>
@@ -10302,7 +10302,7 @@
 <translation id="8318266828739827371">स्क्रिनको जुन भाग जुम इन गरिएको छ त्यो भाग हेर्न स्प्लिट स्क्रिन भ्यू प्रयोग गर्नुहोस्। डक गरिएको म्याग्निफायर अन र अफ गर्न Search + Ctrl + D थिच्नुहोस्।</translation>
 <translation id="8319414634934645341">विस्तारित कुञ्जी प्रयोग</translation>
 <translation id="8320212361750431956">हालसालैको क्रियाकलाप</translation>
-<translation id="8321476692217554900">सूचनाहरू</translation>
+<translation id="8321476692217554900">नोटिफिकेसनहरू</translation>
 <translation id="8321837372750396788"><ph name="MANAGER" /> ले यो <ph name="DEVICE_TYPE" /> व्यवस्थापन गर्ने छ।</translation>
 <translation id="8322814362483282060">यो पृष्ठलाई तपाईंको माइक्रोफोनको पहुँच गर्नबाट ब्लक गरिएको छ।</translation>
 <translation id="8323167517179506834">युआरएल टाइप गर्नुहोस्</translation>
@@ -11253,7 +11253,7 @@
 <translation id="8985561265504464578">डिटेक्सन थ्रेसहोल्ड</translation>
 <translation id="8985661493893822002">आफ्नो <ph name="DEVICE_TYPE" /> मा साइन इन गर्न कृपया इन्टरनेटमा कनेक्ट गर्नुहोस्।</translation>
 <translation id="8985661571449404298">असुरक्षित फाइल डाउनलोड गरियो</translation>
-<translation id="8986362086234534611">बिर्सनुहोस्</translation>
+<translation id="8986362086234534611">हटाउनुहोस्</translation>
 <translation id="8986494364107987395">Google लाई स्वचालित रूपमा उपयोगको तथ्याङ्कहरू र क्र्यास रिपोर्ट पठाउनुहोस्</translation>
 <translation id="8987305927843254629">हरेक व्यक्ति आफूले प्रयोग गर्ने सुविधा पर्सनलाइज गर्न र जानकारी गोप्य राख्न सक्छन्।</translation>
 <translation id="8987321822984361516">ब्राउजर सङ्गठनले व्यवस्थापन गर्छ भने प्रोफाइल <ph name="PROFILE_DOMAIN" /> ले व्यवस्थापन गर्छ</translation>
@@ -11402,9 +11402,9 @@
 <translation id="9082750838489080452">एप: <ph name="APP_NAME" /></translation>
 <translation id="9084064520949870008">सन्झ्यालको रूपमा खोल्नुहोस्</translation>
 <translation id="9085256200913095638">चयन गरिएको ट्याबको प्रतिलिपि बनाउनुहोस्</translation>
-<translation id="9085446486797400519">क्यामेरा प्रयोग गर्ने अनुमति</translation>
+<translation id="9085446486797400519">क्यामेरा एक्सेस</translation>
 <translation id="9085776959277692427"><ph name="LANGUAGE" /> चयन गरिएको छैन। भाषा चयन गर्न 'खोज' बटनसँगै 'स्पेस' बटन थिच्नुहोस्।</translation>
-<translation id="9087949559523851360">प्रतिबन्धित प्रयोगकर्ता कनेक्ट गर्नुहोस्</translation>
+<translation id="9087949559523851360">प्रतिबन्धित प्रयोगकर्ता थप्नुहोस्</translation>
 <translation id="9088234649737575428">इन्टरप्राइजको नीतिले <ph name="PLUGIN_NAME" /> माथि अवरोध लगाएको छ</translation>
 <translation id="9088446193279799727">Linux कन्फिगर गर्न सकिएन। इन्टरनेट जोड्नुहोस् र फेरि प्रयास गर्नुहोस्।</translation>
 <translation id="90885733430013283">Wi-Fi SSID</translation>

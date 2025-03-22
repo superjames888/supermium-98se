@@ -758,7 +758,7 @@ De lo contrario, la configuración de privacidad bloqueará esta acción. Esto p
 <translation id="2318594867107319532">Marca de tiempo de la última política:</translation>
 <translation id="2320564945062300737">Productos para el cuidado facial</translation>
 <translation id="2322254345061973671">{COUNT,plural, =1{1 entana}other{# ventanas}}</translation>
-<translation id="2328651992442742497">Se permite (predeterminado).</translation>
+<translation id="2328651992442742497">Se permite (predeterminado)</translation>
 <translation id="2328955282645810595">Herramientas eléctricas y de construcción</translation>
 <translation id="2330137317877982892"><ph name="CREDIT_CARD" />, fecha de vencimiento: <ph name="EXPIRATION_DATE_ABBR" /></translation>
 <translation id="2337852623177822836">Configuración controlada por tu administrador</translation>
@@ -861,7 +861,7 @@ De lo contrario, la configuración de privacidad bloqueará esta acción. Esto p
 <translation id="2505063700931618106">Se guardó la información de la tarjeta</translation>
 <translation id="2505268675989099013">Proteger cuenta</translation>
 <translation id="2508626115198287271"><ph name="BENEFIT_DESCRIPTION" /> (se aplican condiciones)</translation>
-<translation id="2512101340618156538">No se permite (predeterminado).</translation>
+<translation id="2512101340618156538">No se permite (predeterminado)</translation>
 <translation id="2512413427717747692">Establece Chrome como el botón de navegador predeterminado, presiona Intro para establecer Chrome como el navegador predeterminado en la configuración de iOS</translation>
 <translation id="2514548229949738417">Casa y jardín</translation>
 <translation id="2515629240566999685">Verificar la señal en tu área.</translation>
@@ -4089,7 +4089,7 @@ Detalles adicionales:
 <translation id="8351131234907093545">Crear nota</translation>
 <translation id="8352849934814541340">El administrador de este dispositivo instaló aplicaciones para funciones adicionales. Las aplicaciones tienen acceso a algunos de tus datos.</translation>
 <translation id="8355270400102541638">Contexto de falla local:</translation>
-<translation id="8363502534493474904">Desactivar el modo de avión.</translation>
+<translation id="8363502534493474904">Desactivar el modo avión.</translation>
 <translation id="8364627913115013041">Sin establecer</translation>
 <translation id="8366057325711477500">Noticias del mundo</translation>
 <translation id="836616551641291797">Más información sobre cómo se administra tu navegador</translation>

@@ -3470,7 +3470,7 @@
 <translation id="3423463006624419153">На устройствах <ph name="PHONE_NAME_1" /> и <ph name="PHONE_NAME_2" />:</translation>
 <translation id="3423858849633684918">Перезапустите <ph name="PRODUCT_NAME" /></translation>
 <translation id="3424969259347320884">Опишите, что вы делали, когда произошел сбой</translation>
-<translation id="3427092606871434483">Разрешать (по умолчанию)</translation>
+<translation id="3427092606871434483">Разрешить (по умолчанию)</translation>
 <translation id="3429086384982427336">Указанные ниже приложения не будут обрабатывать ссылки на протоколы.</translation>
 <translation id="3429174588714165399">Создать ярлык для этой страницы</translation>
 <translation id="3429271624041785769">Языки веб-контента</translation>
@@ -3800,7 +3800,7 @@
 <translation id="3653999333232393305">Разрешить <ph name="HOST" /> доступ к микрофону</translation>
 <translation id="3654045516529121250">Чтение настроек специальных возможностей</translation>
 <translation id="3654682977761834281">Данные со встроенных сайтов</translation>
-<translation id="3656328935986149999">Скорость движения курсора</translation>
+<translation id="3656328935986149999">Скорость движения указателя</translation>
 <translation id="3658871634334445293">Ускорение TrackPoint</translation>
 <translation id="3659929705630080526">Слишком часто вводился неправильный код доступа. Повторите попытку позже.</translation>
 <translation id="3660234220361471169">Недоверенный</translation>
@@ -4895,7 +4895,7 @@
 <translation id="4412547955014928315">Удалить данные и разрешения сайта <ph name="SITE_NAME" /> и всех связанных с ним сайтов?</translation>
 <translation id="4412632005703201014">Мы переходим к использованию современных веб-приложений вместо приложений Chrome. Это приложение было установлено в браузер вашей организацией. Чтобы открыть современное веб-приложение, попросите администратора удалить приложение Chrome. Пока вы можете открыть расширение "<ph name="EXTENSION_NAME" />" в браузере, перейдя по адресу <ph name="EXTENSION_LAUNCH_URL" />.</translation>
 <translation id="4412698727486357573">Справочный центр</translation>
-<translation id="4412992751769744546">Разрешить использование сторонних файлов cookie</translation>
+<translation id="4412992751769744546">Принимать сторонние файлы cookie</translation>
 <translation id="4413087696295876280">Чтение сведений об устройстве с ChromeOS Flex и данных на нем</translation>
 <translation id="44137799675104237">Зачитать текст естественным голосом</translation>
 <translation id="441418754432585599"><ph name="MODIFIER_ONE" /> + <ph name="MODIFIER_TWO" /> + <ph name="KEY" /></translation>

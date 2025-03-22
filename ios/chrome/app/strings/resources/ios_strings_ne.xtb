@@ -343,7 +343,7 @@
 <translation id="2468444275314013497">तपाईंको ब्राउजर सुरक्षित देखिन्छ</translation>
 <translation id="2473876017985765807">तपाईंले <ph name="WEBSITE" /> को पासवर्ड सेभ गरिसक्नुभएको छ</translation>
 <translation id="2479148705183875116">सेटिङमा जानुहोस्</translation>
-<translation id="2482878487686419369">सूचनाहरू</translation>
+<translation id="2482878487686419369">नोटिफिकेसनहरू</translation>
 <translation id="2484459871750294497">यो सुविधा अन गर्न के गर्नु पर्छ?</translation>
 <translation id="2493269659028026145"><ph name="BIOMETRIC_AUTHENITCATION_TYPE" /> प्रयोग गरी तुरुन्तै लक गर्नुहोस्</translation>
 <translation id="2496180316473517155">ब्राउजिङ इतिहास</translation>
@@ -1644,7 +1644,7 @@
 <translation id="8474378002946546633">सूचना प्राप्त गर्ने सुविधा अन गर्नुहोस्</translation>
 <translation id="8477178913400731244">डेटा मेटाउनुहोस्</translation>
 <translation id="8481184073299279701">सबै ट्याबहरूबाट JavaScript कन्सोलका भावी लग तथा त्रुटिहरू सङ्कलन गर्न "लग गर्न सुरु गर्नुहोस्" मा ट्याप गर्नुहोस्। यो पेज बन्द नगरेसम्म वा "लग गर्न छाड्नुहोस्" बटन ट्याप नगरेसम्म लगहरू सङ्कलन गरिने छ (र मेमोरीमा मात्र भण्डारण गरिने छ)।</translation>
-<translation id="8487667956631253959">सक्रिय</translation>
+<translation id="8487667956631253959">अन छ</translation>
 <translation id="8487700953926739672">अफलाईन उपलब्ध</translation>
 <translation id="8487894141648868716">USPS</translation>
 <translation id="8490629238792920282">लिंक बनाउन सकिएन</translation>

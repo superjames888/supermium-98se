@@ -1840,7 +1840,7 @@
 <translation id="425582637250725228">行った変更が保存されない可能性があります。</translation>
 <translation id="4258748452823770588">署名が不適切です</translation>
 <translation id="4261046003697461417">保護されたドキュメントに注釈を追加することはできません</translation>
-<translation id="4265872034478892965">管理者によって許可</translation>
+<translation id="4265872034478892965">管理者によって許可されています</translation>
 <translation id="4269029136757623689">家庭用扇風機</translation>
 <translation id="4269264543938335308">水着</translation>
 <translation id="4269599248168651462">サーバー証明書が一意でない名前に対して発行されました。</translation>
@@ -3748,7 +3748,7 @@
 <translation id="7714404809393719981">写真（半光沢）</translation>
 <translation id="7714424966701020172">氏名を入力するオプションが選択されました</translation>
 <translation id="7714464543167945231">証明書</translation>
-<translation id="7716147886133743102">管理者によってブロック</translation>
+<translation id="7716147886133743102">管理者によってブロックされています</translation>
 <translation id="7716375162095500223">まだアップロードされていないか、無視されました</translation>
 <translation id="7716424297397655342">このサイトをキャッシュから読み込むことができません</translation>
 <translation id="7719791801330803993">写真、ビデオ ソフトウェア</translation>
@@ -3792,7 +3792,7 @@
 <translation id="7791543448312431591">追加</translation>
 <translation id="7798389633136518089">ポリシーがクラウドソースによって設定されていないため、無視されました。</translation>
 <translation id="7800304661137206267">この接続は <ph name="CIPHER" /> で暗号化されており、メッセージ認証には <ph name="MAC" />、鍵交換メカニズムには <ph name="KX" /> が使用されています。</translation>
-<translation id="7800977246388195491">Chrome では、ユーザーの最近の閲覧履歴に基づいて興味 / 関心のあるトピックを記録します。また、アクセスしたウェブサイトの情報からユーザーの好みを決定します。その後、ユーザーが訪れた別のウェブサイトにてパーソナライズド広告を表示させるために、これらの情報が求められます。ユーザーは、その際に提供するトピックやウェブサイトの情報を選択できます。</translation>
+<translation id="7800977246388195491">Chrome は、ユーザーの最近の閲覧履歴に基づいて興味 / 関心のあるトピックを記録します。また、アクセスしたウェブサイトの情報からユーザーの好みを判断します。それ以降、ユーザーが訪れた別のウェブサイトでパーソナライズド広告を表示させるためにこれらの情報が求められます。ユーザーは、その際に提供するトピックやウェブサイトの情報を選ぶことができます。</translation>
 <translation id="7802523362929240268">正規のサイトです</translation>
 <translation id="7802989406998618639">カード発行会社による本人確認のため、<ph name="SIDE_OF_CARD" />に記載されている <ph name="NUMBER_OF_DIGITS" /> 桁のセキュリティ コードを入力してください</translation>
 <translation id="780301667611848630">キャンセル</translation>

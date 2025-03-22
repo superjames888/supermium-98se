@@ -847,7 +847,7 @@
 <translation id="2479410451996844060">अवैध खोज युआरएल</translation>
 <translation id="2480300195898055381">तपाईंको Google खाता <ph name="USER_EMAIL" /> मा</translation>
 <translation id="248064299258688299">एक्स्टेन्सन <ph name="EXTENSION_NAME" /> ले यसो भन्छ</translation>
-<translation id="2482878487686419369">सूचनाहरू</translation>
+<translation id="2482878487686419369">नोटिफिकेसनहरू</translation>
 <translation id="248348093745724435">मेसिन नीतिहरू</translation>
 <translation id="2485243023686553468">स्मार्ट फोनहरू</translation>
 <translation id="2491120439723279231">सर्भरको प्रमाणपत्रमा त्रुटिहरू छन्।</translation>
@@ -2324,7 +2324,7 @@
     <ph name="BEGIN_LINK" />थप जान्नुहोस्<ph name="END_LINK" /></translation>
 <translation id="5169827969064885044">तपाईं आफ्नो सङ्गठनको खातामाथिको पहुँच गुमाउन सक्नुहुन्छ वा तपाईंको पहिचान चोरी हुन सक्छ। Chrome तपाईंलाई आफ्नो पासवर्ड अहिले नै परिवर्तन गर्न सिफारिस गर्छ।</translation>
 <translation id="5171045022955879922">युआरएल खोल्नुहोस् वा टाइप गर्नुहोस्</translation>
-<translation id="5172758083709347301">यन्त्र</translation>
+<translation id="5172758083709347301">मेसिन</translation>
 <translation id="5177076414499237632">यो पेजका स्रोत र विषयका बारेमा जान्नुहोस्</translation>
 <translation id="5179490652562926740">भुक्तानीको प्रमाणीकरणसम्बन्धी सेटिङ सेभ गरिएको छ</translation>
 <translation id="5180662470511508940">किबोर्ड लक गर्ने अनुमति दिन अस्वीकार गरिएको छ</translation>
@@ -3301,7 +3301,7 @@
 <translation id="6963693576491380224">सरकारी तथा सार्वजनिक क्षेत्रका जागिरहरू</translation>
 <translation id="6964255747740675745">नेटवर्कको कन्फिगुरेसन पार्स गर्न सकिएन (अमान्य JSON)।</translation>
 <translation id="6965382102122355670">ठिक छ</translation>
-<translation id="6965978654500191972">यन्त्र</translation>
+<translation id="6965978654500191972">डिभाइस</translation>
 <translation id="696703987787944103">बोधात्मक</translation>
 <translation id="6967851206780867018">सामग्रीका कारण एउटा फाइल ब्लक गरिएको छ</translation>
 <translation id="6970885655016700774">फेब्रिक (अर्काइभल)</translation>
@@ -4055,7 +4055,7 @@
 <translation id="8288807391153049143">प्रमाणपत्र देखाउनुहोस्</translation>
 <translation id="8289355894181816810">यसको अर्थ के हो भनेर निश्चित हुन नसकेमा तपाईंको नेटवर्क प्रशासकलाई सम्पर्क गर्नुहोस् ।</translation>
 <translation id="8293206222192510085">बुकमार्क थप्नुहोस्</translation>
-<translation id="829335040383910391">ध्वनि</translation>
+<translation id="829335040383910391">साउन्ड</translation>
 <translation id="8294431847097064396">स्रोत</translation>
 <translation id="8297545700510100061">कुकी र साइटका अन्य डेटा तपाईंको जानकारी याद राख्न प्रयोग गरिन्छन्। जस्तै, कुकी र साइटका अन्य डेटा तपाईंलाई साइन इन गराउने वा विज्ञापन पर्सनलाइज गर्ने प्रयोजनका लागि प्रयोग गरिन्छन्। सबै साइटका कुकीहरू व्यवस्थापन गर्न <ph name="SETTINGS" /> मा जानुहोस्।</translation>
 <translation id="8298115750975731693">तपाईँले प्रयोग गरिरहनु भएको Wi-Fi (<ph name="WIFI_NAME" />) लाई <ph name="BEGIN_BOLD" /><ph name="LOGIN_URL" /><ph name="END_BOLD" /> भ्रमण गर्ने आवश्यकता हुन सक्छ।</translation>
@@ -4069,7 +4069,7 @@
 <translation id="8319269383395457801">रेसिडेन्सियल सेल</translation>
 <translation id="831997045666694187">साँझ</translation>
 <translation id="8321448084834652864">तपाईं जुनसुकै बेला Chromium का सेटिङमा गई डिफल्ट सर्च इन्जिन परिवर्तन गर्न सक्नुहुन्छ।</translation>
-<translation id="8321476692217554900">सूचनाहरू</translation>
+<translation id="8321476692217554900">नोटिफिकेसनहरू</translation>
 <translation id="8322402665880479974">ओच्छ्यान र हेडबोर्ड</translation>
 <translation id="8323505966575306467">आफ्ना पासवर्डहरू अझ सुरक्षित राख्नुहोस्</translation>
 <translation id="832567874344484841">ब्रेकफास्ट</translation>
